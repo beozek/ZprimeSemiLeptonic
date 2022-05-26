@@ -109,8 +109,14 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
   isUL18        = (ctx.get("dataset_version").find("UL18")        != std::string::npos);
 
   // lepton IDs
-  ElectronId eleID_veto = ElectronID_Fall17_tight_noIso;
-  MuonId     muID_veto  = MuonID(Muon::CutBasedIdTight);
+  // ElectronId eleID_veto =  mvaEleID_Fall17_noIso_V2_wp80;
+  // ElectronID_Fall17_tight_noIso
+  // MuonId     muID_veto  = MuonID(Muon::CutBasedIdTight);
+
+  ElectronId eleID_low  = ElectronTagID(Electron::mvaEleID_Fall17_iso_V2_wp80);
+  ElectronId eleID_high = ElectronTagID(Electron::mvaEleID_Fall17_noIso_V2_wp80);
+  MuonId     muID_low   = AndId<Muon>(MuonID(Muon::CutBasedIdTight), MuonID(Muon::PFIsoTight));
+  MuonId     muID_high  = MuonID(Muon::CutBasedIdGlobalHighPt);
 
   double electron_pt(25.);
   double muon_pt(25.);
@@ -132,8 +138,8 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
 
 
   // Cleaning: Mu, Ele, Jets
-  const MuonId muonID_veto(AndId<Muon>(PtEtaCut(muon_pt, 2.4), muID_veto));
-  const ElectronId electronID_veto(AndId<Electron>(PtEtaSCCut(electron_pt, 2.5), eleID_veto));
+  const MuonId muonID_veto(AndId<Muon>(PtEtaCut(muon_pt, 2.4), muonID_veto));
+  const ElectronId electronID_veto(AndId<Electron>(PtEtaSCCut(electron_pt, 2.5), electronID_veto));
   const JetPFID jetID_CHS(JetPFID::WP_TIGHT_CHS);
   const JetPFID jetID_PUPPI(JetPFID::WP_TIGHT_PUPPI);
    
