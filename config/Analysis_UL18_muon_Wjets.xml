@@ -22,14 +22,14 @@
 <!ENTITY TTToHadronic_UL18     SYSTEM "../data/Skimming_datasets_UL18_preselection/TTToHadronic_UL18.xml">
 <!ENTITY TTTo2L2Nu_UL18        SYSTEM "../data/Skimming_datasets_UL18_preselection/TTTo2L2Nu_UL18.xml"> -->
 <!-- WJets -->
-<!ENTITY WJetsToLNu_HT-70To100_UL18    SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_preselection/WJetsToLNu_HT-70To100_UL18.xml">
-<!ENTITY WJetsToLNu_HT-100To200_UL18   SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_preselection/WJetsToLNu_HT-100To200_UL18.xml">
-<!ENTITY WJetsToLNu_HT-200To400_UL18   SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_preselection/WJetsToLNu_HT-200To400_UL18.xml">
-<!ENTITY WJetsToLNu_HT-400To600_UL18   SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_preselection/WJetsToLNu_HT-400To600_UL18.xml">
-<!ENTITY WJetsToLNu_HT-600To800_UL18   SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_preselection/WJetsToLNu_HT-600To800_UL18.xml">
-<!ENTITY WJetsToLNu_HT-800To1200_UL18  SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_preselection/WJetsToLNu_HT-800To1200_UL18.xml">
-<!ENTITY WJetsToLNu_HT-1200To2500_UL18 SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_preselection/WJetsToLNu_HT-1200To2500_UL18.xml">
-<!ENTITY WJetsToLNu_HT-2500ToInf_UL18  SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_preselection/WJetsToLNu_HT-2500ToInf_UL18.xml">
+<!ENTITY WJetsToLNu_HT-70To100_UL18    SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_muon/WJetsToLNu_HT-70To100_UL18.xml">
+<!ENTITY WJetsToLNu_HT-100To200_UL18   SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_muon/WJetsToLNu_HT-100To200_UL18.xml">
+<!ENTITY WJetsToLNu_HT-200To400_UL18   SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_muon/WJetsToLNu_HT-200To400_UL18.xml">
+<!ENTITY WJetsToLNu_HT-400To600_UL18   SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_muon/WJetsToLNu_HT-400To600_UL18.xml">
+<!ENTITY WJetsToLNu_HT-600To800_UL18   SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_muon/WJetsToLNu_HT-600To800_UL18.xml">
+<!ENTITY WJetsToLNu_HT-800To1200_UL18  SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_muon/WJetsToLNu_HT-800To1200_UL18.xml">
+<!ENTITY WJetsToLNu_HT-1200To2500_UL18 SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_muon/WJetsToLNu_HT-1200To2500_UL18.xml">
+<!ENTITY WJetsToLNu_HT-2500ToInf_UL18  SYSTEM "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/Skimming_datasets_UL18_muon/WJetsToLNu_HT-2500ToInf_UL18.xml">
 <!-- DY -->
 <!-- <!ENTITY DYJetsToLL_M-50_HT-70to100_UL18    SYSTEM "../data/Skimming_datasets_UL18_preselection/DYJetsToLL_M-50_HT-70to100_UL18.xml">
 <!ENTITY DYJetsToLL_M-50_HT-100to200_UL18   SYSTEM "../data/Skimming_datasets_UL18_preselection/DYJetsToLL_M-50_HT-100to200_UL18.xml">
@@ -1131,13 +1131,15 @@
 			<Item Name="jecsmear_direction"          Value="nominal"/>
 			<Item Name="ScaleVariationMuR"           Value="nominal"/>
 			<Item Name="ScaleVariationMuF"           Value="nominal"/>
+      		<Item Name="SystDirection_MuonId"        Value="nominal"/>
 			<Item Name="SystDirection_MuonIso"       Value="nominal"/>
 			<Item Name="SystDirection_MuonTrigger"   Value="nominal"/>
 			<Item Name="SystDirection_ElectronId"    Value="nominal"/>
 			<Item Name="SystDirection_ElectronReco"  Value="nominal"/>
 			<!-- add electron trigger SFs -->
 			<Item Name="Sys_PU"                      Value="central"/>
-                        <Item Name="SystDirection_BTaggingShape" Value="central"/>			
+                        <Item Name="SystDirection_BTaggingShape" Value="central"/>		
+			<Item Name="Sys_prefiring"               Value="nominal"/>
 			<Item Name="Sys_TopTag"                  Value="nominal"/>
 			<Item Name="channel"                     Value="&CHANNEL;"/>
 
