@@ -73,6 +73,8 @@ protected:
   // Cleaners
   std::unique_ptr<MuonCleaner>     muon_cleaner_low, muon_cleaner_high;
   std::unique_ptr<ElectronCleaner> electron_cleaner_low, electron_cleaner_high;
+  std::unique_ptr<TopJetCleaner>   topjet_puppi_IDcleaner, topjet_puppi_cleaner;
+
 
   // scale factors
   unique_ptr<AnalysisModule> sf_muon_iso_low, sf_muon_id_low, sf_muon_id_high, sf_muon_trigger_low, sf_muon_trigger_high;
@@ -226,8 +228,8 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   NEle1_selection.reset(new NElectronSelection(1, 1));
 
   // Important selection values
-  double jet1_pt(50.);
-  double jet2_pt(30.);
+  double jet1_pt(150.); // it was 50. before, changed to 150 due to the baseline l+jet selection
+  double jet2_pt(50.);
   double chi2_max(30.);
   // double mtt_blind(3000.);
   string trigger_mu_A, trigger_mu_B, trigger_mu_C, trigger_mu_D, trigger_mu_E, trigger_mu_F;
@@ -247,13 +249,13 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
       trigger_mu_A = "HLT_IsoMu24_v*";
     }
     trigger_mu_B = "HLT_IsoTkMu24_v*";
-    trigger_mu_C = "HLT_Mu50_v*";
+    trigger_mu_C = "HLT_Mu50_v*"; //event passes the unpresclaed single-muon HLT path. selection for baseline l+jets
     trigger_mu_D = "HLT_TkMu50_v*";
     trigger_mu_E = "HLT_OldMu100_v*";
     trigger_mu_F = "HLT_TkMu100_v*";
 
     MET_cut = 50;
-    HT_lep_cut = 0;
+    HT_lep_cut = 150; //it was "0", but changed to 150 due to the selection requirement for baseline l+jets
   }
   if(isElectron){ // semileptonic electron channel
     trigger_ele_B = "HLT_Ele115_CaloIdVT_GsfTrkIdT_v*";
@@ -277,7 +279,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   }
 
 
-  double TwoD_dr = 0.4, TwoD_ptrel = 25.;
+  double TwoD_dr = 0.4, TwoD_ptrel = 25.; //Lepton 2D cut, one single muon selection
 
   const TopJetId toptagID = AndId<TopJet>(HOTVRTopTag(0.8, 140.0, 220.0, 50.0), Tau32Groomed(0.56));
 
@@ -346,12 +348,13 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
 
   TwoDCut_selection.reset(new TwoDCut(TwoD_dr, TwoD_ptrel));
-  Jet1_selection.reset(new NJetSelection(1, -1, JetId(PtEtaCut(jet1_pt, 2.5))));
-  Jet2_selection.reset(new NJetSelection(2, -1, JetId(PtEtaCut(jet2_pt, 2.5))));
+  Jet1_selection.reset(new NJetSelection(1, -1, JetId(PtEtaCut(jet1_pt, 2.4)))); //eta was 2.5, but changed to 2.4 due to baseline l+jets selecton requirements
+  Jet2_selection.reset(new NJetSelection(2, -1, JetId(PtEtaCut(jet2_pt, 2.4)))); //eta was 2.5, but changed to 2.4 due to baseline l+jets selecton requirements
   met_sel.reset(new METCut  (MET_cut   , uhh2::infinity));
   htlep_sel.reset(new HTlepCut(HT_lep_cut, uhh2::infinity));
 
-  Chi2_selection.reset(new Chi2Cut(ctx, 0., chi2_max));
+  // Chi2_selection.reset(new Chi2Cut(ctx, 0., chi2_max)); //this was the original line, changed with the below line for mistag selection
+  Chi2_selection.reset(new Chi2Cut(ctx, chi2_max, -1)); // new line for selection requirement of mistag
   TTbarMatchable_selection.reset(new TTbarSemiLepMatchableSelection());
   Chi2CandidateMatched_selection.reset(new Chi2CandidateMatchedSelection(ctx));
   ZprimeTopTag_selection.reset(new ZprimeTopTagSelection(ctx));
@@ -359,6 +362,10 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   HEM_selection.reset(new HEMSelection(ctx)); // HEM issue in 2018, veto on leptons and jets
 
   Variables_module.reset(new Variables_NN(ctx, mode)); // variables for NN
+
+  // Cleaning: Jets
+  topjet_puppi_cleaner.reset(new TopJetCleaner(ctx, TopJetId(PtEtaCut(500., 2.4)), "toppuppijets")); //this line was taken from preselection module
+  
 
   // Taggers
   TopTaggerHOTVR.reset(new HOTVRTopTagger(ctx));
@@ -453,6 +460,8 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     if(!isMC) return false;
     else event.weight = event.weight*(1-0.64774715284); // calculated following instructions ar https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis
   }
+    
+    topjet_puppi_cleaner->process(event); //this line was taken from preselection module
 
   // Run top-tagging
   if(ishotvr){
@@ -815,7 +824,8 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   }
 
   // b-tagging: >= 1 b-tag medium WP (on matched CHS jet)
-  if(!AK4PuppiCHS_BTagging->passes(event)) return false;
+  // if(!AK4PuppiCHS_BTagging->passes(event)) return false  //this line was the original one, changed it with the below line due to veto AK4 b-tagged jet requirement of mistag selection
+  if(AK4PuppiCHS_BTagging->passes(event)) return false; 
   fill_histograms(event, "Btags1");
   h_CHSMatchHists_afterBTag->fill(event);
 
