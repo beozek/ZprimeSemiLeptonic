@@ -844,22 +844,22 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(debug) cout << "CorrectMatchDiscriminatorZprime: ok" << endl;
 
   // Variables for NN
-  Variables_module->process(event);
-  fill_histograms(event, "NNInputsBeforeReweight");
+  // Variables_module->process(event);
+  // fill_histograms(event, "NNInputsBeforeReweight");
 
-  //  if(TTbarMatchable_selection->passes(event)) fill_histograms(event, "MatchableBeforeChi2Cut");
-  //  else fill_histograms(event, "NotMatchableBeforeChi2Cut");
-  //  if(debug) cout<<"TTbarMatchable_selection is ok"<<endl;
-  //
-  //  if(Chi2CandidateMatched_selection->passes(event)) fill_histograms(event, "CorrectMatchBeforeChi2Cut");
-  //  else fill_histograms(event, "NotCorrectMatchBeforeChi2Cut");
-  //  if(debug) cout<<"Chi2CandidateMatched_selection is ok"<<endl;
-  //
-  //  if(!Chi2_selection->passes(event)) return false;
-  //  fill_histograms(event, "Chi2");
-  //  lumihists_Chi2->fill(event);
-  //
-  //  if(debug) cout<<"Chi2_selection is ok"<<endl;
+   if(TTbarMatchable_selection->passes(event)) fill_histograms(event, "MatchableBeforeChi2Cut");
+   else fill_histograms(event, "NotMatchableBeforeChi2Cut");
+   if(debug) cout<<"TTbarMatchable_selection is ok"<<endl;
+  
+   if(Chi2CandidateMatched_selection->passes(event)) fill_histograms(event, "CorrectMatchBeforeChi2Cut");
+   else fill_histograms(event, "NotCorrectMatchBeforeChi2Cut");
+   if(debug) cout<<"Chi2CandidateMatched_selection is ok"<<endl;
+  
+   if(!Chi2_selection->passes(event)) return false;
+   fill_histograms(event, "Chi2");
+   lumihists_Chi2->fill(event);
+  
+   if(debug) cout<<"Chi2_selection is ok"<<endl;
   //
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
