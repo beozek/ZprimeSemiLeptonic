@@ -364,7 +364,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   Variables_module.reset(new Variables_NN(ctx, mode)); // variables for NN
 
   // Cleaning: Jets
-  topjet_puppi_cleaner.reset(new TopJetCleaner(ctx, TopJetId(PtEtaCut(500., 2.4)), "toppuppijets")); //this line was taken from preselection module
+  topjet_puppi_cleaner.reset(new TopJetCleaner(ctx, TopJetId(PtEtaCut(400., 2.4)), "toppuppijets")); //this line was taken from preselection module
   
 
   // Taggers
@@ -844,8 +844,8 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(debug) cout << "CorrectMatchDiscriminatorZprime: ok" << endl;
 
   // Variables for NN
-  // Variables_module->process(event);
-  // fill_histograms(event, "NNInputsBeforeReweight");
+  Variables_module->process(event);
+  fill_histograms(event, "NNInputsBeforeReweight");
 
    if(TTbarMatchable_selection->passes(event)) fill_histograms(event, "MatchableBeforeChi2Cut");
    else fill_histograms(event, "NotMatchableBeforeChi2Cut");
@@ -858,8 +858,9 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
    if(!Chi2_selection->passes(event)) return false;
    fill_histograms(event, "Chi2");
    lumihists_Chi2->fill(event);
-  
-   if(debug) cout<<"Chi2_selection is ok"<<endl;
+  if(debug) cout<<"Chi2_selection is ok"<<endl;
+
+   
   //
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -869,7 +870,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   //  if(TTbarMatchable_selection->passes(event)) fill_histograms(event, "Matchable");
   //  else fill_histograms(event, "NotMatchable");
   //  if(debug) cout<<"TTbarMatchable_selection is ok"<<endl;
-  //
+  
   //  if(Chi2CandidateMatched_selection->passes(event)) fill_histograms(event, "CorrectMatch");
   //  else fill_histograms(event, "NotCorrectMatch");
   //  if(debug) cout<<"Chi2CandidateMatched_selection is ok"<<endl;
@@ -877,7 +878,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   //  if(ZprimeTopTag_selection->passes(event)) fill_histograms(event, "TopTagReconstruction");
   //  else fill_histograms(event, "NotTopTagReconstruction");
   //  if(debug) cout<<"ZprimeTopTag_selection is ok"<<endl;
-  //
+  
   //  //Fill some vars for monitoring and comparison
   //  bool is_zprime_reconstructed_chi2 = event.get(h_is_zprime_reconstructed_chi2);
   //  if(is_zprime_reconstructed_chi2){
