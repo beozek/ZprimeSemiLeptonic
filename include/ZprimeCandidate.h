@@ -19,6 +19,7 @@ public:
   LorentzVector neutrino_v4() const{return m_neutrino_v4;}
   unsigned int neutrinoindex() {return m_neutrinoindex;}
   bool is_toptag_reconstruction() const{return m_is_toptag_reconstruction;}
+  bool is_wtag_reconstruction() const{return m_is_wtag_reconstruction;} //-beren wtag
   bool is_puppi_reconstruction() const{return m_is_puppi_reconstruction;}
   float discriminator(const TString & l) const {
     auto it = m_discriminators.find(l);
@@ -38,6 +39,7 @@ public:
   void set_neutrino_v4(LorentzVector x) {m_neutrino_v4=x;}
   void set_neutrinoindex(unsigned int x) {m_neutrinoindex = x;}
   void set_is_toptag_reconstruction(bool x) {m_is_toptag_reconstruction=x;}
+  void set_is_wtag_reconstruction(bool x) {m_is_wtag_reconstruction=x;} //-beren wtag
   void set_is_puppi_reconstruction(bool x) {m_is_puppi_reconstruction=x;}
   void set_discriminators(const TString & label, float discr) { m_discriminators[label] = discr;}
 
@@ -56,6 +58,7 @@ private:
   unsigned int m_neutrinoindex;
 
   bool m_is_toptag_reconstruction;
+  bool m_is_wtag_reconstruction;
   bool m_is_puppi_reconstruction;
   std::map<TString, float> m_discriminators;
 

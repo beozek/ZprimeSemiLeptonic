@@ -29,6 +29,8 @@ private:
   uhh2::Event::Handle< std::vector<ZprimeCandidate> > h_ZprimeCandidates_;
   uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
   uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8TopTagsPtr;
+  uhh2::Event::Handle< std::vector<TopJet> > h_AK8WTags; //-beren wtag
+  uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8WTagsPtr; //-beren wtag
 
   float minDR_;
   TString mode_;
@@ -45,6 +47,7 @@ private:
   uhh2::Event::Handle< std::vector<ZprimeCandidate> > h_ZprimeCandidates_;
   uhh2::Event::Handle<ZprimeCandidate*> h_BestCandidate_;
   uhh2::Event::Handle<bool> h_is_zprime_reconstructed_;
+  uhh2::Event::Handle<std::vector<TopJet>> h_AK8WTags; //-beren wtag
   float mtoplep_, mtoplep_ttag_;
   float sigmatoplep_, sigmatoplep_ttag_;
   float mtophad_, mtophad_ttag_;
@@ -84,9 +87,23 @@ private:
   uhh2::Event::Handle< std::vector<TopJet> > h_AK8PuppiTopTags_;
   uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8PuppiTopTagsPtr_;
 };
+//-beren wtag
+class AK8PuppiWTagger : public uhh2::AnalysisModule {
 
+public:
+  explicit AK8PuppiWTagger(uhh2::Context&, int min_num_daughters = 2, float max_dR = 1.2, float min_mass = 65., float max_mass = 105., float max_tau21 = 0.45);
+  virtual bool process(uhh2::Event&) override;
 
-
+private:
+  int min_num_daughters_ = 2;
+  float max_dR_;
+  float min_mass_;
+  float max_mass_;
+  float max_tau21_;
+  uhh2::Event::Handle< std::vector<TopJet> > h_AK8PuppiWTags_;
+  uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8PuppiWTagsPtr_;
+};
+///
 class HOTVRTopTagger : public uhh2::AnalysisModule {
 
 public:
@@ -105,16 +122,50 @@ private:
 class DeepAK8TopTagger : public uhh2::AnalysisModule {
 
 public:
-  explicit DeepAK8TopTagger(uhh2::Context&, float min_mSD = 105., float max_mSD = 210., float max_score = 0.685, float pt_min = 400); // WP from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
+  // explicit DeepAK8TopTagger(uhh2::Context&, float min_mSD = 105., float max_mSD = 210., float max_score = 0.685, float pt_min = 400); // WP from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
+  explicit DeepAK8TopTagger(uhh2::Context&);
   virtual bool process(uhh2::Event&) override;
 
+  //  public:
+  //   explicit DeepAK8TopTagger(uhh2::Context&);
+  //   virtual bool process(uhh2::Event&) override;
+
+// private:
+//   float min_mSD_;
+//   float max_mSD_;
+//   float max_score_;
+//   float pt_min_;
+//   uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags_;
+//   uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_;
 private:
-  float min_mSD_;
-  float max_mSD_;
-  float max_score_;
-  float pt_min_;
+  Year year;
   uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags_;
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_;
+  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_; 
+};
+
+// -beren
+class DeepAK8WTagger : public uhh2::AnalysisModule {
+
+public:
+  explicit DeepAK8WTagger(uhh2::Context&);
+  virtual bool process(uhh2::Event&) override;
+
+// public:
+//   explicit DeepAK8WTagger(uhh2::Context&, float min_mSD = 65., float max_mSD = 105., float max_score = 0.685, float pt_min = 400, float max_tau21_ = 0.45); // WP from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
+//   virtual bool process(uhh2::Event&) override;
+
+// private:
+//   float min_mSD_;
+//   float max_mSD_;
+//   float max_score_;
+//   float pt_min_;
+//   float max_tau21_;
+//   uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags_;
+//   uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr_;
+private:
+  Year year;
+  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags_;
+  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr_; 
 };
 
 
@@ -189,6 +240,7 @@ public:
 private:
   uhh2::Event::Handle<bool> h_is_zprime_reconstructed_chi2;
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
+  uhh2::Event::Handle<std::vector<TopJet>> h_AK8WTags;
   uhh2::Event::Handle< std::vector<Jet> > h_CHSjets_matched;
   uhh2::Event::Handle< float > h_eventweight;
   uhh2::Event::Handle< float > h_Mu_pt, h_Mu_eta, h_Mu_phi, h_Mu_E;
@@ -210,6 +262,9 @@ private:
   uhh2::Event::Handle< float > h_Ak4_j5_pt, h_Ak4_j5_eta, h_Ak4_j5_phi, h_Ak4_j5_E, h_Ak4_j5_m, h_Ak4_j5_deepjetbscore;
   uhh2::Event::Handle< float > h_Ak4_j6_pt, h_Ak4_j6_eta, h_Ak4_j6_phi, h_Ak4_j6_E, h_Ak4_j6_m, h_Ak4_j6_deepjetbscore;
   uhh2::Event::Handle< float > h_M_tt;
+  uhh2::Event::Handle< float > h_Wtag_mass; //-beren wtag 
+  uhh2::Event::Handle< float > h_Wtag_eta; //-beren wtag
+  uhh2::Event::Handle< float > h_Wtag_phi; //-beren wtag
 
   TString mode_;
 
