@@ -45,6 +45,20 @@ bool ZprimeTopTagSelection::passes(const Event & event){
   return cand->is_toptag_reconstruction();
 
 }
+ZprimeWTagSelection::ZprimeWTagSelection(Context& ctx){
+  h_BestZprimeCandidate_chi2 = ctx.get_handle<ZprimeCandidate*>("ZprimeCandidateBestChi2");
+  h_is_zprime_reconstructed_chi2 = ctx.get_handle<bool>("is_zprime_reconstructed_chi2");
+}
+bool ZprimeWTagSelection::passes(const Event & event){
+
+  bool is_zprime_reconstructed_chi2 = event.get(h_is_zprime_reconstructed_chi2);
+  if(!is_zprime_reconstructed_chi2) return false;
+
+  ZprimeCandidate* cand = event.get(h_BestZprimeCandidate_chi2);
+
+  return cand->is_wtag_reconstruction();
+
+}
 
 ZprimeBTagFatSubJetSelection::ZprimeBTagFatSubJetSelection(Context& ctx){
 
