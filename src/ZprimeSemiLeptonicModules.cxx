@@ -83,13 +83,13 @@ ZprimeCandidateBuilder::ZprimeCandidateBuilder(uhh2::Context& ctx, TString mode,
   h_ZprimeCandidates_ = ctx.get_handle< vector<ZprimeCandidate> >("ZprimeCandidates");
 
   if(mode_ == "deepAK8"){
-  h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
-  h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
-  h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren Wtag
-  h_AK8WTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8WTagsPtr"); //-beren Wtag
+    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+    h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
+    h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren Wtag
+    h_AK8WTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8WTagsPtr"); //-beren Wtag
   }else if(mode_ == "hotvr"){
-  h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
-  h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("HOTVRTopTagsPtr");
+    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
+    h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("HOTVRTopTagsPtr");
   }
 
   if(mode_ != "hotvr" && mode_ != "deepAK8") throw runtime_error("In ZprimeCandidateBuilder::ZprimeCandidateBuilder(): 'mode' must be 'hotvr' or 'deepAK8'");
@@ -877,6 +877,9 @@ bool DeepAK8TopTagger::process(uhh2::Event& event){
 //-beren wtag
 
 DeepAK8WTagger::DeepAK8WTagger(uhh2::Context& ctx) {
+
+  year = extract_year(ctx);
+
   h_DeepAK8WTags_ = ctx.get_handle< std::vector<TopJet> >("DeepAK8WTags");
   h_DeepAK8WTagsPtr_ = ctx.get_handle< std::vector<const TopJet*> >("DeepAK8WTagsPtr");
 }
@@ -1162,6 +1165,8 @@ Variables_NN::Variables_NN(uhh2::Context& ctx, TString mode): mode_(mode){
   h_is_zprime_reconstructed_chi2 = ctx.get_handle<bool>("is_zprime_reconstructed_chi2");
   h_CHSjets_matched = ctx.get_handle<std::vector<Jet>>("CHS_matched");
   h_eventweight = ctx.declare_event_output<float> ("eventweight");
+  h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags");
+
 
 ///  MUONS
   h_Mu_pt = ctx.declare_event_output<float> ("Mu_pt");
@@ -1384,21 +1389,21 @@ bool Variables_NN::process(uhh2::Event& evt){
   evt.set(h_Ak4_j6_deepjetbscore, -10);
 
 //-beren wtag
-  // evt.set(h_Wtag_mass, -10);
-  // evt.set(h_Wtag_eta, -10);
-  // evt.set(h_Wtag_phi, -10);
-  // vector<TopJet> WTags = evt.get(h_AK8WTags);
-  // LorentzVector SumSubjets_w(0.,0.,0.,0.);
-  // if(WTags.size() == 1){
-  // TopJet wtag = WTags.at(0);
-  // for(unsigned int k=0; k<wtag.subjets().size(); k++) SumSubjets_w = SumSubjets_w + wtag.subjets().at(k).v4();
-  // float mSD_W = SumSubjets_w.M();
-  // float W_eta = SumSubjets_w.eta(); 
-  // float W_phi = SumSubjets_w.phi();
-  // evt.set(h_Wtag_mass, mSD_W);
-  // evt.set(h_Wtag_phi, W_eta);
-  // evt.set(h_Wtag_eta, W_phi);
-
+  evt.set(h_Wtag_mass, -10);
+  evt.set(h_Wtag_eta, -10);
+  evt.set(h_Wtag_phi, -10);
+  vector<TopJet> WTags = evt.get(h_AK8WTags);
+  LorentzVector SumSubjets_w(0.,0.,0.,0.);
+  if(WTags.size() == 1){
+  TopJet wtag = WTags.at(0);
+  for(unsigned int k=0; k<wtag.subjets().size(); k++) SumSubjets_w = SumSubjets_w + wtag.subjets().at(k).v4();
+  float mSD_W = SumSubjets_w.M();
+  float W_eta = SumSubjets_w.eta(); 
+  float W_phi = SumSubjets_w.phi();
+  evt.set(h_Wtag_mass, mSD_W);
+  evt.set(h_Wtag_phi, W_eta);
+  evt.set(h_Wtag_eta, W_phi);
+  }
 //-beren wtag
 
   vector<Jet>* Ak4jets = evt.jets;
@@ -1506,6 +1511,9 @@ bool Variables_NN::process(uhh2::Event& evt){
   evt.set(h_Ak8_j3_mSD, -10);
   evt.set(h_Ak8_j3_tau21, -10);
   evt.set(h_Ak8_j3_tau32, -10);
+
+   // Top Tagged Jets
+  // vector<TopJet> DeepAK8TopTags = event.get(h_DeepAK8TopTags_);
 
   vector<TopJet>* Ak8jets = evt.toppuppijets;
   int NAk8jets = Ak8jets->size();

@@ -58,7 +58,7 @@ private:
   unsigned int m_neutrinoindex;
 
   bool m_is_toptag_reconstruction;
-  bool m_is_wtag_reconstruction;
+  bool m_is_wtag_reconstruction; //-beren wtag
   bool m_is_puppi_reconstruction;
   std::map<TString, float> m_discriminators;
 

@@ -1135,7 +1135,7 @@
 			<Item Name="Sys_TopTag"                  Value="nominal"/>
 			<Item Name="channel"                     Value="&CHANNEL;"/>
 
-			<Item Name="AnalysisModule" Value="ZprimeAnalysisModule"/>
+			<Item Name="AnalysisModule" Value="ZprimeAnalysisModules_ttagged"/>
 		</UserConfig>
 
 	</Cycle>
