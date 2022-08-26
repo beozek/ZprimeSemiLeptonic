@@ -307,8 +307,8 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   BTag::wp btag_wp = BTag::WP_MEDIUM;
   JetId id_btag = BTag(btag_algo, btag_wp);
 
-  double a_toppt = 0.0615; // par a TopPt Reweighting
-  double b_toppt = -0.0005; // par b TopPt Reweighting
+  float a_toppt = 0.0615; // par a TopPt Reweighting
+  float b_toppt = -0.0005; // par b TopPt Reweighting
 
 
   // Modules
@@ -385,10 +385,8 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   CorrectMatchDiscriminatorZprime.reset(new ZprimeCorrectMatchDiscriminator(ctx));
   h_is_zprime_reconstructed_correctmatch = ctx.get_handle<bool>("is_zprime_reconstructed_correctmatch");
   h_BestZprimeCandidateChi2 = ctx.get_handle<ZprimeCandidate*>("ZprimeCandidateBestChi2");
-  // h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
-   //-beren wtag
-  // h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); 
-  //-beren wtag
+  h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags"); //-beren wtag
+  h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren wtag
 
   h_ttagN = ctx.declare_event_output<int>("ttagN"); //-beren wtag
   h_wtagN = ctx.declare_event_output<int>("wtagN"); //-beren wtag

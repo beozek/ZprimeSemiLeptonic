@@ -79,24 +79,28 @@ vector<LorentzVector> reconstruct_neutrino(const LorentzVector & lepton, const L
 }
 
 ZprimeCandidateBuilder::ZprimeCandidateBuilder(uhh2::Context& ctx, TString mode, float minDR) : minDR_(minDR), mode_(mode){
-
+  cout << "starting zprimecandidatebuilder" << endl;
   h_ZprimeCandidates_ = ctx.get_handle< vector<ZprimeCandidate> >("ZprimeCandidates");
-
   if(mode_ == "deepAK8"){
-    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
-    h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
+  h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+  h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
     h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren Wtag
     h_AK8WTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8WTagsPtr"); //-beren Wtag
   }else if(mode_ == "hotvr"){
     h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
     h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("HOTVRTopTagsPtr");
   }
+  cout << "1 zprimecandidatebuilder" << endl;
 
   if(mode_ != "hotvr" && mode_ != "deepAK8") throw runtime_error("In ZprimeCandidateBuilder::ZprimeCandidateBuilder(): 'mode' must be 'hotvr' or 'deepAK8'");
+    cout << "2 zprimecandidatebuilder" << endl;
 
 }
 
 bool ZprimeCandidateBuilder::process(uhh2::Event& event){
+      cout << "3 zprimecandidatebuilder" << endl;
+
+  
   assert(event.jets);
   assert(event.muons || event.electrons);
   assert(event.met);
@@ -213,41 +217,40 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
            vector<Particle> toplepjets;
            int num = j;
            ZprimeCandidate candidate;
-        candidate.set_is_toptag_reconstruction(false);
-        candidate.set_is_wtag_reconstruction(false); //-beren wtag
-        candidate.set_is_puppi_reconstruction(false);
+          candidate.set_is_toptag_reconstruction(false);
+          candidate.set_is_wtag_reconstruction(false); //-beren wtag
+          candidate.set_is_puppi_reconstruction(false);
 
 
-        for (unsigned int k=0; k<njets; k++) {
-          if(num%3==0){
-            tophadv4 = tophadv4 + event.jets->at(k).v4();
-            tophadjets.emplace_back(event.jets->at(k));
+          for (unsigned int k=0; k<njets; k++) {
+            if(num%3==0){
+              tophadv4 = tophadv4 + event.jets->at(k).v4();
+              tophadjets.emplace_back(event.jets->at(k));
+             }
+             if(num%3==1){
+              toplepv4 = toplepv4 + event.jets->at(k).v4();
+              toplepjets.emplace_back(event.jets->at(k));
+             }
+            num /= 3;
           }
-          if(num%3==1){
-            toplepv4 = toplepv4 + event.jets->at(k).v4();
-            toplepjets.emplace_back(event.jets->at(k));
-          }
-          num /= 3;
-        }
 
-        if(tophadjets.size() < 1 || toplepjets.size() < 1) continue;
+          if(tophadjets.size() < 1 || toplepjets.size() < 1) continue;
 
         // Set all member variables of the candidate
-        candidate.set_Zprime_v4(tophadv4 + toplepv4);
-        candidate.set_top_hadronic_v4(tophadv4);
-        candidate.set_top_leptonic_v4(toplepv4);
-        candidate.set_jets_hadronic(tophadjets);
-        candidate.set_jets_leptonic(toplepjets);
-        candidate.set_lepton(lepton);
-        candidate.set_neutrino_v4(neutrino_v4);
-        candidate.set_neutrinoindex(neutrinoidx);
-        candidates.emplace_back(move(candidate));
+          candidate.set_Zprime_v4(tophadv4 + toplepv4);
+          candidate.set_top_hadronic_v4(tophadv4);
+          candidate.set_top_leptonic_v4(toplepv4);
+          candidate.set_jets_hadronic(tophadjets);
+          candidate.set_jets_leptonic(toplepjets);
+          candidate.set_lepton(lepton);
+          candidate.set_neutrino_v4(neutrino_v4);
+          candidate.set_neutrinoindex(neutrinoidx);
+          candidates.emplace_back(move(candidate));
+        }
+        neutrinoidx++;
       }
-      neutrinoidx++;
-     }
     }
     else { //WTag reconstruction
-//      std::cout  << "Es una reconstruccion con W" << std::endl;  
       for(const auto & neutrino_v4 : neutrinos) {
         for (unsigned int j=0; j < WTags.size(); j++) {
           if(mode_ == "deepAK8"){
@@ -268,7 +271,6 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
           for (unsigned int k=0; k < jetiters; k++) {
 
 
-//             float inv_mass = 0;
              LorentzVector SumSubjets_w(0.,0.,0.,0.);
              for(unsigned int l=0; l<wtag.subjets().size(); l++) SumSubjets_w = SumSubjets_w + wtag.subjets().at(l).v4();
 
@@ -383,8 +385,8 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   event.set(h_ZprimeCandidates_, candidates);
 
   return true;
+  cout << "end of zprimecandidatebuilder" << endl;
 }
-
 
 ZprimeChi2Discriminator::ZprimeChi2Discriminator(uhh2::Context& ctx){
 
@@ -812,8 +814,8 @@ bool HOTVRTopTagger::process(uhh2::Event& event){
   for(const TopJet & topjet : *event.topjets){
 
     if (toptag_id(topjet, event)){
-       toptags.emplace_back(topjet);
-       toptags_ptr.emplace_back(&topjet);
+      toptags.emplace_back(topjet);
+      toptags_ptr.emplace_back(&topjet);
     }
   }
   event.set(h_HOTVRTopTags_, toptags);
@@ -837,10 +839,10 @@ bool DeepAK8TopTagger::process(uhh2::Event& event){
   // values from EOY
   // twiki: https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAK8Tagging2018WPsSFs
   // slides: https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
-  double min_mSD = 105.;
-  double max_mSD = 210.;
-  double pt_min = 400.;
-  double max_score;
+  float min_mSD = 105.;
+  float max_mSD = 210.;
+  float pt_min = 400.;
+  float max_score ;
 
   if(year == Year::isUL16preVFP || year == Year::isUL16postVFP) max_score = 0.632;
   else if(year == Year::isUL17) max_score = 0.554;
@@ -890,10 +892,10 @@ bool DeepAK8WTagger::process(uhh2::Event& event){
   // values from EOY
   // twiki: https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAK8Tagging2018WPsSFs
   // slides: https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
-  double min_mSD = 65.;
-  double max_mSD = 105.;
-  double pt_min = 400.;
-  double max_score;
+  float min_mSD = 65.;
+  float max_mSD = 105.;
+  float pt_min = 400.;
+  float max_score ;
 
   if(year == Year::isUL16preVFP || year == Year::isUL16postVFP) max_score = 0.632;
   else if(year == Year::isUL17) max_score = 0.554;
@@ -1237,31 +1239,31 @@ Variables_NN::Variables_NN(uhh2::Context& ctx, TString mode): mode_(mode){
 
 /// AK8 JETS
   if(mode_ == "deepAK8"){
-  h_N_Ak8 = ctx.declare_event_output<float> ("N_Ak8");
+    h_N_Ak8 = ctx.declare_event_output<float> ("N_Ak8");
 
-  h_Ak8_j1_pt = ctx.declare_event_output<float> ("Ak8_j1_pt");
-  h_Ak8_j1_eta = ctx.declare_event_output<float>("Ak8_j1_eta");
-  h_Ak8_j1_phi = ctx.declare_event_output<float>("Ak8_j1_phi");
-  h_Ak8_j1_E = ctx.declare_event_output<float>  ("Ak8_j1_E");
-  h_Ak8_j1_mSD = ctx.declare_event_output<float>("Ak8_j1_mSD");
-  h_Ak8_j1_tau21 = ctx.declare_event_output<float>("Ak8_j1_tau21");
-  h_Ak8_j1_tau32 = ctx.declare_event_output<float>("Ak8_j1_tau32");
+    h_Ak8_j1_pt = ctx.declare_event_output<float> ("Ak8_j1_pt");
+    h_Ak8_j1_eta = ctx.declare_event_output<float>("Ak8_j1_eta");
+    h_Ak8_j1_phi = ctx.declare_event_output<float>("Ak8_j1_phi");
+    h_Ak8_j1_E = ctx.declare_event_output<float>  ("Ak8_j1_E");
+    h_Ak8_j1_mSD = ctx.declare_event_output<float>("Ak8_j1_mSD");
+    h_Ak8_j1_tau21 = ctx.declare_event_output<float>("Ak8_j1_tau21");
+    h_Ak8_j1_tau32 = ctx.declare_event_output<float>("Ak8_j1_tau32");
 
-  h_Ak8_j2_pt = ctx.declare_event_output<float> ("Ak8_j2_pt");
-  h_Ak8_j2_eta = ctx.declare_event_output<float>("Ak8_j2_eta");
-  h_Ak8_j2_phi = ctx.declare_event_output<float>("Ak8_j2_phi");
-  h_Ak8_j2_E = ctx.declare_event_output<float>  ("Ak8_j2_E");
-  h_Ak8_j2_mSD = ctx.declare_event_output<float>("Ak8_j2_mSD");
-  h_Ak8_j2_tau21 = ctx.declare_event_output<float>("Ak8_j2_tau21");
-  h_Ak8_j2_tau32 = ctx.declare_event_output<float>("Ak8_j2_tau32");
+    h_Ak8_j2_pt = ctx.declare_event_output<float> ("Ak8_j2_pt");
+    h_Ak8_j2_eta = ctx.declare_event_output<float>("Ak8_j2_eta");
+    h_Ak8_j2_phi = ctx.declare_event_output<float>("Ak8_j2_phi");
+    h_Ak8_j2_E = ctx.declare_event_output<float>  ("Ak8_j2_E");
+    h_Ak8_j2_mSD = ctx.declare_event_output<float>("Ak8_j2_mSD");
+    h_Ak8_j2_tau21 = ctx.declare_event_output<float>("Ak8_j2_tau21");
+    h_Ak8_j2_tau32 = ctx.declare_event_output<float>("Ak8_j2_tau32");
 
-  h_Ak8_j3_pt = ctx.declare_event_output<float> ("Ak8_j3_pt");
-  h_Ak8_j3_eta = ctx.declare_event_output<float>("Ak8_j3_eta");
-  h_Ak8_j3_phi = ctx.declare_event_output<float>("Ak8_j3_phi");
-  h_Ak8_j3_E = ctx.declare_event_output<float>  ("Ak8_j3_E");
-  h_Ak8_j3_mSD = ctx.declare_event_output<float>("Ak8_j3_mSD");
-  h_Ak8_j3_tau21 = ctx.declare_event_output<float>("Ak8_j3_tau21");
-  h_Ak8_j3_tau32 = ctx.declare_event_output<float>("Ak8_j3_tau32");
+    h_Ak8_j3_pt = ctx.declare_event_output<float> ("Ak8_j3_pt");
+    h_Ak8_j3_eta = ctx.declare_event_output<float>("Ak8_j3_eta");
+    h_Ak8_j3_phi = ctx.declare_event_output<float>("Ak8_j3_phi");
+    h_Ak8_j3_E = ctx.declare_event_output<float>  ("Ak8_j3_E");
+    h_Ak8_j3_mSD = ctx.declare_event_output<float>("Ak8_j3_mSD");
+    h_Ak8_j3_tau21 = ctx.declare_event_output<float>("Ak8_j3_tau21");
+    h_Ak8_j3_tau32 = ctx.declare_event_output<float>("Ak8_j3_tau32");
   }else if(mode_ == "hotvr"){
 ///  HOTVR JETS
   h_N_HOTVR = ctx.declare_event_output<float> ("N_HOTVR");
@@ -1312,10 +1314,10 @@ bool Variables_NN::process(uhh2::Event& evt){
   int Nmuons = muons->size();
 
   for(int i=0; i<Nmuons; i++){
-      evt.set(h_Mu_pt, muons->at(i).pt());
-      evt.set(h_Mu_eta, muons->at(i).eta());
-      evt.set(h_Mu_phi, muons->at(i).phi());
-      evt.set(h_Mu_E, muons->at(i).energy());
+    evt.set(h_Mu_pt, muons->at(i).pt());
+    evt.set(h_Mu_eta, muons->at(i).eta());
+    evt.set(h_Mu_phi, muons->at(i).phi());
+    evt.set(h_Mu_E, muons->at(i).energy());
   }
 
 
@@ -1486,66 +1488,66 @@ bool Variables_NN::process(uhh2::Event& evt){
 
 /////////   AK8 JETS
   if(mode_ == "deepAK8"){
-  evt.set(h_N_Ak8, -10);
+    evt.set(h_N_Ak8, -10);
 
-  evt.set(h_Ak8_j1_pt, -10);
-  evt.set(h_Ak8_j1_eta, -10);
-  evt.set(h_Ak8_j1_phi, -10);
-  evt.set(h_Ak8_j1_E, -10);
-  evt.set(h_Ak8_j1_mSD, -10);
-  evt.set(h_Ak8_j1_tau21, -10);
-  evt.set(h_Ak8_j1_tau32, -10);
+    evt.set(h_Ak8_j1_pt, -10);
+    evt.set(h_Ak8_j1_eta, -10);
+    evt.set(h_Ak8_j1_phi, -10);
+    evt.set(h_Ak8_j1_E, -10);
+    evt.set(h_Ak8_j1_mSD, -10);
+    evt.set(h_Ak8_j1_tau21, -10);
+    evt.set(h_Ak8_j1_tau32, -10);
 
-  evt.set(h_Ak8_j2_pt, -10);
-  evt.set(h_Ak8_j2_eta, -10);
-  evt.set(h_Ak8_j2_phi, -10);
-  evt.set(h_Ak8_j2_E, -10);
-  evt.set(h_Ak8_j2_mSD, -10);
-  evt.set(h_Ak8_j2_tau21, -10);
-  evt.set(h_Ak8_j2_tau32, -10);
+    evt.set(h_Ak8_j2_pt, -10);
+    evt.set(h_Ak8_j2_eta, -10);
+    evt.set(h_Ak8_j2_phi, -10);
+    evt.set(h_Ak8_j2_E, -10);
+    evt.set(h_Ak8_j2_mSD, -10);
+    evt.set(h_Ak8_j2_tau21, -10);
+    evt.set(h_Ak8_j2_tau32, -10);
 
-  evt.set(h_Ak8_j3_pt, -10);
-  evt.set(h_Ak8_j3_eta, -10);
-  evt.set(h_Ak8_j3_phi, -10);
-  evt.set(h_Ak8_j3_E, -10);
-  evt.set(h_Ak8_j3_mSD, -10);
-  evt.set(h_Ak8_j3_tau21, -10);
-  evt.set(h_Ak8_j3_tau32, -10);
+    evt.set(h_Ak8_j3_pt, -10);
+    evt.set(h_Ak8_j3_eta, -10);
+    evt.set(h_Ak8_j3_phi, -10);
+    evt.set(h_Ak8_j3_E, -10);
+    evt.set(h_Ak8_j3_mSD, -10);
+    evt.set(h_Ak8_j3_tau21, -10);
+    evt.set(h_Ak8_j3_tau32, -10);
 
    // Top Tagged Jets
   // vector<TopJet> DeepAK8TopTags = event.get(h_DeepAK8TopTags_);
 
-  vector<TopJet>* Ak8jets = evt.toppuppijets;
-  int NAk8jets = Ak8jets->size();
-  evt.set(h_N_Ak8, NAk8jets);
+    vector<TopJet>* Ak8jets = evt.toppuppijets;
+    int NAk8jets = Ak8jets->size();
+    evt.set(h_N_Ak8, NAk8jets);
 
   for(int i=0; i<NAk8jets; i++){
       if(i==0){
-      evt.set(h_Ak8_j1_pt, Ak8jets->at(i).pt());
-      evt.set(h_Ak8_j1_eta, Ak8jets->at(i).eta());
-      evt.set(h_Ak8_j1_phi, Ak8jets->at(i).phi());
-      evt.set(h_Ak8_j1_E, Ak8jets->at(i).energy());
-      evt.set(h_Ak8_j1_mSD, Ak8jets->at(i).softdropmass());
-      evt.set(h_Ak8_j1_tau21, Ak8jets->at(i).tau2()/Ak8jets->at(i).tau1());
-      evt.set(h_Ak8_j1_tau32, Ak8jets->at(i).tau3()/Ak8jets->at(i).tau2());
+        evt.set(h_Ak8_j1_pt, Ak8jets->at(i).pt());
+        evt.set(h_Ak8_j1_eta, Ak8jets->at(i).eta());
+        evt.set(h_Ak8_j1_phi, Ak8jets->at(i).phi());
+        evt.set(h_Ak8_j1_E, Ak8jets->at(i).energy());
+        evt.set(h_Ak8_j1_mSD, Ak8jets->at(i).softdropmass());
+        evt.set(h_Ak8_j1_tau21, Ak8jets->at(i).tau2()/Ak8jets->at(i).tau1());
+        evt.set(h_Ak8_j1_tau32, Ak8jets->at(i).tau3()/Ak8jets->at(i).tau2());
       }
       if(i==1){
-      evt.set(h_Ak8_j2_pt, Ak8jets->at(i).pt());
-      evt.set(h_Ak8_j2_eta, Ak8jets->at(i).eta());
-      evt.set(h_Ak8_j2_phi, Ak8jets->at(i).phi());
-      evt.set(h_Ak8_j2_E, Ak8jets->at(i).energy());
-      evt.set(h_Ak8_j2_mSD, Ak8jets->at(i).softdropmass());
-      evt.set(h_Ak8_j2_tau21, Ak8jets->at(i).tau2()/Ak8jets->at(i).tau1());
-      evt.set(h_Ak8_j2_tau32, Ak8jets->at(i).tau3()/Ak8jets->at(i).tau2());
+        evt.set(h_Ak8_j2_pt, Ak8jets->at(i).pt());
+        evt.set(h_Ak8_j2_eta, Ak8jets->at(i).eta());
+        evt.set(h_Ak8_j2_phi, Ak8jets->at(i).phi());
+        evt.set(h_Ak8_j2_E, Ak8jets->at(i).energy());
+        evt.set(h_Ak8_j2_mSD, Ak8jets->at(i).softdropmass());
+        evt.set(h_Ak8_j2_tau21, Ak8jets->at(i).tau2()/Ak8jets->at(i).tau1());
+        evt.set(h_Ak8_j2_tau32, Ak8jets->at(i).tau3()/Ak8jets->at(i).tau2());
       }
       if(i==2){
-      evt.set(h_Ak8_j3_pt, Ak8jets->at(i).pt());
-      evt.set(h_Ak8_j3_eta, Ak8jets->at(i).eta());
-      evt.set(h_Ak8_j3_phi, Ak8jets->at(i).phi());
-      evt.set(h_Ak8_j3_E, Ak8jets->at(i).energy());
-      evt.set(h_Ak8_j3_mSD, Ak8jets->at(i).softdropmass());
-      evt.set(h_Ak8_j3_tau21, Ak8jets->at(i).tau2()/Ak8jets->at(i).tau1());
-      evt.set(h_Ak8_j3_tau32, Ak8jets->at(i).tau3()/Ak8jets->at(i).tau2());
+        evt.set(h_Ak8_j3_pt, Ak8jets->at(i).pt());
+        evt.set(h_Ak8_j3_eta, Ak8jets->at(i).eta());
+        evt.set(h_Ak8_j3_phi, Ak8jets->at(i).phi());
+        evt.set(h_Ak8_j3_E, Ak8jets->at(i).energy());
+        evt.set(h_Ak8_j3_mSD, Ak8jets->at(i).softdropmass());
+        evt.set(h_Ak8_j3_tau21, Ak8jets->at(i).tau2()/Ak8jets->at(i).tau1());
+        evt.set(h_Ak8_j3_tau32, Ak8jets->at(i).tau3()/Ak8jets->at(i).tau2());
       }
   }
   }// end deepAK8 mode
