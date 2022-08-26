@@ -78,18 +78,15 @@ vector<LorentzVector> reconstruct_neutrino(const LorentzVector & lepton, const L
   return solutions;
 }
 
+
 ZprimeCandidateBuilder::ZprimeCandidateBuilder(uhh2::Context& ctx, TString mode, float minDR) : minDR_(minDR), mode_(mode){
   cout << "starting zprimecandidatebuilder" << endl;
   h_ZprimeCandidates_ = ctx.get_handle< vector<ZprimeCandidate> >("ZprimeCandidates");
-  if(mode_ == "deepAK8"){
   h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
   h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
-    h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren Wtag
-    h_AK8WTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8WTagsPtr"); //-beren Wtag
-  }else if(mode_ == "hotvr"){
-    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
-    h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("HOTVRTopTagsPtr");
-  }
+  h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren Wtag
+  h_AK8WTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8WTagsPtr"); //-beren Wtag
+
   cout << "1 zprimecandidatebuilder" << endl;
 
   if(mode_ != "hotvr" && mode_ != "deepAK8") throw runtime_error("In ZprimeCandidateBuilder::ZprimeCandidateBuilder(): 'mode' must be 'hotvr' or 'deepAK8'");
@@ -104,7 +101,6 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   assert(event.jets);
   assert(event.muons || event.electrons);
   assert(event.met);
-
 
   // Declare output
   vector<ZprimeCandidate> candidates;
@@ -929,7 +925,7 @@ bool DeepAK8WTagger::process(uhh2::Event& event){
   return (wtags.size() >= 1);
 
 }
-//
+
 bool JetLeptonDeltaRCleaner::process(uhh2::Event& event){
 
   assert(event.jets);
@@ -1167,7 +1163,7 @@ Variables_NN::Variables_NN(uhh2::Context& ctx, TString mode): mode_(mode){
   h_is_zprime_reconstructed_chi2 = ctx.get_handle<bool>("is_zprime_reconstructed_chi2");
   h_CHSjets_matched = ctx.get_handle<std::vector<Jet>>("CHS_matched");
   h_eventweight = ctx.declare_event_output<float> ("eventweight");
-  h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags");
+  // h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags");
 
 
 ///  MUONS
