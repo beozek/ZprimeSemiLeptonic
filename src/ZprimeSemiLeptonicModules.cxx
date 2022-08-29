@@ -16,6 +16,8 @@
 #include "TFile.h"
 #include "TH1F.h"
 
+#include <math.h>
+
 using namespace std;
 using namespace uhh2;
 
@@ -78,29 +80,24 @@ vector<LorentzVector> reconstruct_neutrino(const LorentzVector & lepton, const L
   return solutions;
 }
 
-
 ZprimeCandidateBuilder::ZprimeCandidateBuilder(uhh2::Context& ctx, TString mode, float minDR) : minDR_(minDR), mode_(mode){
-  cout << "starting zprimecandidatebuilder" << endl;
+
   h_ZprimeCandidates_ = ctx.get_handle< vector<ZprimeCandidate> >("ZprimeCandidates");
   h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
   h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
   h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren Wtag
   h_AK8WTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8WTagsPtr"); //-beren Wtag
 
-  cout << "1 zprimecandidatebuilder" << endl;
 
   if(mode_ != "hotvr" && mode_ != "deepAK8") throw runtime_error("In ZprimeCandidateBuilder::ZprimeCandidateBuilder(): 'mode' must be 'hotvr' or 'deepAK8'");
-    cout << "2 zprimecandidatebuilder" << endl;
 
 }
 
 bool ZprimeCandidateBuilder::process(uhh2::Event& event){
-      cout << "3 zprimecandidatebuilder" << endl;
-
-  
   assert(event.jets);
   assert(event.muons || event.electrons);
   assert(event.met);
+
 
   // Declare output
   vector<ZprimeCandidate> candidates;
@@ -138,7 +135,6 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
 //-beren wtag
 //W Must have at least two AK4 jet with dR > 1.2 
   vector<bool> W_has_separated_jet;
-  bool jets_sep = false;
   std::vector<int> jet_index;
   for(unsigned int i=0; i<WTags.size(); i++){
     int w_sep = 0;
@@ -249,7 +245,6 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
     else { //WTag reconstruction
       for(const auto & neutrino_v4 : neutrinos) {
         for (unsigned int j=0; j < WTags.size(); j++) {
-          if(mode_ == "deepAK8"){
           if(!(W_has_separated_jet[j] &&  !W_overlap_with_lepton[j])) continue;
 
           TopJet wtag = WTags.at(j);
@@ -308,7 +303,7 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
             candidate.set_neutrino_v4(neutrino_v4);
             candidates.emplace_back(candidate);
           }
-        }
+        
            }
       neutrinoidx++;
     }
@@ -381,15 +376,15 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   event.set(h_ZprimeCandidates_, candidates);
 
   return true;
-  cout << "end of zprimecandidatebuilder" << endl;
 }
+
 
 ZprimeChi2Discriminator::ZprimeChi2Discriminator(uhh2::Context& ctx){
 
   h_ZprimeCandidates_ = ctx.get_handle< std::vector<ZprimeCandidate> >("ZprimeCandidates");
   h_is_zprime_reconstructed_ = ctx.get_handle< bool >("is_zprime_reconstructed_chi2");
   h_BestCandidate_ = ctx.get_handle<ZprimeCandidate*>("ZprimeCandidateBestChi2");
-  h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("AK8PuppiWTags");
+  h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("AK8PuppiWTags"); //-beren wtag
   // mtophad_ = 175.;
   // mtophad_ttag_ = 177.;
   // sigmatophad_ = 20.;
@@ -1163,7 +1158,7 @@ Variables_NN::Variables_NN(uhh2::Context& ctx, TString mode): mode_(mode){
   h_is_zprime_reconstructed_chi2 = ctx.get_handle<bool>("is_zprime_reconstructed_chi2");
   h_CHSjets_matched = ctx.get_handle<std::vector<Jet>>("CHS_matched");
   h_eventweight = ctx.declare_event_output<float> ("eventweight");
-  // h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags");
+  h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags");
 
 
 ///  MUONS
