@@ -122,15 +122,14 @@ protected:
 
   //Handles
   Event::Handle<bool> h_is_zprime_reconstructed_chi2, h_is_zprime_reconstructed_correctmatch;
-  Event::Handle<float> h_weight;
-  // Event::Handle<float> h_chi2;  
-  // Event::Handle<float> h_MET;   Event::Handle<int> h_NPV;
-  // Event::Handle<float> h_lep1_pt; Event::Handle<float> h_lep1_eta;
-  // Event::Handle<float> h_ak4jet1_pt; Event::Handle<float> h_ak4jet1_eta;
-  // Event::Handle<float> h_ak8jet1_pt; Event::Handle<float> h_ak8jet1_eta;
-  // Event::Handle<float> h_Mttbar;
-  Event::Handle<int> h_wtagN; //-beren wtag
-  Event::Handle<int> h_ttagN; //-beren wtag
+  Event::Handle<float> h_chi2;   Event::Handle<float> h_weight;
+  Event::Handle<float> h_MET;   Event::Handle<int> h_NPV;
+  Event::Handle<float> h_lep1_pt; Event::Handle<float> h_lep1_eta;
+  Event::Handle<float> h_ak4jet1_pt; Event::Handle<float> h_ak4jet1_eta;
+  Event::Handle<float> h_ak8jet1_pt; Event::Handle<float> h_ak8jet1_eta;
+  Event::Handle<float> h_Mttbar;
+  // Event::Handle<int> h_wtagN; //-beren wtag
+  // Event::Handle<int> h_ttagN; //-beren wtag
 
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
   uhh2::Event::Handle<std::vector<TopJet>> h_AK8TopTags; //-beren wtag
@@ -189,7 +188,7 @@ void ZprimeAnalysisModule::fill_histograms(uhh2::Event& event, string tag){
 
 ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
-  debug = false; // false/true
+  debug = false; 
 
   for(auto & kv : ctx.get_all()){
     cout << " " << kv.first << " = " << kv.second << endl;
@@ -396,20 +395,22 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags"); //-beren wtag
   h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren wtag
 
-  h_ttagN = ctx.declare_event_output<int>("ttagN"); //-beren wtag
-  h_wtagN = ctx.declare_event_output<int>("wtagN"); //-beren wtag
-  // h_chi2 = ctx.declare_event_output<float> ("rec_chi2");
-  // h_MET = ctx.declare_event_output<float> ("met_pt");
-  // h_Mttbar = ctx.declare_event_output<float> ("Mttbar");
-  // h_lep1_pt = ctx.declare_event_output<float> ("lep1_pt");
-  // h_lep1_eta = ctx.declare_event_output<float> ("lep1_eta");
-  // h_ak4jet1_pt = ctx.declare_event_output<float> ("ak4jet1_pt");
-  // h_ak4jet1_eta = ctx.declare_event_output<float> ("ak4jet1_eta");
-  // h_ak8jet1_pt = ctx.declare_event_output<float> ("ak8jet1_pt");
-  // h_ak8jet1_eta = ctx.declare_event_output<float> ("ak8jet1_eta");
+  
+  h_chi2 = ctx.declare_event_output<float> ("rec_chi2");
+  h_MET = ctx.declare_event_output<float> ("met_pt");
+  h_Mttbar = ctx.declare_event_output<float> ("Mttbar");
+  h_lep1_pt = ctx.declare_event_output<float> ("lep1_pt");
+  h_lep1_eta = ctx.declare_event_output<float> ("lep1_eta");
+  h_ak4jet1_pt = ctx.declare_event_output<float> ("ak4jet1_pt");
+  h_ak4jet1_eta = ctx.declare_event_output<float> ("ak4jet1_eta");
+  h_ak8jet1_pt = ctx.declare_event_output<float> ("ak8jet1_pt");
+  h_ak8jet1_eta = ctx.declare_event_output<float> ("ak8jet1_eta");
 
-  // h_NPV = ctx.declare_event_output<int> ("NPV");
-  // h_weight = ctx.declare_event_output<float> ("weight");
+  // h_ttagN = ctx.declare_event_output<int>("ttagN"); //-beren wtag
+  // h_wtagN = ctx.declare_event_output<int>("wtagN"); //-beren wtag
+
+  h_NPV = ctx.declare_event_output<int> ("NPV");
+  h_weight = ctx.declare_event_output<float> ("weight");
 
   sel_1btag.reset(new NJetSelection(1, -1, id_btag));
   sel_2btag.reset(new NJetSelection(2,-1, id_btag));
@@ -486,45 +487,49 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   // Initialize reco flags with false
   event.set(h_is_zprime_reconstructed_chi2, false);
   event.set(h_is_zprime_reconstructed_correctmatch, false);
-  // event.set(h_chi2,-100);
-  // event.set(h_MET,-100);
-  // event.set(h_Mttbar,-100);
-  // event.set(h_lep1_pt,-100);
-  // event.set(h_lep1_eta,-100);
-  // event.set(h_ak4jet1_pt,-100);
-  // event.set(h_ak4jet1_eta,-100);
-  // event.set(h_ak8jet1_pt,-100);
-  // event.set(h_ak8jet1_eta,-100);
-  // event.set(h_NPV,-100);
-  // event.set(h_weight,-100);
-  event.set(h_ttagN,-100); //-beren wtag
-  event.set(h_wtagN,-100); //-beren wtag
+  event.set(h_chi2,-100);
+  event.set(h_MET,-100);
+  event.set(h_Mttbar,-100);
+  event.set(h_lep1_pt,-100);
+  event.set(h_lep1_eta,-100);
+  event.set(h_ak4jet1_pt,-100);
+  event.set(h_ak4jet1_eta,-100);
+  event.set(h_ak8jet1_pt,-100);
+  event.set(h_ak8jet1_eta,-100);
+  event.set(h_NPV,-100);
+  event.set(h_weight,-100);
+  // event.set(h_ttagN,-100); //-beren wtag
+  // event.set(h_wtagN,-100); //-beren wtag
 
 //  Run top-tagging
-//   if(ishotvr){
-//     TopTaggerHOTVR->process(event);
-//     hadronic_top->process(event);
-//   }
-//   else if(isdeepAK8){
-//     TopTaggerDeepAK8->process(event);
-//   }
+  if(ishotvr){
+    TopTaggerHOTVR->process(event);
+    hadronic_top->process(event);
+  }
+  else if(isdeepAK8){
    
+      TopTaggerDeepAK8->process(event);
+      if(debug) cout << "toptagger 2" << endl;
+      fill_histograms(event,"Toptagger_hist");
+      if(debug) cout << "toptagger 3" << endl;
+
+      WTaggerDeepAK8->process(event); 
+      if(debug) cout << "wtagger 2" << endl;
+      fill_histograms(event,"Wtagger_hist");
+      if(debug) cout << "wtagger 3" << endl;
+    }
+  
+  fill_histograms(event, "Weights_Init");
+  lumihists_Weights_Init->fill(event);
 
 
-  // fill_histograms(event, "Weights_Init");
-  // lumihists_Weights_Init->fill(event);
+  
+   //beren -wtag
+  // vector<TopJet> WTags = event.get(h_AK8WTags); 
+  // event.set(h_wtagN,WTags.size());
 
-   // Run top-tagging
-    TopTaggerDeepAK8->process(event);
-    if(debug) cout<<"Top Tagger ok"<<endl;
-    fill_histograms(event,"Toptagger_hist");
-    lumihists_Toptagger_hist->fill(event);
-
-    //Run W-tagging
-    WTaggerDeepAK8->process(event); 
-    if(debug) cout << "W Tagger ok" << endl;
-    fill_histograms(event,"Wtagger_hist");
-    lumihists_Wtagger_hist->fill(event);
+  // vector<TopJet> TopTags = event.get(h_AK8TopTags);
+  // event.set(h_ttagN,TopTags.size());
 
   if(!HEM_selection->passes(event)){
     if(!isMC) return false;
@@ -532,10 +537,22 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   }
     fill_histograms(event, "Weights_HEM");
 
+  //  // Run top-tagging
+  // TopTaggerDeepAK8->process(event);
+  // if(debug) cout<<"Top Tagger ok"<<endl;
+  // fill_histograms(event,"Toptagger_hist");
+  // // lumihists_Toptagger_hist->fill(event);
+
+  //  //Run W-tagging
+  // WTaggerDeepAK8->process(event); 
+  // if(debug) cout << "W Tagger ok" << endl;
+  // fill_histograms(event,"Wtagger_hist");
+  // lumihists_Wtagger_hist->fill(event);
+
+
   // pileup weight
   PUWeight_module->process(event);
-  if(debug) cout << "PUWeight: ok" << endl;
-  
+  if(debug) cout << "PUWeight: ok" << endl;  
   fill_histograms(event, "Weights_PU");
   lumihists_Weights_PU->fill(event);
 
@@ -663,6 +680,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     if( !(ele_is_high || ele_is_low) ) return false;
     fill_histograms(event, "MuEle1_Tot");
   }
+
   // Select exactly 1 electron and 0 muons
   if(isElectron){
     if(!MuonVeto_selection->passes(event)) return false;
@@ -967,15 +985,9 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   fill_histograms(event, "Btags1");
   h_CHSMatchHists_afterBTag->fill(event);
 
-
-  //beren -wtag
-  vector<TopJet> WTags = event.get(h_AK8WTags); 
-  event.set(h_wtagN,WTags.size());
-
-  vector<TopJet> TopTags = event.get(h_AK8TopTags);
-  event.set(h_ttagN,TopTags.size());
-
-  ///
+  //// apply ele trigger SF
+  //if(!isEleTriggerMeasurement) sf_ele_trigger->process(event);
+  //fill_histograms(event, "TriggerEle_SF");
 
   CandidateBuilder->process(event);
   if(debug) cout << "CandidateBuilder: ok" << endl;
@@ -985,8 +997,9 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(debug) cout << "CorrectMatchDiscriminatorZprime: ok" << endl;
 
   // Variables for NN
-  Variables_module->process(event);
-  fill_histograms(event, "NNInputsBeforeReweight");
+  // Variables_module->process(event);
+  // fill_histograms(event, "NNInputsBeforeReweight");
+  // if(debug) cout << "Variables_module" << endl;
 
   //  if(TTbarMatchable_selection->passes(event)) fill_histograms(event, "MatchableBeforeChi2Cut");
   //  else fill_histograms(event, "NotMatchableBeforeChi2Cut");
@@ -1020,11 +1033,11 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   //  if(Chi2CandidateMatched_selection->passes(event)) fill_histograms(event, "CorrectMatch");
   //  else fill_histograms(event, "NotCorrectMatch");
   //  if(debug) cout<<"Chi2CandidateMatched_selection is ok"<<endl;
-  
+  //
   //  if(ZprimeTopTag_selection->passes(event)) fill_histograms(event, "TopTagReconstruction");
   //  else fill_histograms(event, "NotTopTagReconstruction");
   //  if(debug) cout<<"ZprimeTopTag_selection is ok"<<endl;
-  
+  //
   //  //Fill some vars for monitoring and comparison
   //  bool is_zprime_reconstructed_chi2 = event.get(h_is_zprime_reconstructed_chi2);
   //  if(is_zprime_reconstructed_chi2){
