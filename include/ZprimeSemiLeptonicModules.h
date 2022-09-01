@@ -47,7 +47,6 @@ private:
   uhh2::Event::Handle< std::vector<ZprimeCandidate> > h_ZprimeCandidates_;
   uhh2::Event::Handle<ZprimeCandidate*> h_BestCandidate_;
   uhh2::Event::Handle<bool> h_is_zprime_reconstructed_;
-  uhh2::Event::Handle<std::vector<TopJet>> h_AK8WTags; //-beren wtag
   float mtoplep_, mtoplep_ttag_;
   float sigmatoplep_, sigmatoplep_ttag_;
   float mtophad_, mtophad_ttag_;
@@ -262,9 +261,9 @@ private:
   uhh2::Event::Handle< float > h_Ak4_j5_pt, h_Ak4_j5_eta, h_Ak4_j5_phi, h_Ak4_j5_E, h_Ak4_j5_m, h_Ak4_j5_deepjetbscore;
   uhh2::Event::Handle< float > h_Ak4_j6_pt, h_Ak4_j6_eta, h_Ak4_j6_phi, h_Ak4_j6_E, h_Ak4_j6_m, h_Ak4_j6_deepjetbscore;
   uhh2::Event::Handle< float > h_M_tt;
-  uhh2::Event::Handle< float > h_Wtag_mass; //-beren wtag 
-  uhh2::Event::Handle< float > h_Wtag_eta; //-beren wtag
-  uhh2::Event::Handle< float > h_Wtag_phi; //-beren wtag
+  // uhh2::Event::Handle< float > h_Wtag_mass; //-beren wtag 
+  // uhh2::Event::Handle< float > h_Wtag_eta; //-beren wtag
+  // uhh2::Event::Handle< float > h_Wtag_phi; //-beren wtag
 
   TString mode_;
 

@@ -314,7 +314,6 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   double a_toppt = 0.0615; // par a TopPt Reweighting
   double b_toppt = -0.0005; // par b TopPt Reweighting
 
-
   // Modules
   LumiWeight_module.reset(new MCLumiWeight(ctx));
   PUWeight_module.reset(new MCPileupReweight(ctx, Sys_PU));
@@ -501,13 +500,12 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   // event.set(h_ttagN,-100); //-beren wtag
   // event.set(h_wtagN,-100); //-beren wtag
 
-//  Run top-tagging
+// Run top-tagging
   if(ishotvr){
     TopTaggerHOTVR->process(event);
     hadronic_top->process(event);
   }
   else if(isdeepAK8){
-   
       TopTaggerDeepAK8->process(event);
       if(debug) cout << "toptagger 2" << endl;
       fill_histograms(event,"Toptagger_hist");
@@ -995,10 +993,13 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(debug) cout << "Chi2DiscriminatorZprime: ok" << endl;
   CorrectMatchDiscriminatorZprime->process(event);
   if(debug) cout << "CorrectMatchDiscriminatorZprime: ok" << endl;
+  // if(sample.Contains("_blinded")){
+  //   if(!BlindData_selection->passes(event)) return false;
+  // }
 
   // Variables for NN
-  // Variables_module->process(event);
-  // fill_histograms(event, "NNInputsBeforeReweight");
+  Variables_module->process(event);
+  fill_histograms(event, "NNInputsBeforeReweight");
   // if(debug) cout << "Variables_module" << endl;
 
   //  if(TTbarMatchable_selection->passes(event)) fill_histograms(event, "MatchableBeforeChi2Cut");
@@ -1008,18 +1009,12 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   //  if(Chi2CandidateMatched_selection->passes(event)) fill_histograms(event, "CorrectMatchBeforeChi2Cut");
   //  else fill_histograms(event, "NotCorrectMatchBeforeChi2Cut");
   //  if(debug) cout<<"Chi2CandidateMatched_selection is ok"<<endl;
-  
+  //
    if(!Chi2_selection->passes(event)) return false;
    fill_histograms(event, "Chi2");
    lumihists_Chi2->fill(event);
-   if(debug) cout<<"Chi2_selection is ok"<<endl;
-
- 
-
-   
-
-
-   
+  //
+  //  if(debug) cout<<"Chi2_selection is ok"<<endl;
   //
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
