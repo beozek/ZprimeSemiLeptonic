@@ -638,7 +638,7 @@ bool PuppiCHS_BTagging::passes(const Event & event){
      }
      }
   }
-  if(!(btagged)) return false;
+  // if(!(btagged)) return false;
 
 
 return true;
