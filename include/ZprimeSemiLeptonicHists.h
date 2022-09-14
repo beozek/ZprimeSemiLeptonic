@@ -78,6 +78,7 @@ protected:
   TH2F *N_Jets_vs_HT;
 
   uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
+  uhh2::Event::Handle< std::vector<TopJet> > h_AK8WTags; //-beren
   uhh2::Event::Handle<bool> h_is_zprime_reconstructed_chi2;
   uhh2::Event::Handle<bool> h_is_zprime_reconstructed_correctmatch;
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;

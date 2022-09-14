@@ -26,6 +26,7 @@ Hists(ctx, dirname) {
   isdeepAK8 = (ctx.get("is_deepAK8") == "true");
   if(isdeepAK8){
     h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+    // h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags");
   }else if(ishotvr){
     h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
   }
@@ -1369,7 +1370,7 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
       M_tophad_ttag_v4->Fill(inv_mass(BestZprimeCandidate->top_hadronic_v4()), weight);
       M_tophad_ttag_M->Fill(BestZprimeCandidate->top_hadronic_v4().M(), weight);
 
-      //M_tophad_ttag->Fill(BestZprimeCandidate->tophad_topjet_ptr()->softdropmass(), weight);
+      M_tophad_ttag->Fill(BestZprimeCandidate->tophad_topjet_ptr()->softdropmass(), weight);
       M_toplep_ttag->Fill(inv_mass(BestZprimeCandidate->top_leptonic_v4()), weight);
     }
     else{

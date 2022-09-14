@@ -84,11 +84,13 @@ ZprimeCandidateBuilder::ZprimeCandidateBuilder(uhh2::Context& ctx, TString mode,
   h_ZprimeCandidates_ = ctx.get_handle< vector<ZprimeCandidate> >("ZprimeCandidates");
 
 if(mode_ == "deepAK8"){
-  h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
-  h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
-  // h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren Wtag
-  // h_AK8WTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8WTagsPtr"); //-beren Wtag
-}else if(mode_ == "hotvr"){
+    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+    h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
+    // h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren Wtag
+    // h_AK8WTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8WTagsPtr"); //-beren Wtag
+
+}
+else if(mode_ == "hotvr"){
     h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
     h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("HOTVRTopTagsPtr");
   }
@@ -120,13 +122,15 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   // vector<TopJet> WTags = event.get(h_AK8WTags);
   // vector<const TopJet*> WTagsPtr = event.get(h_AK8WTagsPtr); //-beren Wtag
 
-  if((event.muons->size() < 1 && event.electrons->size() < 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Leptons");
+  // if((event.muons->size() < 1 && event.electrons->size() < 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Leptons");
   // if((event.jets->size() < 2 && TopTags.size() == 0 && WTags.size() == 0)) throw runtime_error("Event content did not allow reconstructing the Zprime: AK4");
   // if((event.jets->size() < 1 && TopTags.size() >= 1 && WTags.size() ==0)) throw runtime_error("Event content did not allow reconstructing the Zprime: Top-tag");
   // if((event.jets->size() < 2 && TopTags.size() == 0 && WTags.size() == 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: W-tag"); //-beren Wtag
 
   if((event.jets->size() < 2 && TopTags.size() == 0)) throw runtime_error("Event content did not allow reconstructing the Zprime: AK4");
   if((event.jets->size() < 1 && TopTags.size() >= 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Top-tag");
+  // if((event.jets->size() < 2 && WTags.size() == 0)) throw runtime_error("Event content did not allow reconstructing the Zprime: AK4");
+  // if((event.jets->size() < 1 && WTags.size() >= 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: W-tag");
 
   // Must have at least one AK4 jet with dR > 1.2
   vector<bool> has_separated_jet;
@@ -136,7 +140,7 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
       if(deltaR(event.jets->at(k), TopTags[i]) > 1.2) is_sep = true;
     }
     has_separated_jet.emplace_back(is_sep);
-  }
+   }
 
 //-beren wtag
 //W Must have at least two AK4 jet with dR > 1.2 
@@ -146,7 +150,7 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   //   int w_sep = 0;
   //   bool is_sep = false;
   //   for(unsigned int k = 0; k < event.jets->size(); k++){
-  //     if(deltaR(event.jets->at(k), TopTags[i]) > 1.2) w_sep = w_sep + 1;
+  //     if(deltaR(event.jets->at(k), WTags[i]) > 1.2) w_sep = w_sep + 1;
   //   }
   //   if(w_sep > 1) is_sep = true;
   //   W_has_separated_jet.emplace_back(is_sep);
@@ -197,7 +201,7 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   }
 
   // bool do_wtag_reco = false;
-  // if(TopTags.size() == 0 && WTags.size() >=1 ){
+  // if( WTags.size() >=1 ){
   //   for(unsigned int i=0; i<WTags.size(); i++){
   //    //cout << "Number of toptags: " << TopTags.size() << endl;
   //    //cout << "At " << i << " of " << has_separated_jet.size() << " and " << overlap_with_lepton.size() << endl;
@@ -253,74 +257,7 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
         neutrinoidx++;
       }
     }
-    // else { //WTag reconstruction
-    //   for(const auto & neutrino_v4 : neutrinos) {
-    //     for (unsigned int j=0; j < WTags.size(); j++) {
-    //       if(!(W_has_separated_jet[j] &&  !W_overlap_with_lepton[j])) continue;
-
-    //       TopJet wtag = WTags.at(j);
-    //       const TopJet* wtag_ptr = WTagsPtr.at(j);
-
-    //       vector<Jet> separated_jets;
-    //       for(unsigned int k = 0; k < event.jets->size(); k++){
-    //         if(deltaR(event.jets->at(k), wtag) > 1.2) separated_jets.emplace_back(event.jets->at(k));
-    //       }
-    //       unsigned int njets = separated_jets.size();
-    //       if(njets < 2) throw runtime_error("In WTagReco (PUPPI): This wtag does not have >= 2 well-separated AK4 jet. This should have been caught by earlier messages. There is a logic error.");
-    //       if(njets > 10) njets = 10;
-
-    //       unsigned int jetiters = pow(2, njets);
-    //       for (unsigned int k=0; k < jetiters; k++) {
-
-
-    //          LorentzVector SumSubjets_w(0.,0.,0.,0.);
-    //          for(unsigned int l=0; l<wtag.subjets().size(); l++) SumSubjets_w = SumSubjets_w + wtag.subjets().at(l).v4();
-
-    //          LorentzVector tophadv4 = SumSubjets_w;
-    //          vector<Particle> tophadjets;
-    //          tophadjets.emplace_back(wtag);
-    //          LorentzVector toplepv4 = lepton.v4() + neutrino_v4;
-    //          vector<Particle> toplepjets;
-    //          int num = k;
-    //          ZprimeCandidate candidate;
-    //          candidate.set_is_toptag_reconstruction(false);
-    //          candidate.set_is_wtag_reconstruction(true);
-    //          candidate.set_is_puppi_reconstruction(false);
-
-    //          int n_candidate_had_top = 0;
-    //          for (unsigned int m=0; m<njets; m++) {
-    //           if(num%3==0){
-    //            tophadv4 = tophadv4 + separated_jets.at(m).v4();
-    //            tophadjets.emplace_back(separated_jets.at(m));
-    //            n_candidate_had_top = n_candidate_had_top + 1;
-    //           }
-    //           if(num%3==1){
-    //             toplepv4 = toplepv4 + separated_jets.at(m).v4();
-    //             toplepjets.emplace_back(separated_jets.at(m));
-    //           }
-    //           num /= 3;
-    //         }
-
-    //         if(n_candidate_had_top < 1) continue;
-    //         if(tophadjets.size() < 2 || toplepjets.size() < 1 || separated_jets.size() < 2) continue;
-    //         candidate.set_Zprime_v4(tophadv4 + toplepv4);
-    //         candidate.set_top_hadronic_v4(tophadv4);
-    //         candidate.set_top_leptonic_v4(toplepv4);
-    //         candidate.set_jets_hadronic(tophadjets);
-    //         candidate.set_jets_leptonic(toplepjets);
-    //         candidate.set_lepton(lepton);
-    //         candidate.set_tophad_topjet_ptr(wtag_ptr);
-    //         candidate.set_neutrinoindex(neutrinoidx);
-    //         candidate.set_neutrino_v4(neutrino_v4);
-    //         candidates.emplace_back(candidate);
-    //       }
-        
-    //        }
-    //   neutrinoidx++;
-    // }
-    // } //end
-  
-  else{ // TopTag reconstruction
+   else{ // TopTag reconstruction
     for(const auto & neutrino_v4 : neutrinos) {
       for (unsigned int j=0; j < TopTags.size(); j++) {
         if(!(has_separated_jet[j] &&  !overlap_with_lepton[j])) continue;
@@ -353,7 +290,6 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
           int num = k;
           ZprimeCandidate candidate;
           candidate.set_is_toptag_reconstruction(true);
-          // candidate.set_is_wtag_reconstruction(false); //-beren wtag
           candidate.set_is_puppi_reconstruction(true);
 
           for (unsigned int l=0; l<njets; l++) {
@@ -367,22 +303,23 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
           if(tophadjets.size() < 1 || toplepjets.size() < 1 || separated_jets.size() < 1) continue;
 
           // Set all member variables of the candidate
-          candidate.set_Zprime_v4(tophadv4 + toplepv4);
-          candidate.set_top_hadronic_v4(tophadv4);
-          candidate.set_top_leptonic_v4(toplepv4);
-          candidate.set_jets_hadronic(tophadjets);
-          candidate.set_jets_leptonic(toplepjets);
-          candidate.set_tophad_topjet_ptr(toptag_ptr);
-          candidate.set_lepton(lepton);
-          candidate.set_neutrinoindex(neutrinoidx);
-          candidate.set_neutrino_v4(neutrino_v4);
-          candidates.emplace_back(candidate);
+            candidate.set_Zprime_v4(tophadv4 + toplepv4);
+            candidate.set_top_hadronic_v4(tophadv4);
+            candidate.set_top_leptonic_v4(toplepv4);
+            candidate.set_jets_hadronic(tophadjets);
+            candidate.set_jets_leptonic(toplepjets);
+            candidate.set_tophad_topjet_ptr(toptag_ptr);
+            candidate.set_lepton(lepton);
+            // candidate.set_tophad_topjet_ptr(wtag_ptr);
+            candidate.set_neutrinoindex(neutrinoidx);
+            candidate.set_neutrino_v4(neutrino_v4);
+            candidates.emplace_back(candidate);
 
-        }
-      }
+          }
+           }
       neutrinoidx++;
     }
-  }
+     }
   // Set the handle with all candidates
   event.set(h_ZprimeCandidates_, candidates);
 
@@ -400,37 +337,6 @@ ZprimeChi2Discriminator::ZprimeChi2Discriminator(uhh2::Context& ctx){
   sigmatoplep_ = 23.3;
   mtophad_ = 175.4;
   sigmatophad_ = 20.7;
-  // mtophad_ = 175.;
-  // mtophad_ttag_ = 177.;
-  // sigmatophad_ = 20.;
-  // sigmatophad_ttag_ = 17.;
-  // mtoplep_ = 173.;
-  // mtoplep_ttag_ = 173.;
-  // sigmatoplep_ = 29.;
-  // sigmatoplep_ttag_ = 29.;
-
-  // values used in 102
-  //mtoplep_ = 175.;
-  //sigmatoplep_ = 19.;
-  //mtophad_ = 177.;
-  //sigmatophad_ = 16.;
-  //mtoplep_ttag_ = 175.;
-  //sigmatoplep_ttag_ = 19.;
-  //mtophad_ttag_ = 173.;
-  //sigmatophad_ttag_ = 15.;
-
-  // New fit 2017 MC
-  //mtoplep_ = 164.;
-  //sigmatoplep_ = 22.;
-  //mtophad_ = 166.;
-  //sigmatophad_ = 16.;
-
-  //mtoplep_ttag_ = 164.;
-  //sigmatoplep_ttag_ = 22.;
-  //mtophad_ttag_ = 166.;
-  //sigmatophad_ttag_ = 16.;
-
-
 
   mtoplep_ttag_ = 172.2;
   sigmatoplep_ttag_ = 21.7;
@@ -445,8 +351,6 @@ bool ZprimeChi2Discriminator::process(uhh2::Event& event){
   vector<ZprimeCandidate>& candidates = event.get(h_ZprimeCandidates_);
   // cout << "ZprimeChi2Discriminator " << endl;
   if(candidates.size() < 1) return false;
-  // vector<TopJet> WTags = event.get(h_AK8WTags); //-beren wtag
-
 
   float chi2_best = 99999999;
   ZprimeCandidate* bestCand = &candidates.at(0);
@@ -662,11 +566,12 @@ bool ZprimeCorrectMatchDiscriminator::process(uhh2::Event& event){
       correct_dr += dr;
       if(idx >= 0) n_matched++;
 
-      // if(n_matched != jets_had.size()){
-      //   candidates.at(i).set_discriminators("correct_match", 9999999);
-      //   // cout << "Not number of jets and matched equal" << endl;
-      //   continue;
-      }
+      //if(n_matched != jets_had.size()){
+      //  candidates.at(i).set_discriminators("correct_match", 9999999);
+      //  // cout << "Not number of jets and matched equal" << endl;
+      //  continue;
+      //}      
+    }
     else{
       const TopJet* topjet = candidates.at(i).tophad_topjet_ptr();
 
@@ -782,46 +687,46 @@ bool AK8PuppiTopTagger::process(uhh2::Event& event){
 
 //-beren -wtag
 
-// AK8PuppiWTagger::AK8PuppiWTagger(uhh2::Context& ctx, int min_num_daughters, float max_dR, float min_mass, float max_mass, float max_tau21) : min_num_daughters_(min_num_daughters), max_dR_(max_dR), min_mass_(min_mass), max_mass_(max_mass), max_tau21_(max_tau21) {
+AK8PuppiWTagger::AK8PuppiWTagger(uhh2::Context& ctx, int min_num_daughters, float max_dR, float min_mass, float max_mass, float max_tau21) : min_num_daughters_(min_num_daughters), max_dR_(max_dR), min_mass_(min_mass), max_mass_(max_mass), max_tau21_(max_tau21) {
 
-//   h_AK8PuppiWTags_ = ctx.get_handle< std::vector<TopJet> >("AK8PuppiWTags");
-//   h_AK8PuppiWTagsPtr_ = ctx.get_handle< std::vector<const TopJet*> >("AK8PuppiWTagsPtr");
+  h_AK8PuppiWTags_ = ctx.get_handle< std::vector<TopJet> >("AK8PuppiWTags");
+  h_AK8PuppiWTagsPtr_ = ctx.get_handle< std::vector<const TopJet*> >("AK8PuppiWTagsPtr");
 
-// }
+}
 
-// bool AK8PuppiWTagger::process(uhh2::Event& event){
+bool AK8PuppiWTagger::process(uhh2::Event& event){
 
-//   std::vector<TopJet> wtags;
-//   vector<const TopJet*> wtags_ptr;
-//   for(const TopJet & puppijet : *event.toppuppijets){
-//     // 1) Jet should have at least two daughters
-//     int n_constit = 0;
-//     // Loop over subjets' constituents
-//     for(unsigned int i=0; i<puppijet.subjets().size(); i++){
-//       n_constit += puppijet.subjets().at(i).numberOfDaughters();
-//     }
-//     if(puppijet.numberOfDaughters() > (int)puppijet.subjets().size()){
-//       n_constit += (puppijet.numberOfDaughters() - puppijet.subjets().size());
-//     }
-//     if(n_constit<min_num_daughters_){
-//       continue;
-//     }
-//     // 3) Cut on SD mass
-//     LorentzVector SumSubjets(0.,0.,0.,0.);
-//     for(unsigned int k=0; k<puppijet.subjets().size(); k++) SumSubjets = SumSubjets + puppijet.subjets().at(k).v4();
-//     float mSD = SumSubjets.M();
-//     if(!(min_mass_ < mSD && mSD < max_mass_)) continue;
-//     // 4) Cut on tau 2/1
-//     if(!((puppijet.tau2() / puppijet.tau1()) < max_tau21_)) continue;
-//     // All jets at this point are w-tagged
-//     wtags.emplace_back(puppijet);
-//     wtags_ptr.emplace_back(&puppijet);
-//   }
-//   event.set(h_AK8PuppiWTags_, wtags);
-//   event.set(h_AK8PuppiWTagsPtr_, wtags_ptr);
-//   return (wtags.size() >= 1);
-// }
-//
+  std::vector<TopJet> wtags;
+  vector<const TopJet*> wtags_ptr;
+  for(const TopJet & puppijet : *event.toppuppijets){
+    // 1) Jet should have at least two daughters
+    int n_constit = 0;
+    // Loop over subjets' constituents
+    for(unsigned int i=0; i<puppijet.subjets().size(); i++){
+      n_constit += puppijet.subjets().at(i).numberOfDaughters();
+    }
+    if(puppijet.numberOfDaughters() > (int)puppijet.subjets().size()){
+      n_constit += (puppijet.numberOfDaughters() - puppijet.subjets().size());
+    }
+    if(n_constit<min_num_daughters_){
+      continue;
+    }
+    // 3) Cut on SD mass
+    LorentzVector SumSubjets(0.,0.,0.,0.);
+    for(unsigned int k=0; k<puppijet.subjets().size(); k++) SumSubjets = SumSubjets + puppijet.subjets().at(k).v4();
+    float mSD = SumSubjets.M();
+    if(!(min_mass_ < mSD && mSD < max_mass_)) continue;
+    // 4) Cut on tau 2/1
+    if(!((puppijet.tau2() / puppijet.tau1()) < max_tau21_)) continue;
+    // All jets at this point are w-tagged
+    wtags.emplace_back(puppijet);
+    wtags_ptr.emplace_back(&puppijet);
+  }
+  event.set(h_AK8PuppiWTags_, wtags);
+  event.set(h_AK8PuppiWTagsPtr_, wtags_ptr);
+  return (wtags.size() >= 1);
+}
+
 
 HOTVRTopTagger::HOTVRTopTagger(uhh2::Context& ctx) {
 
@@ -887,10 +792,10 @@ bool DeepAK8TopTagger::process(uhh2::Event& event){
     LorentzVector SumSubjets(0.,0.,0.,0.);
     for(unsigned int k=0; k<puppijet.subjets().size(); k++) SumSubjets = SumSubjets + puppijet.subjets().at(k).v4();
     float mSD = SumSubjets.M();
-    if(!(min_mSD < mSD && mSD < max_mSD)) continue;
+    // if(!(min_mSD < mSD && mSD < max_mSD)) continue;
 
     // cut on score
-    if( !(puppijet.btag_MassDecorrelatedDeepBoosted_TvsQCD() >= max_score ) ) continue;
+    // if( !(puppijet.btag_MassDecorrelatedDeepBoosted_TvsQCD() >= max_score ) ) continue;
 
     toptags.emplace_back(puppijet);
     toptags_ptr.emplace_back(&puppijet);
