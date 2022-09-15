@@ -122,7 +122,7 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   // vector<TopJet> WTags = event.get(h_AK8WTags);
   // vector<const TopJet*> WTagsPtr = event.get(h_AK8WTagsPtr); //-beren Wtag
 
-  // if((event.muons->size() < 1 && event.electrons->size() < 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Leptons");
+  if((event.muons->size() < 1 && event.electrons->size() < 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Leptons");
   // if((event.jets->size() < 2 && TopTags.size() == 0 && WTags.size() == 0)) throw runtime_error("Event content did not allow reconstructing the Zprime: AK4");
   // if((event.jets->size() < 1 && TopTags.size() >= 1 && WTags.size() ==0)) throw runtime_error("Event content did not allow reconstructing the Zprime: Top-tag");
   // if((event.jets->size() < 2 && TopTags.size() == 0 && WTags.size() == 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: W-tag"); //-beren Wtag
@@ -473,12 +473,13 @@ bool ZprimeCorrectMatchDiscriminator::process(uhh2::Event& event){
       // cout << "Not right amount of hadronic jets" << endl;
       continue;
     }
+
     float correct_dr = 0.;
     int idx;
     float dr;
 
     // Match leptonic b-quark
-    dr = match_dr(ttbargen.BLep(), jets_lep, idx);
+     dr = match_dr(ttbargen.BLep(), jets_lep, idx);
     if(dr > 0.4){
       candidates.at(i).set_discriminators("correct_match", 9999999);
       // cout << "Not leptonic b-quark matched" << endl;
@@ -576,7 +577,7 @@ bool ZprimeCorrectMatchDiscriminator::process(uhh2::Event& event){
       const TopJet* topjet = candidates.at(i).tophad_topjet_ptr();
 
       // Match b-quark
-      dr = deltaR(ttbargen.BHad(), *topjet);
+       dr = deltaR(ttbargen.BHad(), *topjet);
       if(dr > 0.8){
         candidates.at(i).set_discriminators("correct_match", 9999999);
         // cout << "Not hadronic b-quark matched (TTAG)" << endl;

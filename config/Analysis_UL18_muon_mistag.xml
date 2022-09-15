@@ -203,7 +203,7 @@
 
 <!--
 <ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="ozekberen@gmail.com" Notification="as" Workdir="workdir_Zprime_Analysis_UL18_muon_test"/>
+<ConfigSGE RAM="2" DISK="2" Mail="ozekberen@gmail.com" Notification="as" Workdir="workdir_Zprime_Analysis_UL18_muon_WJetsCR"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">
@@ -329,7 +329,7 @@
 		<InputData Lumi="664264378.4334818" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M-50_HT-2500toInf_UL18" Cacheable="&b_Cacheable;">
 			&DYJetsToLL_M-50_HT-2500toInf_UL18;
 			<InputTree Name="AnalysisTree"/>
-			<OutputTree Name="AnalysisTree"/>
+			<OutputTree Name="AnalysisTree"/> 
 		</InputData>
 		<!-- Diboson -->
 		<InputData Lumi="206548.84355289157" NEventsMax="&NEVT;" Type="MC" Version="WW_UL18" Cacheable="&b_Cacheable;">
