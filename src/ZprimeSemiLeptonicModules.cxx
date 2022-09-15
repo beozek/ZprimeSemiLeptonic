@@ -632,10 +632,10 @@ bool DeepAK8TopTagger::process(uhh2::Event& event){
      LorentzVector SumSubjets(0.,0.,0.,0.);
      for(unsigned int k=0; k<puppijet.subjets().size(); k++) SumSubjets = SumSubjets + puppijet.subjets().at(k).v4();
      float mSD = SumSubjets.M();
-     if(!(min_mSD_ < mSD && mSD < max_mSD_)) continue;
+    //  if(!(min_mSD_ < mSD && mSD < max_mSD_)) continue;
 
      // cut on score
-     if( !(puppijet.btag_MassDecorrelatedDeepBoosted_TvsQCD() >= max_score_ ) ) continue;
+    //  if( !(puppijet.btag_MassDecorrelatedDeepBoosted_TvsQCD() >= max_score_ ) ) continue;
 
      toptags.emplace_back(puppijet);
      toptags_ptr.emplace_back(&puppijet);
