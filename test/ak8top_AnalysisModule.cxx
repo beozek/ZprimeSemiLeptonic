@@ -98,6 +98,10 @@ protected:
   unique_ptr<DeepAK8WTagger> WTaggerDeepAK8; //-beren wtag
   unique_ptr<AnalysisModule> sf_wtag; //-beren wtag
 
+  // AK8Puppitaggers
+  unique_ptr<AK8PuppiTopTagger> TopTaggerPuppi; //-beren ak8puppi 
+  unique_ptr<AK8PuppiWTagger> WTaggerPuppi;//-beren ak8puppi 
+
   // Mass reconstruction
   unique_ptr<ZprimeCandidateBuilder> CandidateBuilder;
 
@@ -132,7 +136,11 @@ protected:
   uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr_;
   uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_;
   
-
+  //AK8puppi -beren
+  uhh2::Event::Handle< std::vector<TopJet> >h_AK8PuppiTopTags_;
+  uhh2::Event::Handle< std::vector<const TopJet*> >h_AK8PuppiTopTagsPtr_;  
+  uhh2::Event::Handle< std::vector<TopJet> >h_AK8PuppiWTags_;
+  uhh2::Event::Handle< std::vector<const TopJet*> >h_AK8PuppiWTagsPtr_; 
 
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
   // uhh2::Event::Handle<std::vector<TopJet>> h_AK8TopTags; //-beren wtag
@@ -248,8 +256,8 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   NEle1_selection.reset(new NElectronSelection(1, 1));
 
   // Important selection values
-  double jet1_pt(50.); //baseline l+jet selection
-  double jet2_pt(30.);
+  double jet1_pt(150.); // it was 50. before, changed to 150 due to the baseline l+jet selection
+  double jet2_pt(50.);
   double chi2_max(30.);
   // double mtt_blind(3000.);
   string trigger_mu_A, trigger_mu_B, trigger_mu_C, trigger_mu_D, trigger_mu_E, trigger_mu_F;
@@ -275,7 +283,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
     trigger_mu_F = "HLT_TkMu100_v*";
 
     MET_cut = 50;
-    HT_lep_cut = 0; 
+    HT_lep_cut = 150; //it was "0", but changed to 150 due to the selection requirement for baseline l+jets
   }
   if(isElectron){ // semileptonic electron channel
     trigger_ele_B = "HLT_Ele115_CaloIdVT_GsfTrkIdT_v*";
@@ -392,6 +400,9 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   TopTaggerDeepAK8.reset(new DeepAK8TopTagger(ctx));
   WTaggerDeepAK8.reset(new DeepAK8WTagger(ctx)); //-beren wtag
 
+  TopTaggerPuppi.reset(new AK8PuppiTopTagger(ctx)); //-beren ak8puppi 
+  WTaggerPuppi.reset(new AK8PuppiWTagger(ctx)); //-beren ak8puppi 
+
 
   // Zprime candidate builder
   CandidateBuilder.reset(new ZprimeCandidateBuilder(ctx, mode));
@@ -408,6 +419,13 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_DeepAK8TopTagsPtr_ = ctx.get_handle< std::vector<const TopJet*>  >("DeepAK8TopTagsPtr");
   h_DeepAK8WTags_ = ctx.get_handle< std::vector<TopJet>  >("DeepAK8WTags");
   h_DeepAK8WTagsPtr_ = ctx.get_handle< std::vector<const TopJet*>  >("DeepAK8WTagsPtr");
+
+  //AK8puppi
+  h_AK8PuppiTopTags_ = ctx.get_handle< std::vector<TopJet> >("AK8PuppiTopTags");
+  h_AK8PuppiTopTagsPtr_ = ctx.get_handle< std::vector<const TopJet*> >("AK8PuppiTopTagsPtr");
+  h_AK8PuppiWTags_ = ctx.get_handle< std::vector<TopJet> >("AK8PuppiWTags");
+  h_AK8PuppiWTagsPtr_ = ctx.get_handle< std::vector<const TopJet*> >("AK8PuppiWTagsPtr");
+
 
   h_chi2 = ctx.declare_event_output<float> ("rec_chi2");
   h_MET = ctx.declare_event_output<float> ("met_pt");
@@ -434,7 +452,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
   // Book histograms
   // vector<string> histogram_tags = {"Weights_Init", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_TopTag_SF", "Corrections", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "Btags1", "Btags1_SF", "NNInputsBeforeReweight", "MatchableBeforeChi2Cut", "NotMatchableBeforeChi2Cut", "CorrectMatchBeforeChi2Cut", "NotCorrectMatchBeforeChi2Cut", "Chi2", "Matchable", "NotMatchable", "CorrectMatch", "NotCorrectMatch", "TopTagReconstruction", "NotTopTagReconstruction", "Toptagger_hist", "Wtagger_hist"};
-  vector<string> histogram_tags = {"Chi2", "Toptagger_hist","Muon1_LowPt", "Muon1_HighPt"};
+  vector<string> histogram_tags = {"Chi2", "Wtagger_hist"};
 
   book_histograms(ctx, histogram_tags);
 
@@ -487,10 +505,17 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   event.set(h_ak8jet1_eta,-100);
   event.set(h_NPV,-100);
   event.set(h_weight,-100);
-  event.set(h_DeepAK8TopTags_, toptags);
-  event.set(h_DeepAK8WTags_, wtags);
-  event.set(h_DeepAK8WTagsPtr_, wtags_ptr);
-  event.set(h_DeepAK8TopTagsPtr_, toptags_ptr);
+  event.set(h_DeepAK8TopTags_, toptags); //-beren toptagger
+  event.set(h_DeepAK8WTags_, wtags); //-beren 
+  event.set(h_DeepAK8WTagsPtr_, wtags_ptr); //-beren
+  event.set(h_DeepAK8TopTagsPtr_, toptags_ptr); //-beren
+
+  //AK8Puppi taggers
+  event.set(h_AK8PuppiWTags_, wtags);
+  event.set(h_AK8PuppiWTagsPtr_, wtags_ptr);
+  event.set(h_AK8PuppiTopTags_, toptags);
+  event.set(h_AK8PuppiTopTagsPtr_, toptags_ptr);
+
 
 
   if(!HEM_selection->passes(event)){
@@ -565,7 +590,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     vector<Muon>* muons = event.muons;
     for(unsigned int i=0; i<muons->size(); i++){
       if(event.muons->at(i).pt()<=muon_pt_high){
-        muon_is_low = true; //-beren it was true
+        muon_is_low = false; //-beren it was true
       }else{
         muon_is_high = true; 
       }
@@ -580,13 +605,13 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
        if(!NMuon1_selection->passes(event)) return false;
        muon_cleaner_low->process(event);
        if(!NMuon1_selection->passes(event)) return false;
-       fill_histograms(event, "Muon1_LowPt");
+       // fill_histograms(event, "Muon1_LowPt");
     }
     if(muon_is_high){
        if(!NMuon1_selection->passes(event)) return false;
        muon_cleaner_high->process(event);
        if(!NMuon1_selection->passes(event)) return false;
-       fill_histograms(event, "Muon1_HighPt");
+       // fill_histograms(event, "Muon1_HighPt");
     }
     if( !(muon_is_high || muon_is_low) ) return false;
     // fill_histograms(event, "Muon1_Tot");
@@ -909,15 +934,26 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     TopTaggerHOTVR->process(event);
     hadronic_top->process(event);
   }
-  else if(isdeepAK8){
-    TopTaggerDeepAK8->process(event);
-    //  if(debug)cout << "toptagger" << endl;
+    else if(isdeepAK8){
+    TopTaggerPuppi->process(event);
+    if(debug) cout<<"Top Tagger ok"<<endl;
     fill_histograms(event,"Toptagger_hist");
+    //Run W-tagging
+    // WTaggerPuppi->process(event); 
+    // if(debug) cout << "W Tagger ok" << endl;
+//     fill_histograms(event,"Wtagger_hist");
+
+//  
+//     // TopTaggerDeepAK8->process(event);
+//     //  if(debug)cout << "toptagger" << endl;
+//     // fill_histograms(event,"Toptagger_hist");
       
-    // WTaggerDeepAK8->process(event);
-    // // if(debug) cout << "wtagger" << endl;
-    // fill_histograms(event,"Wtagger_hist");
+//     WTaggerDeepAK8->process(event);
+//     // // if(debug) cout << "wtagger" << endl;
+//     fill_histograms(event,"Wtagger_hist");
   }
+
+ 
    
   //
   //

@@ -70,7 +70,9 @@ bool ZprimeBTagFatSubJetSelection::passes(const Event & event){
 TopTag_VetoSelection::TopTag_VetoSelection(Context& ctx, TString mode) : mode_(mode){
 
   if(mode_ == "deepAK8"){
-  h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+  // h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+  h_DeepAK8TopTags = ctx.get_handle<std::vector<TopJet> > ("DeepAK8TopTags");
+  h_DeepAK8WTags = ctx.get_handle<std::vector<TopJet> > ("DeepAK8WTags");
   }else if(mode_ == "hotvr"){
   h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
   }

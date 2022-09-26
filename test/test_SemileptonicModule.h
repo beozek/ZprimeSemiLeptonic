@@ -27,12 +27,10 @@ public:
 
 private:
   uhh2::Event::Handle< std::vector<ZprimeCandidate> > h_ZprimeCandidates_;
-  // uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
-  // uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8TopTagsPtr;
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags; //-beren wtag
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr; //-beren wtag
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags; //-beren wtag
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr; //-beren wtag
+  uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
+  uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8TopTagsPtr;
+  // uhh2::Event::Handle< std::vector<TopJet> > h_AK8WTags; //-beren wtag
+  // uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8WTagsPtr; //-beren wtag
 
   float minDR_;
   TString mode_;
@@ -104,8 +102,7 @@ private:
   uhh2::Event::Handle< std::vector<TopJet> > h_AK8PuppiWTags_;
   uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8PuppiWTagsPtr_;
 };
-
-
+// ///
 class HOTVRTopTagger : public uhh2::AnalysisModule {
 
 public:
@@ -123,35 +120,52 @@ private:
 
 class DeepAK8TopTagger : public uhh2::AnalysisModule {
 
-public:
-  explicit DeepAK8TopTagger(uhh2::Context&, float min_mSD = 105., float max_mSD = 210., float max_score = 0.685, float pt_min = 400); // WP from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
-  virtual bool process(uhh2::Event&) override;
+// public:
+//   // explicit DeepAK8TopTagger(uhh2::Context&, float min_mSD = 105., float max_mSD = 210., float max_score = 0.685, float pt_min = 400); // WP from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
+//   explicit DeepAK8TopTagger(uhh2::Context&);
+//   virtual bool process(uhh2::Event&) override;
 
+   public:
+    explicit DeepAK8TopTagger(uhh2::Context&);
+    virtual bool process(uhh2::Event&) override;
+
+// // private:
+// //   float min_mSD_;
+// //   float max_mSD_;
+// //   float max_score_;
+// //   float pt_min_;
+// //   uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags_;
+// //   uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_;
 private:
-  float min_mSD_;
-  float max_mSD_;
-  float max_score_;
-  float pt_min_;
+  Year year;
   uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags_;
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_;
+  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_; 
 };
 
-//-beren wtag
-class DeepAK8WTagger : public uhh2::AnalysisModule {
-  
-public:
-  explicit DeepAK8WTagger(uhh2::Context&, float min_mSD = 65., float max_mSD = 105., float max_score = 0.806, float pt_min = 400); // WP from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
-  virtual bool process(uhh2::Event&) override;
+// -beren
+// class DeepAK8WTagger : public uhh2::AnalysisModule {
 
-private:
-  float min_mSD_;
-  float max_mSD_;
-  float max_score_;
-  float pt_min_;
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags_;
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr_;
-};
+// public:
+//   explicit DeepAK8WTagger(uhh2::Context&);
+//   virtual bool process(uhh2::Event&) override;
 
+// public:
+//   explicit DeepAK8WTagger(uhh2::Context&, float min_mSD = 65., float max_mSD = 105., float max_score = 0.685, float pt_min = 400, float max_tau21_ = 0.45); // WP from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
+//   virtual bool process(uhh2::Event&) override;
+
+// private:
+//   float min_mSD_;
+//   float max_mSD_;
+//   float max_score_;
+//   float pt_min_;
+//   float max_tau21_;
+//   uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags_;
+//   uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr_;
+// private:
+//   Year year;
+//   uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags_;
+//   uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr_; 
+// };
 
 
 
@@ -225,6 +239,7 @@ public:
 private:
   uhh2::Event::Handle<bool> h_is_zprime_reconstructed_chi2;
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
+  uhh2::Event::Handle<std::vector<TopJet>> h_AK8WTags;
   uhh2::Event::Handle< std::vector<Jet> > h_CHSjets_matched;
   uhh2::Event::Handle< float > h_eventweight;
   uhh2::Event::Handle< float > h_Mu_pt, h_Mu_eta, h_Mu_phi, h_Mu_E;
@@ -246,6 +261,9 @@ private:
   uhh2::Event::Handle< float > h_Ak4_j5_pt, h_Ak4_j5_eta, h_Ak4_j5_phi, h_Ak4_j5_E, h_Ak4_j5_m, h_Ak4_j5_deepjetbscore;
   uhh2::Event::Handle< float > h_Ak4_j6_pt, h_Ak4_j6_eta, h_Ak4_j6_phi, h_Ak4_j6_E, h_Ak4_j6_m, h_Ak4_j6_deepjetbscore;
   uhh2::Event::Handle< float > h_M_tt;
+  // uhh2::Event::Handle< float > h_Wtag_mass; //-beren wtag 
+  // uhh2::Event::Handle< float > h_Wtag_eta; //-beren wtag
+  // uhh2::Event::Handle< float > h_Wtag_phi; //-beren wtag
 
   TString mode_;
 
@@ -287,18 +305,20 @@ class TopPtReweighting : public uhh2::AnalysisModule {
 			 float a, float b,
 			 const std::string& syst_a,
 			 const std::string& syst_b,
-			 const std::string& ttgen_name ="",
-			 const std::string& weight_name="weight_ttbar");
+			 const std::string& ttgen_name ="");
 
 
   virtual bool process(uhh2::Event& event) override;
  private:
   uhh2::Event::Handle<TTbarGen> h_ttbargen_;
-  uhh2::Event::Handle<float> h_weight_;
   float a_, b_;
   std::string version_;
   std::string ttgen_name_;
-  std::string weight_name_;
+  uhh2::Event::Handle< float > h_weight_toppt_nominal;
+  uhh2::Event::Handle< float > h_weight_toppt_a_up;
+  uhh2::Event::Handle< float > h_weight_toppt_b_up;
+  uhh2::Event::Handle< float > h_weight_toppt_a_down;
+  uhh2::Event::Handle< float > h_weight_toppt_b_down;
 };
 
 
@@ -331,3 +351,5 @@ private:
   uhh2::Event::Handle< float > h_muonrecSF_up;
   uhh2::Event::Handle< float > h_muonrecSF_down;
 };
+
+////

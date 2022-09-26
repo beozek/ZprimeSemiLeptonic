@@ -203,7 +203,7 @@
 
 <!--
 <ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="ozekberen@gmail.com" Notification="as" Workdir="workdir_Zprime_Analysis_UL18_muon_WJetsCR"/>
+<ConfigSGE RAM="2" DISK="2" Mail="ozekberen@gmail.com" Notification="as" Workdir="workdir_Zprime_Analysis_UL18_muon_newwtag"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">
@@ -1125,7 +1125,7 @@
 			<Item Name="SystDirection_ElectronReco"  Value="nominal"/>
 			<!-- add electron trigger SFs -->
 			<Item Name="Sys_PU"                      Value="central"/>
-                        <Item Name="SystDirection_BTaggingShape" Value="central"/>			
+                        <!-- <Item Name="SystDirection_BTaggingShape" Value="central"/>			 -->
 			<Item Name="Sys_prefiring"               Value="nominal"/>
 			<Item Name="Sys_TopTag"                  Value="nominal"/>
 			<Item Name="Systematic_TopPt_a"          Value="nominal"/>
