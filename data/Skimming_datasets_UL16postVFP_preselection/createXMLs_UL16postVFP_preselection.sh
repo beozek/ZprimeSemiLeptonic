@@ -2,7 +2,7 @@
 
 # simple script for creating xmls
 
-dir="/nfs/dust/cms/group/zprime-uhh/Presel_UL16postVFP/workdir_Zprime_Preselection_UL16postVFP/"
+dir="/nfs/dust/cms/group/zprime-uhh/Presel_UL16postVFP/workdir_Preselection_UL16postVFP/"
 
 # DATA
 for i in  DATA_SingleElectron_RunF_UL16postVFP DATA_SingleElectron_RunG_UL16postVFP DATA_SingleElectron_RunH_UL16postVFP DATA_SinglePhoton_RunF_UL16postVFP DATA_SinglePhoton_RunG_UL16postVFP DATA_SinglePhoton_RunH_UL16postVFP DATA_SingleMuon_RunF_UL16postVFP DATA_SingleMuon_RunG_UL16postVFP DATA_SingleMuon_RunH_UL16postVFP

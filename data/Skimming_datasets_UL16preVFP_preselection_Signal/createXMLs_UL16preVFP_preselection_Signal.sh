@@ -2,7 +2,7 @@
 
 # simple script for creating xmls
 
-dir="/nfs/dust/cms/group/zprime-uhh/Presel_UL16preVFP_Signals/workdir_Zprime_Preselection_UL16preVFP_Signals/"
+dir="/nfs/dust/cms/group/zprime-uhh/Presel_UL16preVFP_Signals/workdir_Preselection_UL16preVFP_Signals/"
 
 # MC
 # missing: HscalarToTTTo1L1Nu2J_m365_w36p5_res_UL16preVFP, HpseudoToTTTo1L1Nu2J_m400_w100p0_int_UL16preVFP

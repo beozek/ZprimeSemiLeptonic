@@ -2,7 +2,7 @@
 #where UHH2 code installed
 pathGL_code=/nfs/dust/cms/user/deleokse/RunII_106_v2/CMSSW_10_6_28/src/UHH2/
 #where (NOT MERGED) trees after preselection stored
-path_data=/nfs/dust/cms/group/zprime-uhh/Presel_UL16preVFP_Signals/workdir_Zprime_Preselection_UL16preVFP/uhh2.AnalysisModuleRunner.
+path_data=/nfs/dust/cms/group/zprime-uhh/Presel_UL16preVFP_Signals/workdir_Preselection_UL16preVFP/uhh2.AnalysisModuleRunner.
 
 mkdir $pathGL_code/ZprimeSemiLeptonic/data/Skimming_datasets_UL16preVFP_Signal
 cd $pathGL_code/ZprimeSemiLeptonic/data/Skimming_datasets_UL16preVFP_Signal

@@ -132,7 +132,7 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   // if((event.muons->size() < 1 && event.electrons->size() < 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Leptons");
   // if((event.jets->size() < 2 && TopTags.size() == 0)) throw runtime_error("Event content did not allow reconstructing the Zprime: AK4");
   // if((event.jets->size() < 1 && TopTags.size() >= 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Top-tag");
-  //-beren wtag
+  // -beren wtag
   if((event.muons->size() < 1 && event.electrons->size() < 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Leptons");
   if((event.jets->size() < 2 && TopTags.size() == 0 && WTags.size() == 0)) throw runtime_error("Event content did not allow reconstructing the Zprime: AK4");
   if((event.jets->size() < 1 && TopTags.size() >= 1 && WTags.size() ==0)) throw runtime_error("Event content did not allow reconstructing the Zprime: Top-tag");
@@ -610,7 +610,6 @@ bool AK8PuppiTopTagger::process(uhh2::Event& event){
   event.set(h_AK8PuppiTopTags_, toptags);
   event.set(h_AK8PuppiTopTagsPtr_, toptags_ptr);
   return (toptags.size() >= 1);
-
 }
 
 //-beren -wtag
@@ -700,10 +699,10 @@ bool DeepAK8TopTagger::process(uhh2::Event& event){
      LorentzVector SumSubjets(0.,0.,0.,0.);
      for(unsigned int k=0; k<puppijet.subjets().size(); k++) SumSubjets = SumSubjets + puppijet.subjets().at(k).v4();
      float mSD = SumSubjets.M();
-     if(!(min_mSD_ < mSD && mSD < max_mSD_)) continue;
+    //  if(!(min_mSD_ < mSD && mSD < max_mSD_)) continue;
 
-     // cut on score
-     if( !(puppijet.btag_MassDecorrelatedDeepBoosted_TvsQCD() >= max_score_ ) ) continue;
+    //  cut on score
+    //  if( !(puppijet.btag_MassDecorrelatedDeepBoosted_TvsQCD() >= max_score_ ) ) continue;
 
      toptags.emplace_back(puppijet);
      toptags_ptr.emplace_back(&puppijet);
@@ -735,10 +734,10 @@ bool DeepAK8WTagger::process(uhh2::Event& event){
      LorentzVector SumSubjets(0.,0.,0.,0.);
      for(unsigned int k=0; k<puppijet.subjets().size(); k++) SumSubjets = SumSubjets + puppijet.subjets().at(k).v4();
      float mSD = SumSubjets.M();
-    //  if(!(min_mSD_ < mSD && mSD < max_mSD_)) continue;
+     if(!(min_mSD_ < mSD && mSD < max_mSD_)) continue;
 
      // cut on score
-    //  if( !(puppijet.btag_MassDecorrelatedDeepBoosted_TvsQCD() >= max_score_ ) ) continue;
+     if( !(puppijet.btag_MassDecorrelatedDeepBoosted_TvsQCD() >= max_score_ ) ) continue;
 
      wtags.emplace_back(puppijet);
      wtags_ptr.emplace_back(&puppijet);

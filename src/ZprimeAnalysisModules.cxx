@@ -434,7 +434,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
   // Book histograms
   // vector<string> histogram_tags = {"Weights_Init", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_TopTag_SF", "Corrections", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "Btags1", "Btags1_SF", "NNInputsBeforeReweight", "MatchableBeforeChi2Cut", "NotMatchableBeforeChi2Cut", "CorrectMatchBeforeChi2Cut", "NotCorrectMatchBeforeChi2Cut", "Chi2", "Matchable", "NotMatchable", "CorrectMatch", "NotCorrectMatch", "TopTagReconstruction", "NotTopTagReconstruction", "Toptagger_hist", "Wtagger_hist"};
-  vector<string> histogram_tags = {"Chi2", "Toptagger_hist","Muon1_LowPt", "Muon1_HighPt"};
+  vector<string> histogram_tags = {"Chi2", "Toptagger_hist",  "Wtagger_hist"};
 
   book_histograms(ctx, histogram_tags);
 
@@ -493,10 +493,10 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   event.set(h_DeepAK8TopTagsPtr_, toptags_ptr);
 
 
-  if(!HEM_selection->passes(event)){
-    if(!isMC) return false;
-    else event.weight = event.weight*(1-0.64774715284); // calculated following instructions ar https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis
-  }
+  // if(!HEM_selection->passes(event)){
+  //   if(!isMC) return false;
+  //   else event.weight = event.weight*(1-0.64774715284); // calculated following instructions ar https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis
+  // }
     
     topjet_puppi_cleaner->process(event); //this line was taken from preselection module
 
@@ -580,13 +580,13 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
        if(!NMuon1_selection->passes(event)) return false;
        muon_cleaner_low->process(event);
        if(!NMuon1_selection->passes(event)) return false;
-       fill_histograms(event, "Muon1_LowPt");
+      //  fill_histograms(event, "Muon1_LowPt");
     }
     if(muon_is_high){
        if(!NMuon1_selection->passes(event)) return false;
        muon_cleaner_high->process(event);
        if(!NMuon1_selection->passes(event)) return false;
-       fill_histograms(event, "Muon1_HighPt");
+      //  fill_histograms(event, "Muon1_HighPt");
     }
     if( !(muon_is_high || muon_is_low) ) return false;
     // fill_histograms(event, "Muon1_Tot");
@@ -883,8 +883,8 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(debug) cout << "CandidateBuilder: ok" << endl;
   Chi2DiscriminatorZprime->process(event);
   if(debug) cout << "Chi2DiscriminatorZprime: ok" << endl;
-  CorrectMatchDiscriminatorZprime->process(event);
-  if(debug) cout << "CorrectMatchDiscriminatorZprime: ok" << endl;
+  // CorrectMatchDiscriminatorZprime->process(event);
+  // if(debug) cout << "CorrectMatchDiscriminatorZprime: ok" << endl;
 
   // Variables for NN
   Variables_module->process(event);
@@ -910,16 +910,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     hadronic_top->process(event);
   }
   else if(isdeepAK8){
-    TopTaggerDeepAK8->process(event);
+    // TopTaggerDeepAK8->process(event);
     //  if(debug)cout << "toptagger" << endl;
-    fill_histograms(event,"Toptagger_hist");
+    // fill_histograms(event,"Toptagger_hist");
       
-    // WTaggerDeepAK8->process(event);
-    // // if(debug) cout << "wtagger" << endl;
-    // fill_histograms(event,"Wtagger_hist");
+    WTaggerDeepAK8->process(event);
+    if(debug) cout << "wtagger" << endl;
+    fill_histograms(event,"Wtagger_hist");
   }
    
-  //
+  ///
   //
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //////// Extra checks
