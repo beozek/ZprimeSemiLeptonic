@@ -42,6 +42,7 @@ void ZprimeSemiLeptonicHists::init(){
 
   // jets
   N_jets   = book<TH1F>("N_jets", "N_{jets}", 21, -0.5, 20.5);
+  DeltaY   = book<TH1F>("DeltaY", "#Delta y",8,-2.,2.);
   pt_jet   = book<TH1F>("pt_jet", "p_{T}^{jets} [GeV]", 45, 0, 900);
   pt_jet1  = book<TH1F>("pt_jet1", "p_{T}^{jet 1} [GeV]", 45, 0, 900);
   pt_jet2  = book<TH1F>("pt_jet2", "p_{T}^{jet 2} [GeV]", 45, 0, 900);
@@ -635,6 +636,18 @@ void ZprimeSemiLeptonicHists::init(){
 
 
 void ZprimeSemiLeptonicHists::fill(const Event & event){
+  GenParticle zprime, top, antitop;
+  for(const GenParticle & gp : *event.genparticles){
+    if(gp.pdgId() == 6){
+      top = gp;
+    }
+    else if(gp.pdgId() == -6){
+      antitop = gp;
+    }
+    else if(gp.pdgId() == 6000047){
+      zprime = gp;
+    }
+  }
 
   double weight = event.weight;
 
@@ -1636,6 +1649,8 @@ if(is_zprime_reconstructed_chi2){
   NN_M_tt_weighted->Fill(Mass_tt,weight);
   NN_M_tt_notweighted->Fill(Mass_tt);
 }
+
+DeltaY->Fill(TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity()),weight); //-beren
 
 
 } //Method

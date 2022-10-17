@@ -32,7 +32,7 @@
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_37.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_38.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_39.root" Lumi="0.0"/>
-<In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_4.root" Lumi="0.0"/>
+<!--<In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_4.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_40.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_41.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_42.root" Lumi="0.0"/>
@@ -96,5 +96,5 @@
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_95.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_96.root" Lumi="0.0"/>
 <In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_97.root" Lumi="0.0"/>
-<In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_98.root" Lumi="0.0"/>
+<In FileName="/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.MC.TTToHadronic_UL18_98.root" Lumi="0.0"/> -->
 <!-- < NumberEntries="7771" Method=fast /> -->

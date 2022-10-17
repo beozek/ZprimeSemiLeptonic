@@ -124,6 +124,10 @@ protected:
   Event::Handle<float> h_ak4jet1_pt; Event::Handle<float> h_ak4jet1_eta;
   Event::Handle<float> h_ak8jet1_pt; Event::Handle<float> h_ak8jet1_eta;
   Event::Handle<float> h_Mttbar;
+  Event::Handle<float> h_DeltaY; //-beren
+  Event::Handle<float> h_DeltaPhi_thad_lepton; //-beren
+
+
 
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
 
@@ -393,6 +397,10 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_ak4jet1_eta = ctx.declare_event_output<float> ("ak4jet1_eta");
   h_ak8jet1_pt = ctx.declare_event_output<float> ("ak8jet1_pt");
   h_ak8jet1_eta = ctx.declare_event_output<float> ("ak8jet1_eta");
+  h_DeltaY = ctx.declare_event_output<float> ("DeltaY"); //-beren DeltaY
+  h_DeltaPhi_thad_lepton = ctx.declare_event_output<float> ("DeltaPhi_thad_lepton"); //-beren
+
+
 
   h_NPV = ctx.declare_event_output<int> ("NPV");
   h_weight = ctx.declare_event_output<float> ("weight");
@@ -410,7 +418,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_CHSMatchHists_afterBTag.reset(new ZprimeSemiLeptonicCHSMatchHists(ctx, "CHSMatch_afterBTag"));
 
   // Book histograms
-  vector<string> histogram_tags = {"Weights_Init", "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_TopTag_SF", "Weights_PS", "Corrections", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "MuEle1_LowPt", "MuEle1_HighPt", "MuEle1_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "BeforeBtagSF", "AfterBtagSF", "AfterCustomBtagSF", "Btags1", "TriggerEle_SF", "TTbarCandidate", "CorrectMatchDiscriminator", "Chi2Discriminator", "NNInputsBeforeReweight"};
+  vector<string> histogram_tags = {"Weights_Init", "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_TopTag_SF", "Weights_PS", "Corrections", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "MuEle1_LowPt", "MuEle1_HighPt", "MuEle1_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "BeforeBtagSF", "AfterBtagSF", "AfterCustomBtagSF", "Btags1", "TriggerEle_SF", "TTbarCandidate", "CorrectMatchDiscriminator", "Chi2Discriminator", "NNInputsBeforeReweight", "Chi2"};
   book_histograms(ctx, histogram_tags);
 
   lumihists_Weights_Init.reset(new LuminosityHists(ctx, "Lumi_Weights_Init"));
@@ -483,6 +491,10 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   event.set(h_ak8jet1_eta,-100);
   event.set(h_NPV,-100);
   event.set(h_weight,-100);
+  event.set(h_DeltaY,-1000000); //-beren
+  event.set(h_DeltaPhi_thad_lepton,-100); //-beren
+
+
 
 
   // Run top-tagging
@@ -494,37 +506,37 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     TopTaggerDeepAK8->process(event);
   }
 
-  fill_histograms(event, "Weights_Init");
+  // fill_histograms(event, "Weights_Init");
   lumihists_Weights_Init->fill(event);
 
   if(!HEM_selection->passes(event)){
     if(!isMC) return false;
     else event.weight = event.weight*(1-0.64774715284); // calculated following instructions ar https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis
   }
-  fill_histograms(event, "Weights_HEM");
+  // fill_histograms(event, "Weights_HEM");
 
   // pileup weight
   PUWeight_module->process(event);
   if(debug) cout << "PUWeight: ok" << endl;
-  fill_histograms(event, "Weights_PU");
+  // fill_histograms(event, "Weights_PU");
   lumihists_Weights_PU->fill(event);
 
   // lumi weight
   LumiWeight_module->process(event);
   if(debug) cout << "LumiWeight: ok" << endl;
-  fill_histograms(event, "Weights_Lumi");
+  // fill_histograms(event, "Weights_Lumi");
   lumihists_Weights_Lumi->fill(event);
 
   // top pt reweighting
   TopPtReweight_module->process(event);
   if(debug) cout << "TopPtReweight: ok" << endl;
-  fill_histograms(event, "Weights_TopPt");
+  // fill_histograms(event, "Weights_TopPt");
   lumihists_Weights_TopPt->fill(event);
 
   // MC scale
   MCScale_module->process(event);
   if(debug) cout << "MCScale: ok" << endl;
-  fill_histograms(event, "Weights_MCScale");
+  // fill_histograms(event, "Weights_MCScale");
   lumihists_Weights_MCScale->fill(event);
 
   // Prefiring weights
@@ -533,12 +545,12 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
      else if (Prefiring_direction == "up") event.weight *= event.prefiringWeightUp;
      else if (Prefiring_direction == "down") event.weight *= event.prefiringWeightDown;
   }
-  fill_histograms(event, "Weights_Prefiring");
+  // fill_histograms(event, "Weights_Prefiring");
 
   // Write PSWeights from genInfo to own branch in output tree
   ps_weights->process(event);
   if(debug) cout << "MCScale: ok" << endl;
-  fill_histograms(event, "Weights_PS");
+  // fill_histograms(event, "Weights_PS");
   lumihists_Weights_PS->fill(event);
 
   // HOTVR TopTag SFs
@@ -547,7 +559,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
   // Higher order corrections - EWK & QCD NLO
   Corrections_module->process(event);
-  fill_histograms(event, "Corrections");
+  // fill_histograms(event, "Corrections");
 
   //Clean muon collection with ID based on muon pT
   double muon_pt_high(55.);
@@ -576,16 +588,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
        if(!NMuon1_selection->passes(event)) return false;
        muon_cleaner_low->process(event);
        if(!NMuon1_selection->passes(event)) return false;
-       fill_histograms(event, "Muon1_LowPt");
+      //  fill_histograms(event, "Muon1_LowPt");
     }
     if(muon_is_high){
        if(!NMuon1_selection->passes(event)) return false;
        muon_cleaner_high->process(event);
        if(!NMuon1_selection->passes(event)) return false;
-       fill_histograms(event, "Muon1_HighPt");
+      //  fill_histograms(event, "Muon1_HighPt");
     }
     if( !(muon_is_high || muon_is_low) ) return false;
-    fill_histograms(event, "Muon1_Tot");
+    // fill_histograms(event, "Muon1_Tot");
   }
 
   //Clean ele collection with ID based on ele pT
@@ -613,16 +625,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
        if(!NEle1_selection->passes(event)) return false;
        electron_cleaner_low->process(event);
        if(!NEle1_selection->passes(event)) return false;
-       fill_histograms(event, "MuEle1_LowPt");
+      //  fill_histograms(event, "MuEle1_LowPt");
     }  
     if(ele_is_high){
        if(!NEle1_selection->passes(event)) return false;
        electron_cleaner_high->process(event);
        if(!NEle1_selection->passes(event)) return false;
-       fill_histograms(event, "MuEle1_HighPt");
+      //  fill_histograms(event, "MuEle1_HighPt");
     }  
     if( !(ele_is_high || ele_is_low) ) return false;
-    fill_histograms(event, "MuEle1_Tot");
+    // fill_histograms(event, "MuEle1_Tot");
   }
 
   // Select exactly 1 electron and 0 muons
@@ -632,16 +644,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
        if(!NEle1_selection->passes(event)) return false;
        electron_cleaner_low->process(event);
        if(!NEle1_selection->passes(event)) return false;
-       fill_histograms(event, "Ele1_LowPt");
+      //  fill_histograms(event, "Ele1_LowPt");
     }
     if(ele_is_high){
        if(!NEle1_selection->passes(event)) return false;
        electron_cleaner_high->process(event);
        if(!NEle1_selection->passes(event)) return false;
-       fill_histograms(event, "Ele1_HighPt");
+      //  fill_histograms(event, "Ele1_HighPt");
     }
     if( !(ele_is_high || ele_is_low)) return false;
-    fill_histograms(event, "Ele1_Tot");
+    // fill_histograms(event, "Ele1_Tot");
   }
 
 
@@ -664,7 +676,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(ele_is_high){
       sf_ele_id_high->process(event);
     }
-    fill_histograms(event, "IdEle_SF");
+    // fill_histograms(event, "IdEle_SF");
   }
 
 
@@ -676,7 +688,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(muon_is_high){
       sf_muon_iso_low_dummy->process(event);
     }
-    fill_histograms(event, "IsoMuon_SF");
+    // fill_histograms(event, "IsoMuon_SF");
   }
   if(isElectron){
     sf_muon_iso_low_dummy->process(event);
@@ -689,7 +701,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(muon_is_high){
       sf_muon_id_high->process(event);
     }
-    fill_histograms(event, "IdMuon_SF");
+    // fill_histograms(event, "IdMuon_SF");
   }
   if(isElectron){
     sf_muon_id_dummy->process(event);
@@ -704,12 +716,12 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   }
   if(isElectron){
     sf_ele_reco->process(event);
-    fill_histograms(event, "RecoEle_SF");
+    // fill_histograms(event, "RecoEle_SF");
   }
 
   // apply muon reco scale factors
   sf_muon_reco->process(event);
-  fill_histograms(event, "MuonReco_SF");
+  // fill_histograms(event, "MuonReco_SF");
 
   // Trigger MUON channel
   if(isMuon){
@@ -759,7 +771,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
         if(!(Trigger_mu_C_selection->passes(event) || Trigger_mu_E_selection->passes(event) || Trigger_mu_F_selection->passes(event))) return false;
       }
     }
-    fill_histograms(event, "TriggerMuon");
+    // fill_histograms(event, "TriggerMuon");
     lumihists_TriggerMuon->fill(event);
   }
 
@@ -821,7 +833,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
       }
     }
-    fill_histograms(event, "TriggerEle");
+    // fill_histograms(event, "TriggerEle");
     lumihists_TriggerEle->fill(event);
   }
 
@@ -834,7 +846,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     if(muon_is_high){
       sf_muon_trigger_high->process(event);
     }
-    fill_histograms(event, "TriggerMuon_SF");
+    // fill_histograms(event, "TriggerMuon_SF");
   }
   if(isElectron){
     sf_muon_trigger_dummy->process(event);
@@ -851,12 +863,12 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(isMuon && !isEleTriggerMeasurement && muon_is_high){
     if(!TwoDCut_selection->passes(event)) return false;
   }
-  fill_histograms(event, "TwoDCut_Muon");
+  // fill_histograms(event, "TwoDCut_Muon");
   lumihists_TwoDCut_Muon->fill(event);
   if(isElectron && ele_is_high){
     if(!TwoDCut_selection->passes(event)) return false;
   }
-  fill_histograms(event, "TwoDCut_Ele");
+  // fill_histograms(event, "TwoDCut_Ele");
   lumihists_TwoDCut_Ele->fill(event);
 
   if(isMuon && isEleTriggerMeasurement && (muon_is_high || ele_is_high)){
@@ -865,40 +877,40 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
   // match AK4 PUPPI to CHS
   AK4PuppiCHS_matching->process(event);
-  h_CHSMatchHists->fill(event);
+  // h_CHSMatchHists->fill(event);
 
   if(!Jet1_selection->passes(event)) return false;
   if(debug) cout << "Jet1_selection: ok" << endl;
-  fill_histograms(event, "Jet1");
+  // fill_histograms(event, "Jet1");
   lumihists_Jet1->fill(event);
 
   if(!Jet2_selection->passes(event)) return false;
   if(debug) cout << "Jet2_selection: is ok" << endl;
-  fill_histograms(event, "Jet2");
+  // fill_histograms(event, "Jet2");
   lumihists_Jet2->fill(event);
 
   // MET selection
   if(!met_sel->passes(event)) return false;
   if(debug) cout << "MET: ok" << endl;
-  fill_histograms(event, "MET");
+  // fill_histograms(event, "MET");
   lumihists_MET->fill(event);
   if(isMuon){
     if(!htlep_sel->passes(event)) return false;
-    fill_histograms(event, "HTlep");
+    // fill_histograms(event, "HTlep");
     lumihists_HTlep->fill(event);
     if(debug) cout << "HTlep: ok" << endl;
   }
 
   //Fill histograms before BTagging SF - used to extract Custom BTag SF in (NJets,HT)
   h_CHSMatchHists_beforeBTagSF->fill(event);
-  fill_histograms(event, "BeforeBtagSF");
+  // fill_histograms(event, "BeforeBtagSF");
 
   // btag shape sf (Ak4 chs jets)
   // new: using new modules, with PUPPI-CHS matching
   sf_btagging->process(event);
 
   h_CHSMatchHists_afterBTagSF->fill(event);
-  fill_histograms(event, "AfterBtagSF");
+  // fill_histograms(event, "AfterBtagSF");
 
   // apply custom SF to correct for BTag SF shape effects on NJets/HT
   if(isMC && isMuon){
@@ -924,26 +936,26 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
      event.weight *= custom_sf;
   }
   h_CHSMatchHists_after2DBTagSF->fill(event);
-  fill_histograms(event, "AfterCustomBtagSF");
+  // fill_histograms(event, "AfterCustomBtagSF");
 
   // b-tagging: >= 1 b-tag medium WP (on matched CHS jet)
   if(!AK4PuppiCHS_BTagging->passes(event)) return false;
-  fill_histograms(event, "Btags1");
+  // fill_histograms(event, "Btags1");
   h_CHSMatchHists_afterBTag->fill(event);
 
   //// apply ele trigger SF
   if(!isEleTriggerMeasurement) sf_ele_trigger->process(event);
-  fill_histograms(event, "TriggerEle_SF");
+  // fill_histograms(event, "TriggerEle_SF");
 
 
   // build all possible ttbar candidates
   CandidateBuilder->process(event);
-  fill_histograms(event, "TTbarCandidate");
+  // fill_histograms(event, "TTbarCandidate");
   if(debug) cout << "CandidateBuilder: ok" << endl;
 
   // matching to gen-level ttbar - to extract chi2 parameters
   CorrectMatchDiscriminatorZprime->process(event);
-  fill_histograms(event, "CorrectMatchDiscriminator");
+  // fill_histograms(event, "CorrectMatchDiscriminator");
   if(debug) cout << "CorrectMatchDiscriminatorZprime: ok" << endl;
   // if(sample.Contains("_blinded")){
   //   if(!BlindData_selection->passes(event)) return false;
@@ -957,6 +969,47 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   // Variables for NN
   Variables_module->process(event);
   fill_histograms(event, "NNInputsBeforeReweight");
+
+  if(!Chi2_selection->passes(event)) return false;
+
+  fill_histograms(event, "Chi2");
+
+
+
+
+
+//-beren
+if (isMuon){
+  ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+        if(event.muons->at(0).charge() == 1){
+          float DeltaY = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+          event.set(h_DeltaY,DeltaY);
+      
+        }
+        if(event.muons->at(0).charge() == -1){
+          float DeltaY = TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+          event.set(h_DeltaY,DeltaY);
+
+        }
+    }
+
+if (isElectron){
+  ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+        if(event.electrons->at(0).charge() == 1){
+          float DeltaY = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+          event.set(h_DeltaY,DeltaY);
+        }
+        if(event.electrons->at(0).charge() == -1){
+          float DeltaY =TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+          event.set(h_DeltaY,DeltaY);
+        }
+
+    }
+
+  //beren
+
+
+
 
   return true;
 }
