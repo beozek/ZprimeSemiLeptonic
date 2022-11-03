@@ -71,10 +71,8 @@ protected:
   bool debug;
 
   // Cleaners
-  std::unique_ptr<MuonCleaner>     muon_cleaner_low, muon_cleaner_high;
+  std::unique_ptr<MuonCleaner> muon_cleaner_low, muon_cleaner_high;
   std::unique_ptr<ElectronCleaner> electron_cleaner_low, electron_cleaner_high;
-  std::unique_ptr<TopJetCleaner>   topjet_puppi_IDcleaner, topjet_puppi_cleaner;
-
 
   // scale factors
   unique_ptr<AnalysisModule> sf_muon_iso_low, sf_muon_id_low, sf_muon_id_high, sf_muon_trigger_low, sf_muon_trigger_high;
@@ -93,10 +91,6 @@ protected:
   unique_ptr<AnalysisModule> hadronic_top;
   unique_ptr<AnalysisModule> sf_toptag;
   unique_ptr<DeepAK8TopTagger> TopTaggerDeepAK8;
-
-  //  W tagging -beren
-  unique_ptr<DeepAK8WTagger> WTaggerDeepAK8; //-beren wtag
-  unique_ptr<AnalysisModule> sf_wtag; //-beren wtag
 
   // Mass reconstruction
   unique_ptr<ZprimeCandidateBuilder> CandidateBuilder;
@@ -127,19 +121,13 @@ protected:
   Event::Handle<float> h_ak4jet1_pt; Event::Handle<float> h_ak4jet1_eta;
   Event::Handle<float> h_ak8jet1_pt; Event::Handle<float> h_ak8jet1_eta;
   Event::Handle<float> h_Mttbar;
-  uhh2::Event::Handle<std::vector<TopJet> > h_DeepAK8TopTags_;
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags_;
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr_;
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_;
-  
+  Event::Handle<float> h_DeltaY; //-beren
 
 
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
-  // uhh2::Event::Handle<std::vector<TopJet>> h_AK8TopTags; //-beren wtag
-  //  uhh2::Event::Handle< std::vector<const TopJet*>  h_AK8WTags; //-beren wtag
 
   // Lumi hists
-  std::unique_ptr<Hists> lumihists_Weights_Init, lumihists_Weights_PU, lumihists_Weights_Lumi, lumihists_Weights_TopPt, lumihists_Weights_MCScale, lumihists_Muon1_LowPt, lumihists_Muon1_HighPt, lumihists_Ele1_LowPt, lumihists_Ele1_HighPt, lumihists_TriggerMuon, lumihists_TriggerEle, lumihists_TwoDCut_Muon, lumihists_TwoDCut_Ele, lumihists_Jet1, lumihists_Jet2, lumihists_MET, lumihists_HTlep, lumihists_Chi2, lumihists_Toptagger_hist, lumihists_Wtagger_hist;
+  std::unique_ptr<Hists> lumihists_Weights_Init, lumihists_Weights_PU, lumihists_Weights_Lumi, lumihists_Weights_TopPt, lumihists_Weights_MCScale, lumihists_Muon1_LowPt, lumihists_Muon1_HighPt, lumihists_Ele1_LowPt, lumihists_Ele1_HighPt, lumihists_TriggerMuon, lumihists_TriggerEle, lumihists_TwoDCut_Muon, lumihists_TwoDCut_Ele, lumihists_Jet1, lumihists_Jet2, lumihists_MET, lumihists_HTlep, lumihists_Chi2;
 
   // PUPPI CHS match module
   std::unique_ptr<PuppiCHS_matching> AK4PuppiCHS_matching;
@@ -149,13 +137,6 @@ protected:
   std::unique_ptr<Hists> h_CHSMatchHists;
   std::unique_ptr<Hists> h_CHSMatchHists_afterBTag;
   std::unique_ptr<Hists> h_CHSMatchHists_afterBTagSF;
-
-
-  std::vector<TopJet> toptags;
-  vector<const TopJet*> toptags_ptr;
-  std::vector<TopJet> wtags;
-  vector<const TopJet*> wtags_ptr;
-
 
 
   // Configuration
@@ -194,7 +175,7 @@ void ZprimeAnalysisModule::fill_histograms(uhh2::Event& event, string tag){
 
 ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
-  debug = false;
+  debug = true;
 
   for(auto & kv : ctx.get_all()){
     cout << " " << kv.first << " = " << kv.second << endl;
@@ -248,7 +229,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   NEle1_selection.reset(new NElectronSelection(1, 1));
 
   // Important selection values
-  double jet1_pt(50.); //baseline l+jet selection
+  double jet1_pt(50.);
   double jet2_pt(30.);
   double chi2_max(30.);
   // double mtt_blind(3000.);
@@ -256,6 +237,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   string trigger_ele_A, trigger_ele_B;
   string trigger_ph_A;
   double MET_cut, HT_lep_cut;
+  
   isMuon = false; isElectron = false;
   if(ctx.get("channel") == "muon") isMuon = true;
   if(ctx.get("channel") == "electron") isElectron = true;
@@ -269,7 +251,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
       trigger_mu_A = "HLT_IsoMu24_v*";
     }
     trigger_mu_B = "HLT_IsoTkMu24_v*";
-    trigger_mu_C = "HLT_Mu50_v*"; //event passes the unpresclaed single-muon HLT path. selection for baseline l+jets
+    trigger_mu_C = "HLT_Mu50_v*";
     trigger_mu_D = "HLT_TkMu50_v*";
     trigger_mu_E = "HLT_OldMu100_v*";
     trigger_mu_F = "HLT_TkMu100_v*";
@@ -299,14 +281,14 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   }
 
 
-  double TwoD_dr = 0.4, TwoD_ptrel = 25.; //Lepton 2D cut, one single muon selection
+  double TwoD_dr = 0.4, TwoD_ptrel = 25.;
 
   const TopJetId toptagID = AndId<TopJet>(HOTVRTopTag(0.8, 140.0, 220.0, 50.0), Tau32Groomed(0.56));
 
   Sys_PU = ctx.get("Sys_PU");
   Prefiring_direction = ctx.get("Sys_prefiring");
-  Sys_TopPt_a = ctx.get("Systematic_TopPt_a");
-  Sys_TopPt_b = ctx.get("Systematic_TopPt_b");
+  // Sys_TopPt_a = ctx.get("Systematic_TopPt_a");
+  // Sys_TopPt_b = ctx.get("Systematic_TopPt_b");
 
   BTag::algo btag_algo = BTag::DEEPJET;
   BTag::wp btag_wp = BTag::WP_MEDIUM;
@@ -318,14 +300,14 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   // Modules
   LumiWeight_module.reset(new MCLumiWeight(ctx));
   PUWeight_module.reset(new MCPileupReweight(ctx, Sys_PU));
-  TopPtReweight_module.reset(new TopPtReweighting(ctx, a_toppt, b_toppt, Sys_TopPt_a, Sys_TopPt_b, ""));
+  // TopPtReweight_module.reset(new TopPtReweighting(ctx, a_toppt, b_toppt, Sys_TopPt_a, Sys_TopPt_b, ""));
   MCScale_module.reset(new MCScaleVariation(ctx));
   hadronic_top.reset(new HadronicTop(ctx));
   // sf_toptag.reset(new HOTVRScaleFactor(ctx, toptagID, ctx.get("Sys_TopTag", "nominal"), "HadronicTop", "TopTagSF", "HOTVRTopTagSFs"));
   Corrections_module.reset(new NLOCorrections(ctx));
 
   // b-tagging SFs
-  //  sf_btagging.reset(new MCBTagDiscriminantReweighting(ctx, BTag::algo::DEEPJET, "CHS_matched"));
+   sf_btagging.reset(new MCBTagDiscriminantReweighting(ctx, BTag::algo::DEEPJET, "CHS_matched"));
 
   // set lepton scale factors: see UHH2/common/include/LeptonScaleFactors.h
   sf_muon_iso_low.reset(new uhh2::MuonIsoScaleFactors(ctx, Muon::Selector::PFIsoTight, Muon::Selector::CutBasedIdTight, true));
@@ -338,16 +320,6 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   sf_ele_id_high.reset(new uhh2::ElectronIdScaleFactors(ctx, Electron::tag::mvaEleID_Fall17_noIso_V2_wp80, true));
   sf_ele_reco.reset(new uhh2::ElectronRecoScaleFactors(ctx, false, true));
 
-  // dummies (needed to aviod set value errors)
-  // sf_muon_iso_low_dummy.reset(new uhh2::MuonIsoScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, boost::none, true));
-  // sf_muon_id_low_dummy.reset(new uhh2::MuonIdScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
-  // sf_muon_id_high_dummy.reset(new uhh2::MuonIdScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
-  // sf_muon_trigger_low_dummy.reset(new uhh2::MuonTriggerScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, boost::none, true));
-  // sf_muon_trigger_high_dummy.reset(new uhh2::MuonTriggerScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, boost::none, true));
-  // sf_ele_id_low_dummy.reset(new uhh2::ElectronIdScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
-  // sf_ele_id_high_dummy.reset(new uhh2::ElectronIdScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
-  // sf_ele_reco_dummy.reset(new uhh2::ElectronRecoScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
-  
   sf_muon_iso_low_dummy.reset(new uhh2::MuonIsoScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, boost::none, true));
   sf_muon_id_dummy.reset(new uhh2::MuonIdScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
   sf_muon_trigger_dummy.reset(new uhh2::MuonTriggerScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, boost::none, true));
@@ -368,13 +340,12 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
 
   TwoDCut_selection.reset(new TwoDCut(TwoD_dr, TwoD_ptrel));
-  Jet1_selection.reset(new NJetSelection(1, -1, JetId(PtEtaCut(jet1_pt, 2.4)))); //eta was 2.5, but changed to 2.4 due to baseline l+jets selecton requirements
-  Jet2_selection.reset(new NJetSelection(2, -1, JetId(PtEtaCut(jet2_pt, 2.4)))); //eta was 2.5, but changed to 2.4 due to baseline l+jets selecton requirements
+  Jet1_selection.reset(new NJetSelection(1, -1, JetId(PtEtaCut(jet1_pt, 2.5))));
+  Jet2_selection.reset(new NJetSelection(2, -1, JetId(PtEtaCut(jet2_pt, 2.5))));
   met_sel.reset(new METCut  (MET_cut   , uhh2::infinity));
   htlep_sel.reset(new HTlepCut(HT_lep_cut, uhh2::infinity));
 
-  // Chi2_selection.reset(new Chi2Cut(ctx, 0., chi2_max)); //this was the original line, changed with the below line for mistag selection
-  Chi2_selection.reset(new Chi2Cut(ctx, chi2_max, -1)); // new line for selection requirement of mistag
+  Chi2_selection.reset(new Chi2Cut(ctx, 0., chi2_max));
   TTbarMatchable_selection.reset(new TTbarSemiLepMatchableSelection());
   Chi2CandidateMatched_selection.reset(new Chi2CandidateMatchedSelection(ctx));
   ZprimeTopTag_selection.reset(new ZprimeTopTagSelection(ctx));
@@ -383,15 +354,10 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
   Variables_module.reset(new Variables_NN(ctx, mode)); // variables for NN
 
-  // Cleaning: Jets
-  topjet_puppi_cleaner.reset(new TopJetCleaner(ctx, TopJetId(PtEtaCut(400., 2.4)), "toppuppijets")); //this line was taken from preselection module
-  
 
   // Taggers
   TopTaggerHOTVR.reset(new HOTVRTopTagger(ctx));
   TopTaggerDeepAK8.reset(new DeepAK8TopTagger(ctx));
-  WTaggerDeepAK8.reset(new DeepAK8WTagger(ctx)); //-beren wtag
-
 
   // Zprime candidate builder
   CandidateBuilder.reset(new ZprimeCandidateBuilder(ctx, mode));
@@ -402,13 +368,9 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   CorrectMatchDiscriminatorZprime.reset(new ZprimeCorrectMatchDiscriminator(ctx));
   h_is_zprime_reconstructed_correctmatch = ctx.get_handle<bool>("is_zprime_reconstructed_correctmatch");
   h_BestZprimeCandidateChi2 = ctx.get_handle<ZprimeCandidate*>("ZprimeCandidateBestChi2");
-  // h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags"); //-beren wtag
-  // h_AK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags"); //-beren wtag
-  h_DeepAK8TopTags_ = ctx.get_handle<std::vector<TopJet> > ("DeepAK8TopTags");
-  h_DeepAK8TopTagsPtr_ = ctx.get_handle< std::vector<const TopJet*>  >("DeepAK8TopTagsPtr");
-  h_DeepAK8WTags_ = ctx.get_handle< std::vector<TopJet>  >("DeepAK8WTags");
-  h_DeepAK8WTagsPtr_ = ctx.get_handle< std::vector<const TopJet*>  >("DeepAK8WTagsPtr");
-
+  
+  
+  h_DeltaY = ctx.declare_event_output<float> ("DeltaY"); //-beren DeltaY
   h_chi2 = ctx.declare_event_output<float> ("rec_chi2");
   h_MET = ctx.declare_event_output<float> ("met_pt");
   h_Mttbar = ctx.declare_event_output<float> ("Mttbar");
@@ -433,14 +395,12 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_CHSMatchHists_afterBTagSF.reset(new ZprimeSemiLeptonicCHSMatchHists(ctx, "CHSMatch_afterBTagSF"));
 
   // Book histograms
-  // vector<string> histogram_tags = {"Weights_Init", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_TopTag_SF", "Corrections", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "Btags1", "Btags1_SF", "NNInputsBeforeReweight", "MatchableBeforeChi2Cut", "NotMatchableBeforeChi2Cut", "CorrectMatchBeforeChi2Cut", "NotCorrectMatchBeforeChi2Cut", "Chi2", "Matchable", "NotMatchable", "CorrectMatch", "NotCorrectMatch", "TopTagReconstruction", "NotTopTagReconstruction", "Toptagger_hist", "Wtagger_hist"};
-  vector<string> histogram_tags = {"Chi2", "Toptagger_hist",  "Wtagger_hist"};
+  // vector<string> histogram_tags = {"Weights_Init", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_TopTag_SF", "Corrections", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "Btags1", "Btags1_SF", "NNInputsBeforeReweight", "MatchableBeforeChi2Cut", "NotMatchableBeforeChi2Cut", "CorrectMatchBeforeChi2Cut", "NotCorrectMatchBeforeChi2Cut", "Chi2", "Matchable", "NotMatchable", "CorrectMatch", "NotCorrectMatch", "TopTagReconstruction", "NotTopTagReconstruction"};
+  vector<string> histogram_tags = {"Btags1_SF","Chi2"};
 
   book_histograms(ctx, histogram_tags);
 
   lumihists_Weights_Init.reset(new LuminosityHists(ctx, "Lumi_Weights_Init"));
-  lumihists_Toptagger_hist.reset(new LuminosityHists(ctx, "Lumi_Toptagger_hist"));//-beren
-  lumihists_Wtagger_hist.reset(new LuminosityHists(ctx, "Lumi_Wtagger_hist")); //-beren
   lumihists_Weights_PU.reset(new LuminosityHists(ctx, "Lumi_Weights_PU"));
   lumihists_Weights_Lumi.reset(new LuminosityHists(ctx, "Lumi_Weights_Lumi"));
   lumihists_Weights_TopPt.reset(new LuminosityHists(ctx, "Lumi_Weights_TopPt"));
@@ -487,37 +447,29 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   event.set(h_ak8jet1_eta,-100);
   event.set(h_NPV,-100);
   event.set(h_weight,-100);
-  event.set(h_DeepAK8TopTags_, toptags);
-  event.set(h_DeepAK8WTags_, wtags);
-  event.set(h_DeepAK8WTagsPtr_, wtags_ptr);
-  event.set(h_DeepAK8TopTagsPtr_, toptags_ptr);
+  event.set(h_DeltaY,-100); //-beren
 
 
-  // if(!HEM_selection->passes(event)){
-  //   if(!isMC) return false;
-  //   else event.weight = event.weight*(1-0.64774715284); // calculated following instructions ar https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis
-  // }
+  
     
-    topjet_puppi_cleaner->process(event); //this line was taken from preselection module
-
   // Run top-tagging
-  // if(ishotvr){
-  //   TopTaggerHOTVR->process(event);
-  //   hadronic_top->process(event);
-  // }
-  // else if(isdeepAK8){
-  //   TopTaggerDeepAK8->process(event);
-  //   //  if(debug)cout << "toptagger" << endl;
-  //   // fill_histograms(event,"Toptagger_hist");
-      
-  //   WTaggerDeepAK8->process(event);
-  //   // if(debug) cout << "wtagger" << endl;
-  //   // fill_histograms(event,"Wtagger_hist");
-  // }
+  if(ishotvr){
+    TopTaggerHOTVR->process(event);
+    hadronic_top->process(event);
+  }
+  else if(isdeepAK8){
+    TopTaggerDeepAK8->process(event);
+      }
 
   // fill_histograms(event, "Weights_Init");
   // lumihists_Weights_Init->fill(event);
 
+    if(!HEM_selection->passes(event)){
+    if(!isMC) return false;
+    else event.weight = event.weight*(1-0.64774715284); // calculated following instructions ar https://twiki.cern.ch/twiki/bin/view/CMS/PdmV2018Analysis
+  }
+  // fill_histograms(event, "Weights_HEM");
+  
   // pileup weight
   PUWeight_module->process(event);
   if(debug) cout << "PUWeight: ok" << endl;
@@ -531,7 +483,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   // lumihists_Weights_Lumi->fill(event);
 
   // top pt reweighting
-  TopPtReweight_module->process(event);
+  // TopPtReweight_module->process(event);
   // fill_histograms(event, "Weights_TopPt");
   // lumihists_Weights_TopPt->fill(event);
 
@@ -565,8 +517,9 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     vector<Muon>* muons = event.muons;
     for(unsigned int i=0; i<muons->size(); i++){
       if(event.muons->at(i).pt()<=muon_pt_high){
-        muon_is_low = true; //-beren it was true
-      }else{
+        muon_is_low = true;
+      }
+      else{
         muon_is_high = true; 
       }
     }
@@ -675,8 +628,6 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     // fill_histograms(event, "IdMuon_SF");
   }
   if(isElectron){
-    // sf_muon_id_low_dummy->process(event);
-    // sf_muon_id_high_dummy->process(event);
      sf_muon_id_dummy->process(event);
   }
 
@@ -817,10 +768,6 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     // fill_histograms(event, "TriggerMuon_SF");
   }
   if(isElectron){
-    // TODO: implement electron trigger SFs (low + high pt)
-    // // fill_histograms(event, "TriggerEle");
-    // sf_muon_trigger_low_dummy->process(event);
-    // sf_muon_trigger_high_dummy->process(event);
       sf_muon_trigger_dummy->process(event);
   }
 
@@ -867,15 +814,15 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   }
 
   // b-tagging: >= 1 b-tag medium WP (on matched CHS jet)
-  // if(!AK4PuppiCHS_BTagging->passes(event)) return false  //this line was the original one, changed it with the below line due to veto AK4 b-tagged jet requirement of mistag selection
-  if(AK4PuppiCHS_BTagging->passes(event)) return false; 
+  if(!AK4PuppiCHS_BTagging->passes(event)) return false;
   // fill_histograms(event, "Btags1");
-  // h_CHSMatchHists_afterBTag->fill(event);
+  h_CHSMatchHists_afterBTag->fill(event);
 
   // btag shape sf (Ak4 chs jets)
   // new: using new modules, with PUPPI-CHS matching
-  // sf_btagging->process(event);
-  // h_CHSMatchHists_afterBTagSF->fill(event);
+  sf_btagging->process(event);
+
+  h_CHSMatchHists_afterBTagSF->fill(event);
   // fill_histograms(event, "Btags1_SF");
 
 
@@ -883,7 +830,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(debug) cout << "CandidateBuilder: ok" << endl;
   Chi2DiscriminatorZprime->process(event);
   if(debug) cout << "Chi2DiscriminatorZprime: ok" << endl;
-  // CorrectMatchDiscriminatorZprime->process(event);
+  CorrectMatchDiscriminatorZprime->process(event);
   // if(debug) cout << "CorrectMatchDiscriminatorZprime: ok" << endl;
 
   // Variables for NN
@@ -898,26 +845,42 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   //  else  fill_histograms(event, "NotCorrectMatchBeforeChi2Cut");
   //  if(debug) cout<<"Chi2CandidateMatched_selection is ok"<<endl;
   
+   
+   //-beren
+// if (isMuon){
+//   ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+//         if(event.muons->at(0).charge() == 1){
+//           float DeltaY = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+//           event.set(h_DeltaY,DeltaY);
+      
+//         }
+//         if(event.muons->at(0).charge() == -1){
+//           float DeltaY = TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+//           event.set(h_DeltaY,DeltaY);
+
+//         }
+//     }
+
+// if (isElectron){
+//   ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+//         if(event.electrons->at(0).charge() == 1){
+//           float DeltaY = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+//           event.set(h_DeltaY,DeltaY);
+//         }
+//         if(event.electrons->at(0).charge() == -1){
+//           float DeltaY =TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+//           event.set(h_DeltaY,DeltaY);
+//         }
+
+//     }
+
+  //beren
+   
    if(!Chi2_selection->passes(event)) return false;
    fill_histograms(event, "Chi2");
    lumihists_Chi2->fill(event);
   
    if(debug) cout<<"Chi2_selection is ok"<<endl;
-
-     // Run top-tagging
-  if(ishotvr){
-    TopTaggerHOTVR->process(event);
-    hadronic_top->process(event);
-  }
-  else if(isdeepAK8){
-    // TopTaggerDeepAK8->process(event);
-    //  if(debug)cout << "toptagger" << endl;
-    // fill_histograms(event,"Toptagger_hist");
-      
-    WTaggerDeepAK8->process(event);
-    if(debug) cout << "wtagger" << endl;
-    fill_histograms(event,"Wtagger_hist");
-  }
    
   ///
   //

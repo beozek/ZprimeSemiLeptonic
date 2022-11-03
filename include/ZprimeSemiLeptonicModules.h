@@ -27,13 +27,9 @@ public:
 
 private:
   uhh2::Event::Handle< std::vector<ZprimeCandidate> > h_ZprimeCandidates_;
-  // uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
-  // uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8TopTagsPtr;
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags; //-beren wtag
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr; //-beren wtag
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags; //-beren wtag
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr; //-beren wtag
-
+  uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
+  uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8TopTagsPtr;
+  
   float minDR_;
   TString mode_;
 
@@ -88,22 +84,7 @@ private:
   uhh2::Event::Handle< std::vector<TopJet> > h_AK8PuppiTopTags_;
   uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8PuppiTopTagsPtr_;
 };
-//-beren wtag
-class AK8PuppiWTagger : public uhh2::AnalysisModule {
 
-public:
-  explicit AK8PuppiWTagger(uhh2::Context&, int min_num_daughters = 2, float max_dR = 1.2, float min_mass = 65., float max_mass = 105., float max_tau21 = 0.45);
-  virtual bool process(uhh2::Event&) override;
-
-private:
-  int min_num_daughters_ = 2;
-  float max_dR_;
-  float min_mass_;
-  float max_mass_;
-  float max_tau21_;
-  uhh2::Event::Handle< std::vector<TopJet> > h_AK8PuppiWTags_;
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8PuppiWTagsPtr_;
-};
 
 
 class HOTVRTopTagger : public uhh2::AnalysisModule {
@@ -135,23 +116,6 @@ private:
   uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags_;
   uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr_;
 };
-
-//-beren wtag
-class DeepAK8WTagger : public uhh2::AnalysisModule {
-  
-public:
-  explicit DeepAK8WTagger(uhh2::Context&, float min_mSD = 65., float max_mSD = 105., float max_score = 0.806, float pt_min = 400); // WP from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3379280/DeepAK8_Top_W_SFs_V2.pdf
-  virtual bool process(uhh2::Event&) override;
-
-private:
-  float min_mSD_;
-  float max_mSD_;
-  float max_score_;
-  float pt_min_;
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags_;
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8WTagsPtr_;
-};
-
 
 
 

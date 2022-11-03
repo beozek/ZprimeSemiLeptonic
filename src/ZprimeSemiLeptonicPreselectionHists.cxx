@@ -45,6 +45,25 @@ void ZprimeSemiLeptonicPreselectionHists::init(){
   m_jet2            = book<TH1F>("m_jet2", "m^{jet 2}", 50, 0, 500);
   m_jet3            = book<TH1F>("m_jet3", "m^{jet 3}", 50, 0, 500);
 
+//-beren -new variables for unfolding study
+  DeltaY            = book<TH1F>("DeltaY", "#Delta y",2,-2.,2.); 
+  DeltaY_N          = book<TH1F>("DeltaY_N", "#Delta y",1,-2.,0); 
+  DeltaY_P          = book<TH1F>("DeltaY_P", "#Delta y",1,0.,2.); 
+  M_ttbar           = book<TH1F>("M_ttbar","M_{t#bar{t}}^{gen} [GEV]",280,0,7000);
+  M_ttbar_750Inf    = book<TH1F>("M_ttbar", "M_{t#bar{t}750Inf}^{gen} [GeV]", 280, 750, 7000);
+  M_ttbar_750_900   = book<TH1F>("M_ttbar", "M_{t#bar{t}750-900}^{gen} [GeV]", 280, 750, 900);
+  M_ttbar_900Inf    = book<TH1F>("M_ttbar", "M_{t#bar{t}900Inf}^{gen} [GeV]", 280, 900, 7000);
+  M_top             = book<TH1F>("M_top", "M_{t}^{gen} [GeV]", 30, 0, 300);
+  M_antitop         = book<TH1F>("M_antitop", "M_{#bar{t}}^{gen} [GeV]", 30, 0, 300);
+  Pt_ttbar          = book<TH1F>("Pt_ttbar", "p_{T}^{t#bar{t}, gen} [GeV]", 100, 0, 1000);
+  Pt_top            = book<TH1F>("Pt_top", "p_{T}^{t, gen} [GeV]", 300, 0, 3000);
+  Pt_antitop        = book<TH1F>("Pt_antitop", "p_{T}^{#bar{t}, gen} [GeV]", 300, 0, 3000);
+  Eta_ttbar         = book<TH1F>("Eta_ttbar", "#eta^{T}^{t#bar{t}, gen} [GeV]", 50, -3, 3);
+  Eta_top           = book<TH1F>("Eta_top", "#eta^{t, gen} [GeV]", 50, -3, 3);
+  Eta_antitop       = book<TH1F>("Eta_antitop", "#eta^{#bar{t}, gen} [GeV]", 50, -3, 3);
+  //-beren
+
+
   // leptons
   N_mu              = book<TH1F>("N_mu", "N^{#mu}", 11, -0.5, 10.5);
   pt_mu             = book<TH1F>("pt_mu", "p_{T}^{#mu} [GeV]", 50, 0, 1500);
@@ -245,6 +264,44 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
 
   double weight = event.weight;
 
+
+//-beren Delta Y
+
+  GenParticle top, antitop;
+   for(const GenParticle & gp : *event.genparticles){
+     if(gp.pdgId() == 6){
+       top = gp;
+     }
+     else if(gp.pdgId() == -6){
+       antitop = gp;
+     }
+   }
+  
+    // ?? DeltaY = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
+    // for(unsigned int i = 0; i<math.length(); i++){
+    //   if (DeltaY[i]<0){
+    //     DeltaY_N->Fill(DeltaY,weight);
+    //   }
+    //   else if(DeltaY[i]>0){
+    //     DeltaY_P->Fill(DeltaY,weight);
+    //   }
+    // }
+
+  DeltaY->Fill(TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity()),weight);
+
+    double_t Delta_Y = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
+      if (Delta_Y<0){
+        DeltaY_N->Fill(Delta_Y,weight);
+      }
+      else if(Delta_Y>0){
+        DeltaY_P->Fill(Delta_Y,weight);
+      }
+  
+
+
+
+
+ /// -beren Delta Y
 
 
   /*
@@ -644,10 +701,33 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
   S23->Fill(s23, weight);
   S33->Fill(s33, weight);
 
-
   sum_event_weights->Fill(1., weight);
 
 
+//-beren new variables for unfolding study
+
+float m_ttbar = inv_mass(top.v4() + antitop.v4());
+  M_ttbar->Fill(m_ttbar, weight);
+  M_top->Fill(inv_mass(top.v4()), weight);
+  M_antitop->Fill(inv_mass(antitop.v4()), weight);
+  Pt_ttbar->Fill((top.v4() + antitop.v4()).Pt());
+  Pt_top->Fill(top.pt(), weight);
+  Pt_antitop->Fill(antitop.pt(), weight);
+  Eta_ttbar->Fill((top.v4() + antitop.v4()).Eta());
+  Eta_top->Fill(top.eta(), weight);
+  Eta_antitop->Fill(antitop.eta(), weight);
+
+  if (m_ttbar>750){
+    M_ttbar_750Inf->Fill(m_ttbar,weight);
+  }
+  else if(m_ttbar>900){
+    M_ttbar_900Inf->Fill(m_ttbar,weight);
+  }
+  else if(m_ttbar>750 && m_ttbar<900){
+    M_ttbar_750_900->Fill(m_ttbar,weight);
+  }
+
+///-beren
 
 } //Method
 

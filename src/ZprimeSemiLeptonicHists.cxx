@@ -25,10 +25,7 @@ Hists(ctx, dirname) {
   ishotvr = (ctx.get("is_hotvr") == "true");
   isdeepAK8 = (ctx.get("is_deepAK8") == "true");
   if(isdeepAK8){
-  // h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
-  h_DeepAK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
-  h_DeepAK8WTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8WTags");
-
+  h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
   }else if(ishotvr){
   h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
   }
@@ -42,6 +39,24 @@ Hists(ctx, dirname) {
 }
 
 void ZprimeSemiLeptonicHists::init(){
+
+  //-beren -generator
+  DeltaY            = book<TH1F>("DeltaY", "#Delta y",2,-2.,2.); 
+  DeltaY_N          = book<TH1F>("DeltaY_N", "#Delta y",1,-2.,0); 
+  DeltaY_P          = book<TH1F>("DeltaY_P", "#Delta y",1,0.,2.); 
+  M_ttbar           = book<TH1F>("M_ttbar","M_{t#bar{t}}^{gen} [GEV]",280,0,7000);
+  M_ttbar_750Inf    = book<TH1F>("M_ttbar", "M_{t#bar{t}750Inf}^{gen} [GeV]", 280, 750, 7000);
+  M_ttbar_750_900   = book<TH1F>("M_ttbar", "M_{t#bar{t}750-900}^{gen} [GeV]", 280, 750, 900);
+  M_ttbar_900Inf    = book<TH1F>("M_ttbar", "M_{t#bar{t}900Inf}^{gen} [GeV]", 280, 900, 7000);
+  M_top             = book<TH1F>("M_top", "M_{t}^{gen} [GeV]", 30, 0, 300);
+  M_antitop         = book<TH1F>("M_antitop", "M_{#bar{t}}^{gen} [GeV]", 30, 0, 300);
+  Pt_ttbar          = book<TH1F>("Pt_ttbar", "p_{T}^{t#bar{t}, gen} [GeV]", 100, 0, 1000);
+  Pt_top            = book<TH1F>("Pt_top", "p_{T}^{t, gen} [GeV]", 300, 0, 3000);
+  Pt_antitop        = book<TH1F>("Pt_antitop", "p_{T}^{#bar{t}, gen} [GeV]", 300, 0, 3000);
+  Eta_ttbar         = book<TH1F>("Eta_ttbar", "#eta^{T}^{t#bar{t}, gen} [GeV]", 50, -3, 3);
+  Eta_top           = book<TH1F>("Eta_top", "#eta^{t, gen} [GeV]", 50, -3, 3);
+  Eta_antitop       = book<TH1F>("Eta_antitop", "#eta^{#bar{t}, gen} [GeV]", 50, -3, 3);
+  //-beren
 
   // jets
   N_jets   = book<TH1F>("N_jets", "N_{jets}", 21, -0.5, 20.5);
@@ -63,9 +78,9 @@ void ZprimeSemiLeptonicHists::init(){
   m_jet3   = book<TH1F>("m_jet3", "m^{jet 3}", 50, 0, 500);
 
   deepjetbscore_jet    = book<TH1F>("deepjetbscore_jet", "DeepJet b-tag score all AK4 jets", 20, 0, 1);
-  deepjetbscore_jet1   = book<TH1F>("deepjetbscore_jet1", "DeppJet b-tag score AK4 jet 1}", 20, 0, 1);
-  deepjetbscore_jet2   = book<TH1F>("deepjetbscore_jet2", "DeepJet b-tag score AK4 jet 2}", 20, 0, 1);
-  deepjetbscore_jet3   = book<TH1F>("deepjetbscore_jet3", "DeepJet b-tag score AK4 jet 3}", 20, 0, 1);
+    deepjetbscore_jet1   = book<TH1F>("deepjetbscore_jet1", "DeepJet b-tag score AK4 jet 1", 20, 0, 1);
+  deepjetbscore_jet2   = book<TH1F>("deepjetbscore_jet2", "DeepJet b-tag score AK4 jet 2", 20, 0, 1);
+  deepjetbscore_jet3   = book<TH1F>("deepjetbscore_jet3", "DeepJet b-tag score AK4 jet 3", 20, 0, 1);
   N_bJetsDeepJet_loose = book<TH1F>("N_bJetsDeepJet_loose", "N_{jets}^{DeepJet loose}", 11, -0.5, 10.5);
   N_bJetsDeepJet_med   = book<TH1F>("N_bJetsDeepJet_med", "N_{jets}^{DeepJet medium}", 11, -0.5, 10.5);
   N_bJetsDeepJet_tight = book<TH1F>("N_bJetsDeepJet_tight", "N_{jets}^{DeepJet tight}", 11, -0.5, 10.5);
@@ -104,6 +119,15 @@ void ZprimeSemiLeptonicHists::init(){
   reliso_ele_rebin  = book<TH1F>("reliso_ele_rebin", "e rel. Iso", 400, 0, 5);
   reliso_ele1_rebin = book<TH1F>("reliso_ele1_rebin", "e 1 rel. Iso", 400, 0, 5);
   reliso_ele2_rebin = book<TH1F>("reliso_ele2_rebin", "e 2 rel. Iso", 400, 0, 5);
+  pt_ele_lowpt      = book<TH1F>("pt_ele_lowpt", "p_{T}^{e} [GeV] p_{T}<120 GeV", 180, 0, 900);
+  pt_ele_midpt      = book<TH1F>("pt_ele_midpt", "p_{T}^{e} [GeV] 120<p_{T}<200 GeV", 180, 0, 900);
+  pt_ele_highpt     = book<TH1F>("pt_ele_highpt", "p_{T}^{e} [GeV] p_{T}>200 GeV", 180, 0, 900);
+  eta_ele_lowpt     = book<TH1F>("eta_ele_lowpt", "#eta^{e} p_{T}<120 GeV", 50, -2.5, 2.5);
+  eta_ele_midpt     = book<TH1F>("eta_ele_midpt", "#eta^{e} 120<p_{T}<200 GeV", 50, -2.5, 2.5);
+  eta_ele_highpt    = book<TH1F>("eta_ele_highpt", "#eta^{e} p_{T}>200 GeV", 50, -2.5, 2.5);
+  phi_ele_lowpt     = book<TH1F>("phi_ele_lowpt", "#phi^{e} p_{T}<120 GeV", 35, -3.5, 3.5);
+  phi_ele_midpt     = book<TH1F>("phi_ele_midpt", "#phi^{e} 120<p_{T}<200 GeV", 35, -3.5, 3.5);
+  phi_ele_highpt    = book<TH1F>("phi_ele_highpt", "#phi^{e} p_{T}>200 GeV", 35, -3.5, 3.5);
   M_mumu            = book<TH1F>("M_mumu", "M_{#mu#mu} [GeV]",75 , 0, 500);
   M_ee              = book<TH1F>("M_ee", "M_{ee} [GeV]",75 , 0, 500);
 
@@ -241,29 +265,29 @@ void ZprimeSemiLeptonicHists::init(){
   tau32_AK8Puppijet3       = book<TH1F>("tau32_AK8Puppijet3", "#tau_{3/2}^{AK8Puppi jet 3}", 24, 0, 1.2);
 
   deepjet_topscore_jet    = book<TH1F>("deepjet_topscore_jet", "DeepJet top score all AK8 jets", 20, 0, 1);
-  deepjet_topscore_jet1   = book<TH1F>("deepjet_topscore_jet1", "DeppJet top score AK8 jet 1", 20, 0, 1);
+  deepjet_topscore_jet1   = book<TH1F>("deepjet_topscore_jet1", "DeepJet top score AK8 jet 1", 20, 0, 1);
   deepjet_topscore_jet2   = book<TH1F>("deepjet_topscore_jet2", "DeepJet top score AK8 jet 2", 20, 0, 1);
   deepjet_topscore_jet3   = book<TH1F>("deepjet_topscore_jet3", "DeepJet top score AK8 jet 3", 20, 0, 1);
   deepjet_wscore_jet      = book<TH1F>("deepjet_wscore_jet", "DeepJet W score all AK8 jets", 20, 0, 1);
-  deepjet_wscore_jet1     = book<TH1F>("deepjet_wscore_jet1", "DeppJet W score AK8 jet 1}", 20, 0, 1);
-  deepjet_wscore_jet2     = book<TH1F>("deepjet_wscore_jet2", "DeepJet W score AK8 jet 2}", 20, 0, 1);
+  deepjet_wscore_jet1     = book<TH1F>("deepjet_wscore_jet1", "DeepJet W score AK8 jet 1", 20, 0, 1);
+  deepjet_wscore_jet2     = book<TH1F>("deepjet_wscore_jet2", "DeepJet W score AK8 jet 2", 20, 0, 1);
   deepjet_zscore_jet      = book<TH1F>("deepjet_zscore_jet", "DeepJet Z score all AK8 jets", 20, 0, 1);
-  deepjet_zscore_jet1     = book<TH1F>("deepjet_zscore_jet1", "DeppJet Z score AK8 jet 1}", 20, 0, 1);
-  deepjet_zscore_jet2     = book<TH1F>("deepjet_zscore_jet2", "DeepJet Z score AK8 jet 2}", 20, 0, 1);
+  deepjet_zscore_jet1     = book<TH1F>("deepjet_zscore_jet1", "DeepJet Z score AK8 jet 1", 20, 0, 1);
+  deepjet_zscore_jet2     = book<TH1F>("deepjet_zscore_jet2", "DeepJet Z score AK8 jet 2", 20, 0, 1);
   deepjet_higgsscore_jet  = book<TH1F>("deepjet_higgsscore_jet", "DeepJet Higgs score all AK8 jets", 20, 0, 1);
-  deepjet_higgsscore_jet1 = book<TH1F>("deepjet_higgsscore_jet1", "DeppJet Higgs score AK8 jet 1}", 20, 0, 1);
-  deepjet_higgsscore_jet2 = book<TH1F>("deepjet_higgsscore_jet2", "DeepJet Higgs score AK8 jet 2}", 20, 0, 1);
+  deepjet_higgsscore_jet1 = book<TH1F>("deepjet_higgsscore_jet1", "DeepJet Higgs score AK8 jet 1", 20, 0, 1);
+  deepjet_higgsscore_jet2 = book<TH1F>("deepjet_higgsscore_jet2", "DeepJet Higgs score AK8 jet 2", 20, 0, 1);
   deepjet_qcdscore_jet    = book<TH1F>("deepjet_qcdscore_jet", "DeepJet qcd score all AK8 jets", 20, 0, 1);
-  deepjet_qcdscore_jet1   = book<TH1F>("deepjet_qcdscore_jet1", "DeppJet qcd score AK8 jet 1}", 20, 0, 1);
+  deepjet_qcdscore_jet1   = book<TH1F>("deepjet_qcdscore_jet1", "DeepJet qcd score AK8 jet 1", 20, 0, 1);
   deepjet_qcdscore_jet2   = book<TH1F>("deepjet_qcdscore_jet2", "DeepJet qcd score AK8 jet 2}", 20, 0, 1);
 
   deepjet_TvsQCD_jet  = book<TH1F>("deepjet_topProb_jet", "DeepJet  TvsQCD all AK8 jets", 20, 0, 1);
-  deepjet_TvsQCD_jet1 = book<TH1F>("deepjet_topProb_jet1", "DeppJet TvsQCD AK8 jet 1", 20, 0, 1);
+  deepjet_TvsQCD_jet1 = book<TH1F>("deepjet_topProb_jet1", "DeepJet TvsQCD AK8 jet 1", 20, 0, 1);
   deepjet_TvsQCD_jet2 = book<TH1F>("deepjet_topProb_jet2", "DeepJet TvsQCD AK8 jet 2", 20, 0, 1);
   deepjet_TvsQCD_jet3 = book<TH1F>("deepjet_topProb_jet3", "DeepJet TvsQCD AK8 jet 3", 20, 0, 1);
 
   massdecordeepjet_TvsQCD_jet  = book<TH1F>("massdecordeepjet_topProb_jet",  "Mass decor deepJet TvsQCD all AK8 jets", 20, 0, 1);
-  massdecordeepjet_TvsQCD_jet1 = book<TH1F>("massdecordeepjet_topProb_jet1", "Mass decor DeppJet TvsQCD AK8 jet 1", 20, 0, 1);
+  massdecordeepjet_TvsQCD_jet1 = book<TH1F>("massdecordeepjet_topProb_jet1", "Mass decor DeepJet TvsQCD AK8 jet 1", 20, 0, 1);
   massdecordeepjet_TvsQCD_jet2 = book<TH1F>("massdecordeepjet_topProb_jet2", "Mass decor DeepJet TvsQCD AK8 jet 2", 20, 0, 1);
   massdecordeepjet_TvsQCD_jet3 = book<TH1F>("massdecordeepjet_topProb_jet3", "Mass decor DeepJet TvsQCD AK8 jet 3", 20, 0, 1);
 
@@ -396,7 +420,7 @@ void ZprimeSemiLeptonicHists::init(){
   tau32_AK8PuppiTaggedjet3       = book<TH1F>("tau32_AK8PuppiTaggedjet3", "#tau_{3/2}^{AK8Puppi  Tagged jet 3}", 24, 0, 1.2);
 
   deepjet_topscore_Taggedjet  = book<TH1F>("deepjet_topscore_Taggedjet", "DeepJet top score all TaggedAK8 jets", 20, 0, 1);
-  deepjet_topscore_Taggedjet1 = book<TH1F>("deepjet_topscore_Taggedjet1", "DeppJet top score TaggedAK8 jet 1", 20, 0, 1);
+  deepjet_topscore_Taggedjet1 = book<TH1F>("deepjet_topscore_Taggedjet1", "DeepJet top score TaggedAK8 jet 1", 20, 0, 1);
   deepjet_topscore_Taggedjet2 = book<TH1F>("deepjet_topscore_Taggedjet2", "DeepJet top score TaggedAK8 jet 2", 20, 0, 1);
   deepjet_topscore_Taggedjet3 = book<TH1F>("deepjet_topscore_Taggedjet3", "DeepJet top score TaggedAK8 jet 3", 20, 0, 1);
 
@@ -406,7 +430,7 @@ void ZprimeSemiLeptonicHists::init(){
   massdecordeepjet_topscore_Taggedjet3 = book<TH1F>("massdecordeepjet_topscore_Taggedjet3", "Mass decor deepjet top score TaggedAK8 jet 3", 20, 0, 1);
 
   deepjet_TvsQCD_Taggedjet  = book<TH1F>("deepjet_TvsQCD_Taggedjet", "DeepJet  TvsQCD all TaggedAK8 jets", 20, 0, 1);
-  deepjet_TvsQCD_Taggedjet1 = book<TH1F>("deepjet_TvsQCD_Taggedjet1", "DeppJet TvsQCD TaggedAK8 jet 1", 20, 0, 1);
+  deepjet_TvsQCD_Taggedjet1 = book<TH1F>("deepjet_TvsQCD_Taggedjet1", "DeepJet TvsQCD TaggedAK8 jet 1", 20, 0, 1);
   deepjet_TvsQCD_Taggedjet2 = book<TH1F>("deepjet_TvsQCD_Taggedjet2", "DeepJet TvsQCD TaggedAK8 jet 2", 20, 0, 1);
   deepjet_TvsQCD_Taggedjet3 = book<TH1F>("deepjet_TvsQCD_Taggedjet3", "DeepJet TvsQCD TaggedAK8 jet 3", 20, 0, 1);
 
@@ -435,6 +459,22 @@ void ZprimeSemiLeptonicHists::init(){
   STlep_rebin3  = book<TH1F>("STlep_rebin3", "S_{T}^{lep} [GeV]", 15, 0, 1500);
 
   // Zprime reconstruction
+  toplep_pt         = book<TH1F>("toplep_pt", "p_{T}^{t,lep} [GeV]", 70, 0, 7000);
+  toplep_eta        = book<TH1F>("toplep_eta", "#eta^{t,lep}", 60, -3.0, 3.0);
+  toplep_phi        = book<TH1F>("toplep_phi", "#phi^{t,lep}", 70, -3.5, 3.5);
+  toplep_m          = book<TH1F>("toplep_m", "m^{t,lep} [GeV]", 70, 0, 7000);
+  tophad_pt         = book<TH1F>("tophad_pt", "p_{T}^{t,had} [GeV]", 70, 0, 7000);
+  tophad_eta        = book<TH1F>("tophad_eta", "#eta^{t,had}", 60, -3.0, 3.0);
+  tophad_phi        = book<TH1F>("tophad_phi", "#phi^{t,had}", 70, -3.5, 3.5);
+  tophad_m          = book<TH1F>("tophad_m", "m^{t,had} [GeV]", 70, 0, 7000);
+  ditop_mass        = book<TH1F>("ditop_mass", "m_{t#bar{t}} [GeV]", 70, 0, 7000);
+  ditop_absDeltaPhi = book<TH1F>("ditop_absDeltaPhi", "|#Delta#phi(t,#bar{t})|", 35, 0, 3.5);
+  ditop_deltaEta    = book<TH1F>("ditop_deltaEta", "#Delta#eta(t,#bar{t})", 120, -6.0, 6.0);
+  ditop_absDeltaEta = book<TH1F>("ditop_absDeltaEta", "|#Delta#eta(t,#bar{t})|", 60, 0, 6.0);
+  ditop_deltaR      = book<TH1F>("ditop_deltaR", "#DeltaR(t,#bar{t})", 100, 0, 10.0);
+
+
+
   vector<float> bins_Zprime4 = {0,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200,3400,3600,3800,4000,4400,4800,5200,5600,6000,6100};
   vector<float> bins_Zprime5 = {0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3300,3600,3900,4200,4500,5000,5100};
   vector<float> bins_Zprime6 = {0,200,400,600,800,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3300,3600,3900,4200,4500,5000};
@@ -505,6 +545,15 @@ void ZprimeSemiLeptonicHists::init(){
   cos_hadtop_thetastar = book<TH1F>("cos_hadtop_thetastar", "cos(hadtop #theta^*)", 100, -1.0, 1.0);
   leptop_thetastar     = book<TH1F>("leptop_thetastar", "leptop #theta^*", 70, -3.5, 3.5);
   cos_leptop_thetastar = book<TH1F>("cos_leptop_thetastar", "cos(leptop #theta^*)", 100, -1.0, 1.0);
+
+  // mttbar histograms from TOP-20-001: https://www.hepdata.net/record/ins1901295
+  vector<float> bins_ditopmass_Fig19 = {250,400,480,560,640,720,800,900,1000,1150,1300,1500,1700,2000,2300,3500};
+  vector<float> bins_ditopmass_Fig25 = {250,420,520,620,800,1000,3500};
+  TOP_20_001_ditopmass_Fig19 = book<TH1F>("TOP_20_001_ditopmass_Fig19","m_{t#bar{t} [GeV]}",bins_ditopmass_Fig19.size()-1,&bins_ditopmass_Fig19[0]);
+  TOP_20_001_ditopmass_Fig25 = book<TH1F>("TOP_20_001_ditopmass_Fig25","m_{t#bar{t} [GeV]}",bins_ditopmass_Fig25.size()-1,&bins_ditopmass_Fig25[0]);
+
+  // 2D sitributoin NJets/HT to extract custom btag SF
+  N_Jets_vs_HT  = book<TH2F>("N_Jets_vs_HT", "N_Jets_vs_HT", 21, 0., 21., 50, 0., 7000.);
 
   // NN Hists
   NN_Mu_pt            = book<TH1F>("NN_Mu_pt", "NN_Mu_pt", 50, 0, 1000);
@@ -604,11 +653,31 @@ void ZprimeSemiLeptonicHists::init(){
 
 
 void ZprimeSemiLeptonicHists::fill(const Event & event){
-
+  
   double weight = event.weight;
 
+//-beren Delta Y
 
+  GenParticle top, antitop;
+   for(const GenParticle & gp : *event.genparticles){
+     if(gp.pdgId() == 6){
+       top = gp;
+     }
+     else if(gp.pdgId() == -6){
+       antitop = gp;
+     }
+   }
+  
+DeltaY->Fill(TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity()),weight);
 
+    double_t Delta_Y = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
+      if (Delta_Y<0){
+        DeltaY_N->Fill(Delta_Y,weight);
+      }
+      else if(Delta_Y>0){
+        DeltaY_P->Fill(Delta_Y,weight);
+      }
+//-beren Delta Y
   /*
   █      ██ ███████ ████████ ███████
   █      ██ ██         ██    ██
@@ -984,17 +1053,8 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
     }
   }
 
-  // // Top-tagged jets AK8
-  // vector<TopJet> AK8PuppiTopTags = event.get(h_DeepAK8TopTags);
-  //  int NAK8PuppiTaggedjets = 0;
-  //   for(unsigned int i=0; i<AK8PuppiTopTags.size(); i++){
-  //     NAK8PuppiTaggedjets++;
-
-  //     double tau21 = AK8PuppiTopTags.at(i).tau2() / AK8PuppiTopTags.at(i).tau1();
-  //     double tau32 = AK8PuppiTopTags.at(i).tau3() / AK8PuppiTopTags.at(i).tau2();
-
-// W-tagged jets AK8
-  vector<TopJet> AK8PuppiTopTags = event.get(h_DeepAK8WTags);
+// Top-tagged jets AK8
+    vector<TopJet> AK8PuppiTopTags = event.get(h_AK8TopTags);
    int NAK8PuppiTaggedjets = 0;
     for(unsigned int i=0; i<AK8PuppiTopTags.size(); i++){
       NAK8PuppiTaggedjets++;
@@ -1152,7 +1212,6 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
         pt_mu_nearjet->Fill(jets->at(k).pt(),weight);
       }
     }
-
   }
 
   for(int i=0; i<Nmuons; i++){
@@ -1185,6 +1244,21 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
     dRmin_ele_jet_scaled->Fill(electrons->at(i).get_tag(Electron::twodcut_dRmin)*event.jets->at(0).pt(), weight);
     ptrel_ele_jet->Fill(electrons->at(i).get_tag(Electron::twodcut_pTrel), weight);
     dRmin_ptrel_ele->Fill(electrons->at(i).get_tag(Electron::twodcut_dRmin), electrons->at(i).get_tag(Electron::twodcut_pTrel), weight);
+    if(electrons->at(i).pt()<120){
+      pt_ele_lowpt->Fill(electrons->at(i).pt(),weight);
+      eta_ele_lowpt->Fill(electrons->at(i).eta(),weight);
+      phi_ele_lowpt->Fill(electrons->at(i).phi(),weight);
+    }
+    if(electrons->at(i).pt()>=120 && electrons->at(i).pt()<200){
+      pt_ele_midpt->Fill(electrons->at(i).pt(),weight);
+      eta_ele_midpt->Fill(electrons->at(i).eta(),weight);
+      phi_ele_midpt->Fill(electrons->at(i).phi(),weight);
+    }
+    if(electrons->at(i).pt()>=200){
+      pt_ele_highpt->Fill(electrons->at(i).pt(),weight);
+      eta_ele_highpt->Fill(electrons->at(i).eta(),weight);
+      phi_ele_highpt->Fill(electrons->at(i).phi(),weight);
+    }
     if(i==0){
       pt_ele1->Fill(electrons->at(i).pt(),weight);
       eta_ele1->Fill(electrons->at(i).eta(),weight);
@@ -1265,10 +1339,31 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
   // Zprime reco
   bool is_zprime_reconstructed_chi2 = event.get(h_is_zprime_reconstructed_chi2);
   bool is_zprime_reconstructed_correctmatch = event.get(h_is_zprime_reconstructed_correctmatch);
-  if(is_zprime_reconstructed_chi2 && is_mc){ // added "is_mc" to blind data in mttbar hists
+  // added "is_mc" to blind data in mttbar hists
+  if(is_zprime_reconstructed_chi2 && is_mc){
     ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
     float Mreco = BestZprimeCandidate->Zprime_v4().M();
     float chi2 = BestZprimeCandidate->discriminator("chi2_total");
+
+    LorentzVector toplep = BestZprimeCandidate->top_leptonic_v4();
+    LorentzVector tophad = BestZprimeCandidate->top_hadronic_v4();
+
+    toplep_pt->Fill(toplep.Pt(), weight);
+    toplep_eta->Fill(toplep.Eta(), weight);
+    toplep_phi->Fill(toplep.Phi(), weight);
+    toplep_m->Fill(toplep.M(), weight);
+
+    tophad_pt->Fill(tophad.Pt(), weight);
+    tophad_eta->Fill(tophad.Eta(), weight);
+    tophad_phi->Fill(tophad.Phi(), weight);
+    tophad_m->Fill(tophad.M(), weight);
+
+    ditop_mass->Fill(Mreco, weight);
+    ditop_absDeltaPhi->Fill(deltaPhi(toplep, tophad), weight);
+    ditop_deltaEta->Fill(toplep.Eta()-tophad.Eta(), weight);
+    ditop_absDeltaEta->Fill(abs(toplep.Eta()-tophad.Eta()), weight);
+    ditop_deltaR->Fill(deltaR(toplep,tophad), weight);
+
     M_Zprime->Fill(Mreco, weight);
     M_Zprime_rebin->Fill(Mreco, weight);
     M_Zprime_rebin2->Fill(Mreco, weight);
@@ -1282,6 +1377,10 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
     chi2_Zprime->Fill(chi2, weight);
     chi2_Zprime_rebin->Fill(chi2, weight);
     chi2_Zprime_rebin2->Fill(chi2, weight);
+
+    TOP_20_001_ditopmass_Fig19->Fill(Mreco, weight);
+    TOP_20_001_ditopmass_Fig25->Fill(Mreco, weight);
+
     if(BestZprimeCandidate->is_toptag_reconstruction()){
       M_tophad->Fill(BestZprimeCandidate->tophad_topjet_ptr()->v4().M(), weight);
       M_toplep->Fill(inv_mass(BestZprimeCandidate->top_leptonic_v4()), weight);
@@ -1410,6 +1509,9 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
     leptop_thetastar->Fill(ang_leptop_thetastar, weight);
     cos_leptop_thetastar->Fill(TMath::Cos(ang_leptop_thetastar), weight);
   }
+
+
+N_Jets_vs_HT->Fill(Njets, st_jets, weight);
 
   /*
   ███    ██ ███    ██

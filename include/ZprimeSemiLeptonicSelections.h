@@ -49,9 +49,6 @@ namespace uhh2 {
 
   private:
   uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags;
-  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8WTags;
-
   TString mode_;
   };
 
@@ -214,14 +211,14 @@ namespace uhh2 {
   };
   ////
 
-  class ZprimeBTagFatSubJetSelection: public Selection {
-  public:
-    explicit ZprimeBTagFatSubJetSelection(Context& ctx);
-    virtual bool passes(const Event&) override;
+  // class ZprimeBTagFatSubJetSelection: public Selection {
+  // public:
+  //   explicit ZprimeBTagFatSubJetSelection(Context& ctx);
+  //   virtual bool passes(const Event&) override;
 
-  private:
-    std::unique_ptr<Selection> sel_1btag;
-  };
+  // private:
+  //   std::unique_ptr<Selection> sel_1btag;
+  // };
   ////
 
 
