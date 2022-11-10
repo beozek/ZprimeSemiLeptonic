@@ -2,7 +2,7 @@
 #where UHH2 code installed
 pathGL_code=/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/
 #where (NOT MERGED) trees after preselection stored
-path_data=/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/event_numbers/UL18/workdir_Preselection_UL18_NumberOfEvents/nominal/uhh2.AnalysisModuleRunner.
+path_data=/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_unfolding/UL18/preselection/workdir_Preselection_UL18_NumberOfEvents_new/uhh2.AnalysisModuleRunner.
 #path_data=/nfs/dust/cms/group/zprime-uhh/Analysis_UL18/electron/workdir_Zprime_Analysis_UL18_electron/uhh2.AnalysisModuleRunner.
 
 mkdir $pathGL_code/ZprimeSemiLeptonic/data/Skimming_datasets_numberofevents
@@ -13,13 +13,13 @@ cd $pathGL_code/ZprimeSemiLeptonic/data/Skimming_datasets_numberofevents
 
 # #MC
 
-for sample_name in TTToSemiLeptonic10
+for sample_name in TTToSemiLeptonic_UL18
 
 do
     echo $sample_name
 
-       $pathGL_code/scripts/create-dataset-xmlfile ${path_data}${sample_name}"*.root" $sample_name.xml
-       python $pathGL_code/scripts/crab/readaMCatNloEntries.py 10 $sample_name.xml True
+       $pathGL_code/scripts/create-dataset-xmlfile ${path_data}"MC."${sample_name}"*.root" MC_$sample_name.xml
+       python $pathGL_code/scripts/crab/readaMCatNloEntries.py 10 MC_$sample_name.xml True
 done
 
 # # #DATA

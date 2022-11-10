@@ -121,7 +121,14 @@ protected:
   Event::Handle<float> h_ak4jet1_pt; Event::Handle<float> h_ak4jet1_eta;
   Event::Handle<float> h_ak8jet1_pt; Event::Handle<float> h_ak8jet1_eta;
   Event::Handle<float> h_Mttbar;
-  Event::Handle<float> h_DeltaY; //-beren
+  Event::Handle<float> h_DeltaY_reco; //-beren
+  Event::Handle<float> h_DeltaY_N_reco; //-beren
+  Event::Handle<float> h_DeltaY_P_reco; //-beren
+  Event::Handle<float> h_DeltaY_gen; //-beren
+  Event::Handle<float> h_DeltaY_N_gen; //-beren
+  Event::Handle<float> h_DeltaY_P_gen; //-beren
+
+
 
 
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
@@ -175,7 +182,7 @@ void ZprimeAnalysisModule::fill_histograms(uhh2::Event& event, string tag){
 
 ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
-  debug = true;
+  debug = false;
 
   for(auto & kv : ctx.get_all()){
     cout << " " << kv.first << " = " << kv.second << endl;
@@ -370,7 +377,13 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_BestZprimeCandidateChi2 = ctx.get_handle<ZprimeCandidate*>("ZprimeCandidateBestChi2");
   
   
-  h_DeltaY = ctx.declare_event_output<float> ("DeltaY"); //-beren DeltaY
+  h_DeltaY_reco = ctx.declare_event_output<float> ("DeltaY_reco"); //-beren DeltaY
+  h_DeltaY_N_reco = ctx.declare_event_output<float> ("DeltaY_N_reco"); //-beren DeltaY
+  h_DeltaY_P_reco = ctx.declare_event_output<float> ("DeltaY_P_reco"); //-beren DeltaY
+  h_DeltaY_gen = ctx.declare_event_output<float> ("DeltaY_gen"); //-beren DeltaY
+  h_DeltaY_N_gen = ctx.declare_event_output<float> ("DeltaY_N_gen"); //-beren DeltaY
+  h_DeltaY_P_gen = ctx.declare_event_output<float> ("DeltaY_P_gen"); //-beren DeltaY
+
   h_chi2 = ctx.declare_event_output<float> ("rec_chi2");
   h_MET = ctx.declare_event_output<float> ("met_pt");
   h_Mttbar = ctx.declare_event_output<float> ("Mttbar");
@@ -396,7 +409,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
   // Book histograms
   // vector<string> histogram_tags = {"Weights_Init", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_TopTag_SF", "Corrections", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "Btags1", "Btags1_SF", "NNInputsBeforeReweight", "MatchableBeforeChi2Cut", "NotMatchableBeforeChi2Cut", "CorrectMatchBeforeChi2Cut", "NotCorrectMatchBeforeChi2Cut", "Chi2", "Matchable", "NotMatchable", "CorrectMatch", "NotCorrectMatch", "TopTagReconstruction", "NotTopTagReconstruction"};
-  vector<string> histogram_tags = {"Btags1_SF","Chi2"};
+  vector<string> histogram_tags = {"Chi2"};
 
   book_histograms(ctx, histogram_tags);
 
@@ -447,7 +460,13 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   event.set(h_ak8jet1_eta,-100);
   event.set(h_NPV,-100);
   event.set(h_weight,-100);
-  event.set(h_DeltaY,-100); //-beren
+  event.set(h_DeltaY_reco,-100); //-beren
+  event.set(h_DeltaY_N_reco,-100); //-beren
+  event.set(h_DeltaY_P_reco,-100); //-beren
+  event.set(h_DeltaY_gen,-100); //-beren
+  event.set(h_DeltaY_N_gen,-100); //-beren
+  event.set(h_DeltaY_P_gen,-100); //-beren
+
 
 
   
@@ -847,32 +866,100 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   
    
    //-beren
-// if (isMuon){
-//   ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
-//         if(event.muons->at(0).charge() == 1){
-//           float DeltaY = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
-//           event.set(h_DeltaY,DeltaY);
-      
-//         }
-//         if(event.muons->at(0).charge() == -1){
-//           float DeltaY = TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
-//           event.set(h_DeltaY,DeltaY);
+  
+  //DeltaY for generated events
+  //looping over all the gen particles
+   GenParticle top, antitop;
+   for(const GenParticle & gp : *event.genparticles){
+     if(gp.pdgId() == 6){
+       top = gp;
+     }
+     else if(gp.pdgId() == -6){
+       antitop = gp;
+     }
+   }
+ 
+  double_t DeltaY_gen = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
+    event.set(h_DeltaY_gen, DeltaY_gen);
+    
+  if (DeltaY_gen<0){
+    event.set(h_DeltaY_N_gen, DeltaY_gen);
+    cout<< "Number of DeltaY_gen_N" <<endl;
+          }
+  else if(DeltaY_gen>0){
+    event.set(h_DeltaY_P_gen, DeltaY_gen);
+    cout<< "Number of DeltaY_gen_P" <<endl;
 
-//         }
-//     }
+      }
+  
+ 
 
-// if (isElectron){
-//   ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
-//         if(event.electrons->at(0).charge() == 1){
-//           float DeltaY = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
-//           event.set(h_DeltaY,DeltaY);
-//         }
-//         if(event.electrons->at(0).charge() == -1){
-//           float DeltaY =TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
-//           event.set(h_DeltaY,DeltaY);
-//         }
+  //DeltaY for reconstructed events
 
-//     }
+if (isMuon){
+  ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+        if(event.muons->at(0).charge() == 1){
+          float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+          event.set(h_DeltaY_reco,DeltaY_reco);
+
+          if (DeltaY_reco<0){
+          event.set(h_DeltaY_N_reco, DeltaY_reco);
+          cout<< "Number of DeltaY_reco_N" <<endl;
+          }
+          else if(DeltaY_reco>0){
+          event.set(h_DeltaY_P_reco, DeltaY_reco);
+          cout<< "Number of DeltaY_reco_P" <<endl;
+          }
+        }
+        if(event.muons->at(0).charge() == -1){
+          float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+          event.set(h_DeltaY_reco,DeltaY_reco);
+
+          if (DeltaY_reco<0){
+          event.set(h_DeltaY_N_reco, DeltaY_reco);
+          cout<< "Number of DeltaY_reco_N" <<endl;
+          }
+          else if(DeltaY_reco>0){
+          event.set(h_DeltaY_P_reco, DeltaY_reco);
+          cout<< "Number of DeltaY_reco_P" <<endl;
+          }
+        }
+}
+
+if (isElectron){
+  ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+        if(event.electrons->at(0).charge() == 1){
+          float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+          event.set(h_DeltaY_reco,DeltaY_reco);
+
+          if (DeltaY_reco<0){
+          event.set(h_DeltaY_N_reco, DeltaY_reco);
+          cout<< "Number of DeltaY_reco_N" <<endl;
+          }
+          else if(DeltaY_reco>0){
+          event.set(h_DeltaY_P_reco, DeltaY_reco);
+          cout<< "Number of DeltaY_reco_P" <<endl;
+          }
+        }
+        if(event.electrons->at(0).charge() == -1){
+          float DeltaY_reco =TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+          event.set(h_DeltaY_reco,DeltaY_reco);
+
+          if (DeltaY_reco<0){
+          event.set(h_DeltaY_N_reco, DeltaY_reco);
+          cout<< "Number of DeltaY_reco_N" <<endl;
+
+          }
+          else if(DeltaY_reco>0){
+          event.set(h_DeltaY_P_reco, DeltaY_reco);
+          cout<< "Number of DeltaY_reco_N" <<endl;
+          }
+        }
+
+    }
+
+
+
 
   //beren
    

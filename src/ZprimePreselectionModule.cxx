@@ -78,6 +78,11 @@ bool debug;
   // additional branch with AK4 CHS jets -> for b-tagging
   Event::Handle<vector<Jet>> h_CHSjets;
 
+  //DeltaY variable to save them to tree
+  Event::Handle<float> h_DeltaY; //-beren
+  Event::Handle<float> h_DeltaY_N; //-beren
+  Event::Handle<float> h_DeltaY_P; //-beren
+
 };
 
 void ZprimePreselectionModule::book_histograms(uhh2::Context& ctx, vector<string> tags){
@@ -176,6 +181,13 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
   // additional branch with Ak4 CHS jets
   h_CHSjets = ctx.get_handle<vector<Jet>>("jetsAk4CHS");
 
+  //DeltaY variables
+  h_DeltaY = ctx.declare_event_output<float> ("DeltaY"); //-beren DeltaY
+  h_DeltaY_N = ctx.declare_event_output<float> ("DeltaY_N"); //-beren DeltaY
+  h_DeltaY_P = ctx.declare_event_output<float> ("DeltaY_P"); //-beren DeltaY
+
+
+
   // Book histograms
   vector<string> histogram_tags = {"Input", "CommonModules", "HOTVRCorrections", "PUPPICorrections", "Lepton1", "JetID", "JetCleaner1", "JetCleaner2", "TopjetCleaner", "Jet1", "Jet2", "MET"};
   book_histograms(ctx, histogram_tags);
@@ -192,10 +204,37 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
 //  cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
 //  cout << " run.event: " << event.run << ". " << event.event << endl;
 
+  event.set(h_DeltaY,-100); //-beren
+  event.set(h_DeltaY_N,-100); //-beren
+  event.set(h_DeltaY_P,-100); //-beren
 
 
 
   fill_histograms(event, "Input");
+
+  //-beren
+
+  GenParticle top, antitop;
+   for(const GenParticle & gp : *event.genparticles){
+     if(gp.pdgId() == 6){
+       top = gp;
+     }
+     else if(gp.pdgId() == -6){
+       antitop = gp;
+     }
+   }
+
+  double_t Delta_Y = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
+  if (Delta_Y<0){
+    event.set(h_DeltaY_N, Delta_Y);
+          }
+  else if(Delta_Y>0){
+    event.set(h_DeltaY_P, Delta_Y);
+      }
+  
+  event.set(h_DeltaY, Delta_Y);
+
+  //beren
 
   bool commonResult = common->process(event);
   if (!commonResult) return false;
