@@ -122,11 +122,35 @@ protected:
   Event::Handle<float> h_ak8jet1_pt; Event::Handle<float> h_ak8jet1_eta;
   Event::Handle<float> h_Mttbar;
   Event::Handle<float> h_DeltaY_reco; //-beren
+  Event::Handle<float> h_DeltaY_reco_mass; //-beren
   Event::Handle<float> h_DeltaY_N_reco; //-beren
   Event::Handle<float> h_DeltaY_P_reco; //-beren
-  Event::Handle<float> h_DeltaY_gen; //-beren
+  Event::Handle<float> h_DeltaY_N_reco_nomass; //-beren
+  Event::Handle<float> h_DeltaY_P_reco_nomass; //-beren
+  Event::Handle<float> h_DeltaY_gen; //-beren 
+  Event::Handle<float> h_DeltaY_gen_mass; //-beren
   Event::Handle<float> h_DeltaY_N_gen; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_nomass; //-beren
   Event::Handle<float> h_DeltaY_P_gen; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_nomass; //-beren
+  Event::Handle<float> h_DeltaY_P_P; //-beren
+  Event::Handle<float> h_DeltaY_P_N; //-beren
+  Event::Handle<float> h_DeltaY_N_P; //-beren
+  Event::Handle<float> h_DeltaY_N_N; //-beren
+  Event::Handle<float> h_DeltaY_P_P_nomass; //-beren
+  Event::Handle<float> h_DeltaY_P_N_nomass; //-beren
+  Event::Handle<float> h_DeltaY_N_P_nomass; //-beren
+  Event::Handle<float> h_DeltaY_N_N_nomass; //-beren
+
+  // Event::Handle<float> pp; //-beren
+  // Event::Handle<float> pn; //-beren
+  // Event::Handle<float> np; //-beren
+  // Event::Handle<float> nn; //-beren
+  
+  
+  
+
+  
 
 
 
@@ -301,8 +325,8 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   BTag::wp btag_wp = BTag::WP_MEDIUM;
   JetId id_btag = BTag(btag_algo, btag_wp);
 
-  double a_toppt = 0.0615; // par a TopPt Reweighting
-  double b_toppt = -0.0005; // par b TopPt Reweighting
+  // double a_toppt = 0.0615; // par a TopPt Reweighting
+  // double b_toppt = -0.0005; // par b TopPt Reweighting
 
   // Modules
   LumiWeight_module.reset(new MCLumiWeight(ctx));
@@ -378,11 +402,27 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   
   
   h_DeltaY_reco = ctx.declare_event_output<float> ("DeltaY_reco"); //-beren DeltaY
+  h_DeltaY_reco_mass = ctx.declare_event_output<float> ("DeltaY_reco_mass"); //-beren DeltaY
   h_DeltaY_N_reco = ctx.declare_event_output<float> ("DeltaY_N_reco"); //-beren DeltaY
   h_DeltaY_P_reco = ctx.declare_event_output<float> ("DeltaY_P_reco"); //-beren DeltaY
-  h_DeltaY_gen = ctx.declare_event_output<float> ("DeltaY_gen"); //-beren DeltaY
+  h_DeltaY_N_reco_nomass = ctx.declare_event_output<float> ("DeltaY_N_reco_nomass"); //-beren DeltaY
+  h_DeltaY_P_reco_nomass = ctx.declare_event_output<float> ("DeltaY_P_reco_nomass"); //-beren DeltaY
+  h_DeltaY_gen = ctx.declare_event_output<float> ("DeltaY_gen"); //-beren DeltaY 
+  h_DeltaY_gen_mass = ctx.declare_event_output<float> ("DeltaY_gen_mass"); //-beren
   h_DeltaY_N_gen = ctx.declare_event_output<float> ("DeltaY_N_gen"); //-beren DeltaY
+  h_DeltaY_N_gen_nomass = ctx.declare_event_output<float> ("DeltaY_N_gen_nomass"); //-beren DeltaY
   h_DeltaY_P_gen = ctx.declare_event_output<float> ("DeltaY_P_gen"); //-beren DeltaY
+  h_DeltaY_P_gen_nomass = ctx.declare_event_output<float> ("DeltaY_P_gen_nomass"); //-beren DeltaY
+  h_DeltaY_P_P = ctx.declare_event_output<float> ("DeltaY_P_P"); //-beren DeltaY
+  h_DeltaY_P_N = ctx.declare_event_output<float> ("DeltaY_P_N"); //-beren DeltaY
+  h_DeltaY_N_P = ctx.declare_event_output<float> ("DeltaY_N_P"); //-beren DeltaY
+  h_DeltaY_N_N = ctx.declare_event_output<float> ("DeltaY_N_N"); //-beren DeltaY
+  h_DeltaY_P_P_nomass = ctx.declare_event_output<float> ("DeltaY_P_P_nomass"); //-beren DeltaY
+  h_DeltaY_P_N_nomass = ctx.declare_event_output<float> ("DeltaY_P_N_nomass"); //-beren DeltaY
+  h_DeltaY_N_P_nomass = ctx.declare_event_output<float> ("DeltaY_N_P_nomass"); //-beren DeltaY
+  h_DeltaY_N_N_nomass = ctx.declare_event_output<float> ("DeltaY_N_N_nomass"); //-beren DeltaY
+
+  
 
   h_chi2 = ctx.declare_event_output<float> ("rec_chi2");
   h_MET = ctx.declare_event_output<float> ("met_pt");
@@ -444,8 +484,8 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
 bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
-  if(debug)   cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
-  if(debug)   cout<<" run.event: "<<event.run<<". "<<event.event<<endl;
+  if(debug) cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
+ if(debug) cout<<" run.event: "<<event.run<<". "<<event.event<<endl;
   // Initialize reco flags with false
   event.set(h_is_zprime_reconstructed_chi2, false);
   event.set(h_is_zprime_reconstructed_correctmatch, false);
@@ -461,11 +501,31 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   event.set(h_NPV,-100);
   event.set(h_weight,-100);
   event.set(h_DeltaY_reco,-100); //-beren
+  event.set(h_DeltaY_reco_mass,-100); //-beren
   event.set(h_DeltaY_N_reco,-100); //-beren
   event.set(h_DeltaY_P_reco,-100); //-beren
+  event.set(h_DeltaY_N_reco_nomass,-100); //-beren
+  event.set(h_DeltaY_P_reco_nomass,-100); //-beren
   event.set(h_DeltaY_gen,-100); //-beren
+  event.set(h_DeltaY_gen_mass,-100); //-beren
   event.set(h_DeltaY_N_gen,-100); //-beren
   event.set(h_DeltaY_P_gen,-100); //-beren
+  event.set(h_DeltaY_P_gen_nomass,-100); //-beren
+  event.set(h_DeltaY_N_gen_nomass,-100); //-beren
+  event.set(h_DeltaY_P_P,-100); //-beren
+  event.set(h_DeltaY_P_N,-100); //-beren
+  event.set(h_DeltaY_N_P,-100); //-beren
+  event.set(h_DeltaY_N_N,-100); //-beren
+  event.set(h_DeltaY_P_P_nomass,-100); //-beren
+  event.set(h_DeltaY_P_N_nomass,-100); //-beren
+  event.set(h_DeltaY_N_P_nomass,-100); //-beren
+  event.set(h_DeltaY_N_N_nomass,-100); //-beren
+
+  //defining objects to save positive and negative gen&reco events. first letter (p or n) is gen, second one is reco (p or n)
+  // event.set(pp,0); //-beren
+  // event.set(pn,0); //-beren
+  // event.set(np,0); //-beren
+  // event.set(nn,0); //-beren
 
 
 
@@ -866,6 +926,8 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   
    
    //-beren
+
+
   
   //DeltaY for generated events
   //looping over all the gen particles
@@ -878,87 +940,409 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
        antitop = gp;
      }
    }
- 
-  double_t DeltaY_gen = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
-    event.set(h_DeltaY_gen, DeltaY_gen);
-    
-  if (DeltaY_gen<0){
-    event.set(h_DeltaY_N_gen, DeltaY_gen);
-    cout<< "Number of DeltaY_gen_N" <<endl;
-          }
-  else if(DeltaY_gen>0){
-    event.set(h_DeltaY_P_gen, DeltaY_gen);
-    cout<< "Number of DeltaY_gen_P" <<endl;
 
-      }
+  // mass of ttbar in gen level
+  float m_ttbar = inv_mass(top.v4() + antitop.v4());
+  
+  double_t DeltaY_gen= TMath::Abs(0.5*TMath::Log((top.energy() + top.pt()*TMath::SinH(top.eta()))/(top.energy() - top.pt()*TMath::SinH(top.eta())))) - TMath::Abs(0.5*TMath::Log((antitop.energy() + antitop.pt()*TMath::SinH(antitop.eta()))/(antitop.energy() - antitop.pt()*TMath::SinH(antitop.eta()))));
+
+  // double_t DeltaY_gen = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
+  event.set(h_DeltaY_gen, DeltaY_gen);
+
+  if(m_ttbar>750){
+  event.set(h_DeltaY_gen_mass, DeltaY_gen);
+  }
+  if(DeltaY_gen<0){
+    event.set(h_DeltaY_N_gen_nomass, DeltaY_gen);
+  }
+
+  if(DeltaY_gen>0){
+    event.set(h_DeltaY_P_gen_nomass, DeltaY_gen);
+  }
+
+  if (DeltaY_gen<0 && m_ttbar>750){
+    event.set(h_DeltaY_N_gen, DeltaY_gen);
+  }
+
+  else if(DeltaY_gen>0 && m_ttbar>750){
+    event.set(h_DeltaY_P_gen, DeltaY_gen);
+  }
   
  
 
-  //DeltaY for reconstructed events
+//DeltaY for reconstructed events
 
 if (isMuon){
   ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
         if(event.muons->at(0).charge() == 1){
-          float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+            
+          double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))));
+          // float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+          
+          //Number of deltaY events
           event.set(h_DeltaY_reco,DeltaY_reco);
 
-          if (DeltaY_reco<0){
-          event.set(h_DeltaY_N_reco, DeltaY_reco);
-          cout<< "Number of DeltaY_reco_N" <<endl;
+          //Number of deltaY events after mass cut
+          if(m_ttbar>750){
+          event.set(h_DeltaY_reco_mass,DeltaY_reco);
           }
-          else if(DeltaY_reco>0){
+
+          //Number of NEGATIVE deltaY events without mass cut
+          if (DeltaY_reco<0){
+          event.set(h_DeltaY_N_reco_nomass, DeltaY_reco);
+          // cout<< "DeltaY_reco_N" <<endl;
+          }
+
+          //Number of NEGATIVE deltaY events with mass cut
+          if (DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_N_reco, DeltaY_reco);
+          // cout<< "DeltaY_reco_N" <<endl;
+          }
+
+          //Number of POSITIVE deltaY events without mass cut
+          if(DeltaY_reco>0){
+          event.set(h_DeltaY_P_reco_nomass, DeltaY_reco);
+          // cout<< "DeltaY_reco_P" <<endl;
+          }
+
+          //Number of POSITIVE deltaY events after mass cut
+          if(DeltaY_reco>0 && m_ttbar>750){
           event.set(h_DeltaY_P_reco, DeltaY_reco);
-          cout<< "Number of DeltaY_reco_P" <<endl;
+          // cout<< "DeltaY_reco_P" <<endl;
+          }
+
+         // ====RECO&GEN together =====
+
+         //Number of events with POSITIVE DeltaY in gen and POSITIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen>0 && DeltaY_reco>0){
+          event.set(h_DeltaY_P_P_nomass, DeltaY_gen);  //!!!!!HERE
+          }
+
+          //Number of events with POSITIVE DeltaY in gen and POSITIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen>0 && DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_P_P, DeltaY_gen);
+          // event.set(pp,event.get(pp)+1);
+          }
+
+
+          //Number of events with POSITIVE DeltaY in gen and NEGATIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen>0 && DeltaY_reco<0){
+          event.set(h_DeltaY_P_N_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(pn,event.get(pn)+1);
+          }
+
+          //Number of events with POSITIVE DeltaY in gen and NEGATIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen>0 && DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_P_N, DeltaY_gen);
+          // event.set(pn,event.get(pn)+1);
+          }
+
+          //Number of events with NEGATIVE DeltaY in gen and POSITIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen<0 && DeltaY_reco>0){
+          event.set(h_DeltaY_N_P_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(np,event.get(np)+1);
+          }  
+
+          //Number of events with NEGATIVE DeltaY in gen and POSITIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen<0 && DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_N_P, DeltaY_gen);
+          // event.set(np,event.get(np)+1);
+          }
+
+
+          //Number of events with NEGATIVE DeltaY in gen and NEGATIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen<0 && DeltaY_reco<0){
+          event.set(h_DeltaY_N_N_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(nn,event.get(nn)+1);
+          }
+
+
+          //Number of events with NEGATIVE DeltaY in gen and NEGATIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen<0 && DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_N_N, DeltaY_gen);
+          // event.set(nn,event.get(nn)+1);
           }
         }
+
+
+        
         if(event.muons->at(0).charge() == -1){
-          float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+
+          double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))));
+
+          // float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+           //Number of deltaY events
           event.set(h_DeltaY_reco,DeltaY_reco);
 
-          if (DeltaY_reco<0){
-          event.set(h_DeltaY_N_reco, DeltaY_reco);
-          cout<< "Number of DeltaY_reco_N" <<endl;
+          //Number of deltaY events after mass cut
+          if(m_ttbar>750){
+          event.set(h_DeltaY_reco_mass,DeltaY_reco);
           }
-          else if(DeltaY_reco>0){
+
+          //Number of NEGATIVE deltaY events without mass cut
+          if (DeltaY_reco<0){
+          event.set(h_DeltaY_N_reco_nomass, DeltaY_reco);
+          // cout<< "DeltaY_reco_N" <<endl;
+          }
+
+          //Number of NEGATIVE deltaY events with mass cut
+          if (DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_N_reco, DeltaY_reco);
+          // cout<< "DeltaY_reco_N" <<endl;
+          }
+
+          //Number of POSITIVE deltaY events without mass cut
+          if(DeltaY_reco>0){
+          event.set(h_DeltaY_P_reco_nomass, DeltaY_reco);
+          // cout<< "DeltaY_reco_P" <<endl;
+          }
+
+          //Number of POSITIVE deltaY events after mass cut
+          if(DeltaY_reco>0 && m_ttbar>750){
           event.set(h_DeltaY_P_reco, DeltaY_reco);
-          cout<< "Number of DeltaY_reco_P" <<endl;
+          // cout<< "DeltaY_reco_P" <<endl;
+          }
+
+         // ====RECO&GEN together =====
+
+         //Number of events with POSITIVE DeltaY in gen and POSITIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen>0 && DeltaY_reco>0){
+          event.set(h_DeltaY_P_P_nomass, DeltaY_gen);  //!!!!!HERE
+          }
+
+          //Number of events with POSITIVE DeltaY in gen and POSITIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen>0 && DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_P_P, DeltaY_gen);
+          // event.set(pp,event.get(pp)+1);
+          }
+
+
+          //Number of events with POSITIVE DeltaY in gen and NEGATIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen>0 && DeltaY_reco<0){
+          event.set(h_DeltaY_P_N_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(pn,event.get(pn)+1);
+          }
+
+          //Number of events with POSITIVE DeltaY in gen and NEGATIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen>0 && DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_P_N, DeltaY_gen);
+          // event.set(pn,event.get(pn)+1);
+          }
+
+          //Number of events with NEGATIVE DeltaY in gen and POSITIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen<0 && DeltaY_reco>0){
+          event.set(h_DeltaY_N_P_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(np,event.get(np)+1);
+          }  
+
+          //Number of events with NEGATIVE DeltaY in gen and POSITIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen<0 && DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_N_P, DeltaY_gen);
+          // event.set(np,event.get(np)+1);
+          }
+
+
+          //Number of events with NEGATIVE DeltaY in gen and NEGATIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen<0 && DeltaY_reco<0){
+          event.set(h_DeltaY_N_N_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(nn,event.get(nn)+1);
+          }
+
+
+          //Number of events with NEGATIVE DeltaY in gen and NEGATIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen<0 && DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_N_N, DeltaY_gen);
+          // event.set(nn,event.get(nn)+1);
           }
         }
 }
 
-if (isElectron){
+if (isElectron){          
   ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
         if(event.electrons->at(0).charge() == 1){
-          float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+          
+          double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))));
+
+          // float DeltaY_reco = TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity());
+          
+         //Number of deltaY events
           event.set(h_DeltaY_reco,DeltaY_reco);
 
+          //Number of deltaY events after mass cut
+          if(m_ttbar>750){
+          event.set(h_DeltaY_reco_mass,DeltaY_reco);
+          }
+
+          //Number of NEGATIVE deltaY events without mass cut
           if (DeltaY_reco<0){
+          event.set(h_DeltaY_N_reco_nomass, DeltaY_reco);
+          // cout<< "DeltaY_reco_N" <<endl;
+          }
+
+          //Number of NEGATIVE deltaY events with mass cut
+          if (DeltaY_reco<0 && m_ttbar>750){
           event.set(h_DeltaY_N_reco, DeltaY_reco);
-          cout<< "Number of DeltaY_reco_N" <<endl;
+          // cout<< "DeltaY_reco_N" <<endl;
           }
-          else if(DeltaY_reco>0){
+
+          //Number of POSITIVE deltaY events without mass cut
+          if(DeltaY_reco>0){
+          event.set(h_DeltaY_P_reco_nomass, DeltaY_reco);
+          // cout<< "DeltaY_reco_P" <<endl;
+          }
+
+          //Number of POSITIVE deltaY events after mass cut
+          if(DeltaY_reco>0 && m_ttbar>750){
           event.set(h_DeltaY_P_reco, DeltaY_reco);
-          cout<< "Number of DeltaY_reco_P" <<endl;
+          // cout<< "DeltaY_reco_P" <<endl;
           }
-        }
-        if(event.electrons->at(0).charge() == -1){
-          float DeltaY_reco =TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
-          event.set(h_DeltaY_reco,DeltaY_reco);
 
-          if (DeltaY_reco<0){
-          event.set(h_DeltaY_N_reco, DeltaY_reco);
-          cout<< "Number of DeltaY_reco_N" <<endl;
+         // ====RECO&GEN together =====
 
+         //Number of events with POSITIVE DeltaY in gen and POSITIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen>0 && DeltaY_reco>0){
+          event.set(h_DeltaY_P_P_nomass, DeltaY_gen);  //!!!!!HERE
           }
-          else if(DeltaY_reco>0){
-          event.set(h_DeltaY_P_reco, DeltaY_reco);
-          cout<< "Number of DeltaY_reco_N" <<endl;
-          }
-        }
 
+          //Number of events with POSITIVE DeltaY in gen and POSITIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen>0 && DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_P_P, DeltaY_gen);
+          // event.set(pp,event.get(pp)+1);
+          }
+
+
+          //Number of events with POSITIVE DeltaY in gen and NEGATIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen>0 && DeltaY_reco<0){
+          event.set(h_DeltaY_P_N_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(pn,event.get(pn)+1);
+          }
+
+          //Number of events with POSITIVE DeltaY in gen and NEGATIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen>0 && DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_P_N, DeltaY_gen);
+          // event.set(pn,event.get(pn)+1);
+          }
+
+          //Number of events with NEGATIVE DeltaY in gen and POSITIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen<0 && DeltaY_reco>0){
+          event.set(h_DeltaY_N_P_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(np,event.get(np)+1);
+          }  
+
+          //Number of events with NEGATIVE DeltaY in gen and POSITIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen<0 && DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_N_P, DeltaY_gen);
+          // event.set(np,event.get(np)+1);
+          }
+
+
+          //Number of events with NEGATIVE DeltaY in gen and NEGATIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen<0 && DeltaY_reco<0){
+          event.set(h_DeltaY_N_N_nomass, DeltaY_gen);   //!!!!!HERE
+          // event.set(nn,event.get(nn)+1);
+          }
+
+
+          //Number of events with NEGATIVE DeltaY in gen and NEGATIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen<0 && DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_N_N, DeltaY_gen);
+          // event.set(nn,event.get(nn)+1);
+          }
     }
+        
+        if(event.electrons->at(0).charge() == -1){
+
+          double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))));
+
+          // float DeltaY_reco =TMath::Abs(BestZprimeCandidate->top_hadronic_v4().Rapidity()) - TMath::Abs(BestZprimeCandidate->top_leptonic_v4().Rapidity());
+
+          //Number of deltaY events
+          event.set(h_DeltaY_reco,DeltaY_reco);
+
+          //Number of deltaY events after mass cut
+          if(m_ttbar>750){
+          event.set(h_DeltaY_reco_mass,DeltaY_reco);
+          }
+
+          //Number of NEGATIVE deltaY events without mass cut
+          if (DeltaY_reco<0){
+          event.set(h_DeltaY_N_reco_nomass, DeltaY_reco);
+          // cout<< "DeltaY_reco_N" <<endl;
+          }
+
+          //Number of NEGATIVE deltaY events with mass cut
+          if (DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_N_reco, DeltaY_reco);
+          // cout<< "DeltaY_reco_N" <<endl;
+          }
+
+          //Number of POSITIVE deltaY events without mass cut
+          if(DeltaY_reco>0){
+          event.set(h_DeltaY_P_reco_nomass, DeltaY_reco);
+          // cout<< "DeltaY_reco_P" <<endl;
+          }
+
+          //Number of POSITIVE deltaY events after mass cut
+          if(DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_P_reco, DeltaY_reco);
+          // cout<< "DeltaY_reco_P" <<endl;
+          }
+
+         // ====RECO&GEN together =====
+
+         //Number of events with POSITIVE DeltaY in gen and POSITIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen>0 && DeltaY_reco>0){
+          event.set(h_DeltaY_P_P_nomass, DeltaY_gen); 
+          }
+
+          //Number of events with POSITIVE DeltaY in gen and POSITIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen>0 && DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_P_P, DeltaY_gen);
+          // event.set(pp,event.get(pp)+1);
+          }
 
 
+          //Number of events with POSITIVE DeltaY in gen and NEGATIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen>0 && DeltaY_reco<0){
+          event.set(h_DeltaY_P_N_nomass, DeltaY_gen);   
+          // event.set(pn,event.get(pn)+1);
+          }
+
+          //Number of events with POSITIVE DeltaY in gen and NEGATIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen>0 && DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_P_N, DeltaY_gen);
+          // event.set(pn,event.get(pn)+1);
+          }
+
+          //Number of events with NEGATIVE DeltaY in gen and POSITIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen<0 && DeltaY_reco>0){
+          event.set(h_DeltaY_N_P_nomass, DeltaY_gen);  
+          // event.set(np,event.get(np)+1);
+          }  
+
+          //Number of events with NEGATIVE DeltaY in gen and POSITIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen<0 && DeltaY_reco>0 && m_ttbar>750){
+          event.set(h_DeltaY_N_P, DeltaY_gen);
+          // event.set(np,event.get(np)+1);
+          }
+
+
+          //Number of events with NEGATIVE DeltaY in gen and NEGATIVE DeltaY in reco WITHOUT mass cut
+          if (DeltaY_gen<0 && DeltaY_reco<0){
+          event.set(h_DeltaY_N_N_nomass, DeltaY_gen); 
+          // event.set(nn,event.get(nn)+1);
+          }
+
+
+          //Number of events with NEGATIVE DeltaY in gen and NEGATIVE DeltaY in reco WITH mass cut
+          if (DeltaY_gen<0 && DeltaY_reco<0 && m_ttbar>750){
+          event.set(h_DeltaY_N_N, DeltaY_gen);
+          // event.set(nn,event.get(nn)+1);
+          }
+        }
+
+  }
+   
 
 
   //beren

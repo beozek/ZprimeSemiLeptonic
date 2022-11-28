@@ -720,10 +720,10 @@ float m_ttbar = inv_mass(top.v4() + antitop.v4());
   if (m_ttbar>750){
     M_ttbar_750Inf->Fill(m_ttbar,weight);
   }
-  else if(m_ttbar>900){
+  if(m_ttbar>900){
     M_ttbar_900Inf->Fill(m_ttbar,weight);
   }
-  else if(m_ttbar>750 && m_ttbar<900){
+  if(m_ttbar>750 && m_ttbar<900){
     M_ttbar_750_900->Fill(m_ttbar,weight);
   }
 

@@ -228,7 +228,7 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
   if (Delta_Y<0){
     event.set(h_DeltaY_N, Delta_Y);
           }
-  else if(Delta_Y>0){
+  if(Delta_Y>0){
     event.set(h_DeltaY_P, Delta_Y);
       }
   
