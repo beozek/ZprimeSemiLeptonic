@@ -44,7 +44,7 @@ void ZprimeSemiLeptonicHists::init(){
   DeltaY            = book<TH1F>("DeltaY", "#Delta y",2,-2.,2.); 
   DeltaY_N          = book<TH1F>("DeltaY_N", "#Delta y",1,-2.,0); 
   DeltaY_P          = book<TH1F>("DeltaY_P", "#Delta y",1,0.,2.); 
-  M_ttbar           = book<TH1F>("M_ttbar","M_{t#bar{t}}^{gen} [GEV]",280,0,7000);
+  // M_ttbar           = book<TH1F>("M_ttbar","M_{t#bar{t}}^{gen} [GEV]",280,0,7000);
   M_ttbar_750Inf    = book<TH1F>("M_ttbar", "M_{t#bar{t}750Inf}^{gen} [GeV]", 280, 750, 7000);
   M_ttbar_750_900   = book<TH1F>("M_ttbar", "M_{t#bar{t}750-900}^{gen} [GeV]", 280, 750, 900);
   M_ttbar_900Inf    = book<TH1F>("M_ttbar", "M_{t#bar{t}900Inf}^{gen} [GeV]", 280, 900, 7000);

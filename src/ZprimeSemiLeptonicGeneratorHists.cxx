@@ -32,7 +32,7 @@ void ZprimeSemiLeptonicGeneratorHists::init(){
   M_Zprime_rebin           = book<TH1F>("M_Zprime_rebin", "M_{Z'}^{gen} [GeV]", 140, 0, 7000);
   M_Zprime_rebin2          = book<TH1F>("M_Zprime_rebin2", "M_{Z'}^{gen} [GeV]", 70, 0, 7000);
   M_Zprime_rebin3          = book<TH1F>("M_Zprime_rebin3", "M_{Z'}^{gen} [GeV]", 35, 0, 7000);
-  M_ttbar                  = book<TH1F>("M_ttbar", "M_{t#bar{t}}^{gen} [GeV]", 280, 0, 7000);
+  // M_ttbar                  = book<TH1F>("M_ttbar", "M_{t#bar{t}}^{gen} [GeV]", 280, 0, 7000);
   M_ttbar_rebin            = book<TH1F>("M_ttbar_rebin", "M_{t#bar{t}}^{gen} [GeV]", 140, 0, 7000);
   M_ttbar_rebin2           = book<TH1F>("M_ttbar_rebin2", "M_{t#bar{t}}^{gen} [GeV]", 70, 0, 7000);
   M_ttbar_rebin3           = book<TH1F>("M_ttbar_rebin3", "M_{t#bar{t}}^{gen} [GeV]", 35, 0, 7000);
@@ -83,7 +83,7 @@ void ZprimeSemiLeptonicGeneratorHists::fill(const Event & event){
     Pt_Zprime->Fill(zprime.pt());
   }
   float m_ttbar = inv_mass(top.v4() + antitop.v4());
-  M_ttbar->Fill(m_ttbar, weight);
+  // M_ttbar->Fill(m_ttbar, weight);
   M_ttbar_rebin->Fill(m_ttbar, weight);
   M_ttbar_rebin2->Fill(m_ttbar, weight);
   M_ttbar_rebin3->Fill(m_ttbar, weight);
