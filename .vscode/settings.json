@@ -55,6 +55,17 @@
         "typeinfo": "cpp",
         "string": "cpp",
         "random": "cpp",
-        "ResponseMatrix.C": "cpp"
+        "ResponseMatrix.C": "cpp",
+        "ResponseMatrix_muon3.C": "cpp",
+        "ResponseMatrix_muon.C": "cpp",
+        "ResponseMatrix_muon2.C": "cpp",
+        "DeltaY_plots.C": "cpp",
+        "DeltaY_plots copy.C": "cpp",
+        "DeltaY_plots2.C": "cpp",
+        "DeltaY_plots2 copy.C": "cpp",
+        "DeltaY_plots3.C": "cpp",
+        "ResponseMatrix_electron.C": "cpp",
+        "ele_trig_eff.C": "cpp",
+        "ResponseMatrix_2electron.C": "cpp"
     }
 }

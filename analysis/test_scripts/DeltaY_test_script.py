@@ -8,7 +8,7 @@ import numpy
 
 
 # list of DeltaY ROOT files 
-input_files = ["DeltaY_UL18_muon_DATA.root", "DeltaY_UL18_muon_TTbar.root", "DeltaY_UL18_muon_WJet.root", "DeltaY_UL18_muon_DY.root", "DeltaY_UL18_muon_Diboson.root", "DeltaY_UL18_muon_ST.root", "DeltaY_UL18_muon_QCD.root" ]
+input_files = ["DeltaY_UL18_muon.root" ]
 
 # Output ROOT file
 output_file = ROOT.TFile("DeltaY_UL18_muon.root", "RECREATE")
@@ -22,7 +22,7 @@ for input_file in input_files:
     if hist:
         # The Clone() method creates a copy of the histogram. One can save multiple histograms with the same name from different input files in the same output file.
         # Clone the histogram and give it a different name
-        hist_clone = hist.Clone(input_file + "_px1")
+        hist_clone = hist.Clone("px1")
         # Writing the histogram to the output file
         hist_clone.Write()
     infile.Close()

@@ -264,7 +264,7 @@
 
 <!--
 <ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="ozekberen@gmail.com" Notification="as" Workdir="workdir_Zprime_Analysis_UL18_muon_combine"/>
+<ConfigSGE RAM="2" DISK="2" Mail="ozekberen@gmail.com" Notification="as" Workdir="workdir_Zprime_Analysis_UL18_muon_combine_ttbar"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">
@@ -274,7 +274,7 @@
 	<Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&OUTPUTdir;/" PostFix="" TargetLumi="&TargetLumi;">
 
                 <!-- SingleMuon -->
-                <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_SingleMuon_RunA_UL18" Cacheable="&b_Cacheable;">
+                <!-- <InputData Lumi="1" NEventsMax="&NEVT;" Type="DATA" Version="DATA_SingleMuon_RunA_UL18" Cacheable="&b_Cacheable;">
                         &DATA_SingleMuon_RunA_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
@@ -293,7 +293,7 @@
                         &DATA_SingleMuon_RunD_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
-                </InputData>
+                </InputData> -->
                 <!-- TTbar -->
                 <InputData Lumi="390319077.042" NEventsMax="&NEVT;" Type="MC" Version="TTToSemiLeptonic_UL18" Cacheable="&b_Cacheable;">
                         &TTToSemiLeptonic_UL18;
@@ -311,7 +311,7 @@
                         <OutputTree Name="AnalysisTree"/>
                 </InputData>
                 <!-- WJets -->
-                <InputData Lumi="51831.7623918" NEventsMax="&NEVT;" Type="MC" Version="WJetsToLNu_HT-70To100_UL18" Cacheable="&b_Cacheable;">
+                <!-- <InputData Lumi="51831.7623918" NEventsMax="&NEVT;" Type="MC" Version="WJetsToLNu_HT-70To100_UL18" Cacheable="&b_Cacheable;">
                         &WJetsToLNu_HT-70To100_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
@@ -350,9 +350,9 @@
                         &WJetsToLNu_HT-2500ToInf_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
-                </InputData>
+                </InputData>  -->
                 <!-- DY -->
-                <InputData Lumi="120695.553176" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M-50_HT-70to100_UL18" Cacheable="&b_Cacheable;">
+                <!-- <InputData Lumi="120695.553176" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M-50_HT-70to100_UL18" Cacheable="&b_Cacheable;">
                         &DYJetsToLL_M-50_HT-70to100_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
@@ -391,9 +391,9 @@
                         &DYJetsToLL_M-50_HT-2500toInf_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
-                </InputData>
+                </InputData> -->
                 <!-- Diboson -->
-                <InputData Lumi="203703.367886" NEventsMax="&NEVT;" Type="MC" Version="WW_UL18" Cacheable="&b_Cacheable;">
+                <!-- <InputData Lumi="203703.367886" NEventsMax="&NEVT;" Type="MC" Version="WW_UL18" Cacheable="&b_Cacheable;">
                         &WW_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
@@ -407,9 +407,9 @@
                         &ZZ_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
-                </InputData>
+                </InputData> -->
                 <!-- ST -->
-                <InputData Lumi="18197298.5626" NEventsMax="&NEVT;" Type="MC" Version="ST_tW_antitop_5f_NoFullyHadronicDecays_UL18" Cacheable="&b_Cacheable;">
+                <!-- <InputData Lumi="18197298.5626" NEventsMax="&NEVT;" Type="MC" Version="ST_tW_antitop_5f_NoFullyHadronicDecays_UL18" Cacheable="&b_Cacheable;">
                         &ST_tW_antitop_5f_NoFullyHadronicDecays_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
@@ -433,9 +433,9 @@
                         &ST_s-channel_4f_leptonDecays_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
-                </InputData>
+                </InputData> -->
                 <!-- QCD -->
-                <InputData Lumi="0.206124454008" NEventsMax="&NEVT;" Type="MC" Version="QCD_HT50to100_UL18" Cacheable="&b_Cacheable;">
+                <!-- <InputData Lumi="0.206124454008" NEventsMax="&NEVT;" Type="MC" Version="QCD_HT50to100_UL18" Cacheable="&b_Cacheable;">
                         &QCD_HT50to100_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
@@ -479,7 +479,7 @@
                         &QCD_HT2000toInf_UL18;
                         <InputTree Name="AnalysisTree"/>
                         <OutputTree Name="AnalysisTree"/>
-                </InputData>
+                </InputData> -->
                 <!-- ALP -->
                 <!-- <InputData Lumi="1360527.80931" NEventsMax="&NEVT;" Type="MC" Version="ALP_ttbar_signal_UL18" Cacheable="&b_Cacheable;">
                         &ALP_ttbar_signal_UL18;
