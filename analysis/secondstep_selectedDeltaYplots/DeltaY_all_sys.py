@@ -113,7 +113,7 @@ for input_file_name,histogram_name in input_files.items():
         
         hist1_org = hist1.Clone(histogram_name + "_1_original")
         hist1_org.Write()
-        hist1_nominal = hist1.Clone(histogram_name + "_1_nominal")
+        hist1_nominal = hist1.Clone(histogram_name + "_1")
 
         for sf in scale_factors_nominal:
             scale_factor_hist_nominal = root_file.Get(sf)
@@ -126,14 +126,14 @@ for input_file_name,histogram_name in input_files.items():
         for sf,name in scale_factors_up.items():
             scale_factor_hist_up = root_file.Get(sf)
             scale_factor_hist_up_mean = scale_factor_hist_up.GetMean()
-            print(scale_factor_hist_up_mean)
+            # print(scale_factor_hist_up_mean)
             
             scale_factor_hist_up_div = root_file.Get(scale_factors_up_division[sf])
-            print(scale_factors_up_division[sf])
+            # print(scale_factors_up_division[sf])
             scale_factor_hist_up_div_mean = 1/scale_factor_hist_up_div.GetMean()
-            print(scale_factor_hist_up_div_mean)
+            # print(scale_factor_hist_up_div_mean)
             final_SF = scale_factor_hist_up_mean * scale_factor_hist_up_div_mean
-            print(final_SF)
+            # print(final_SF)
             
             hist1_up = hist1_nominal.Clone(histogram_name + "_1_" + name)
             hist1_up.Scale(final_SF)
@@ -158,7 +158,7 @@ for input_file_name,histogram_name in input_files.items():
         
         hist2_org = hist2.Clone(histogram_name + "_2_original")
         hist2_org.Write()
-        hist2_nominal = hist2.Clone(histogram_name + "_2_nominal")
+        hist2_nominal = hist2.Clone(histogram_name + "_2")
         
         for sf in scale_factors_nominal:
             scale_factor_hist_nominal = root_file.Get(sf)
@@ -208,7 +208,7 @@ for input_file_name2,histogram_name in input_files2.items():
            
         hist3_org = hist3.Clone(histogram_name + "_original")
         hist3_org.Write()
-        hist3_nominal = hist3.Clone(histogram_name + "_nominal")
+        hist3_nominal = hist3.Clone(histogram_name )
         
         for sf in scale_factors_nominal:
             scale_factor_hist_nominal = root_file.Get(sf)

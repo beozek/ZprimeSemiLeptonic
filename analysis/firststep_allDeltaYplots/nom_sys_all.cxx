@@ -46,8 +46,8 @@ void processFile(const std::string& inputPath, const std::string& outputPath) {
     TTree *treereco = (TTree*) reco;
 
     std::cout << "Number of Events: " << treereco->GetEntries() << std::endl;
-    
-    // TH1D DeltaY Plots
+   
+   // TH1D DeltaY Plots
 
     //DeltaY gen without mass cut
     TH1D *h_DeltaY_gen = new TH1D("DeltaY_gen","#Delta_Y_{gen}",10,-2.5,2.5);
@@ -559,7 +559,7 @@ void processFile(const std::string& inputPath, const std::string& outputPath) {
 
   // --------------- Output File ------------------
 
-    TFile *myFile = new TFile(outputPath.c_str(), "RECREATE");
+TFile *myFile = new TFile(outputPath.c_str(), "RECREATE");
 
     h_DeltaY_gen->Write();
     h_DeltaY_gen_mass->Write();
@@ -673,7 +673,7 @@ void processFile(const std::string& inputPath, const std::string& outputPath) {
     h_weight_murmuf_dyn4_upnone->Write();
     h_weight_murmuf_dyn4_upup->Write();
 
-    myFile->Close();
+myFile->Close();
 
 }
 

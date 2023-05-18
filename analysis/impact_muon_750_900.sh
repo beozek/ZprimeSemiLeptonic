@@ -3,6 +3,9 @@ date
 
 rm comb*
 rm higgs*
+rm Ac.pdf
+rm r_neg.pdf
+rm impacts.json
 
 declare -a POIS=(
   "r_neg"
