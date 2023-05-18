@@ -27,8 +27,10 @@ public:
 
 private:
   uhh2::Event::Handle< std::vector<ZprimeCandidate> > h_ZprimeCandidates_;
-  uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
-  uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8TopTagsPtr;
+  // uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
+  // uhh2::Event::Handle< std::vector<const TopJet*> > h_AK8TopTagsPtr;
+  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags; //mistag
+  uhh2::Event::Handle< std::vector<const TopJet*> > h_DeepAK8TopTagsPtr; //mistag
 
   float minDR_;
   TString mode_;

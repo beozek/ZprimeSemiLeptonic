@@ -25,7 +25,9 @@ Hists(ctx, dirname) {
   ishotvr = (ctx.get("is_hotvr") == "true");
   isdeepAK8 = (ctx.get("is_deepAK8") == "true");
   if(isdeepAK8){
-    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+    // h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+    h_DeepAK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+
   }else if(ishotvr){
     h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
   }
@@ -1026,7 +1028,9 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
     }
 
     // Top-tagged jets AK8
-    vector<TopJet> AK8PuppiTopTags = event.get(h_AK8TopTags);
+    // vector<TopJet> AK8PuppiTopTags = event.get(h_AK8TopTags);
+    vector<TopJet> AK8PuppiTopTags = event.get(h_DeepAK8TopTags); //mistag 
+
     int NAK8PuppiTaggedjets = 0;
     for(unsigned int i=0; i<AK8PuppiTopTags.size(); i++){
       NAK8PuppiTaggedjets++;
@@ -1184,6 +1188,7 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
         pt_mu_nearjet->Fill(jets->at(k).pt(),weight);
       }
     }
+
   }
 
   for(int i=0; i<Nmuons; i++){

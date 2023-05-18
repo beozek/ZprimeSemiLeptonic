@@ -49,6 +49,8 @@ namespace uhh2 {
 
   private:
   uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
+  uhh2::Event::Handle< std::vector<TopJet> > h_DeepAK8TopTags; //mistag
+
   TString mode_;
   };
 

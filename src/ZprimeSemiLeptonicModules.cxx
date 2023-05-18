@@ -84,11 +84,15 @@ ZprimeCandidateBuilder::ZprimeCandidateBuilder(uhh2::Context& ctx, TString mode,
   h_ZprimeCandidates_ = ctx.get_handle< vector<ZprimeCandidate> >("ZprimeCandidates");
 
   if(mode_ == "deepAK8"){
-    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
-    h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
+    // h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
+    // h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("DeepAK8TopTagsPtr");
+    h_DeepAK8TopTags = ctx.get_handle< std::vector<TopJet>  >("DeepAK8TopTags"); //mistag
+    h_DeepAK8TopTagsPtr = ctx.get_handle< std::vector<const TopJet*>  >("DeepAK8TopTagsPtr"); //mistag
+
   }else if(mode_ == "hotvr"){
-    h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
-    h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("HOTVRTopTagsPtr");
+    // h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("HOTVRTopTags");
+    // h_AK8TopTagsPtr = ctx.get_handle<std::vector<const TopJet*>>("HOTVRTopTagsPtr");
+  
   }
 
   if(mode_ != "hotvr" && mode_ != "deepAK8") throw runtime_error("In ZprimeCandidateBuilder::ZprimeCandidateBuilder(): 'mode' must be 'hotvr' or 'deepAK8'");
@@ -111,8 +115,10 @@ bool ZprimeCandidateBuilder::process(uhh2::Event& event){
   unsigned int neutrinoidx = 0;
 
   // Build all necessary loops
-  vector<TopJet> TopTags = event.get(h_AK8TopTags);
-  vector<const TopJet*> TopTagsPtr = event.get(h_AK8TopTagsPtr);
+  // vector<TopJet> TopTags = event.get(h_AK8TopTags);
+  // vector<const TopJet*> TopTagsPtr = event.get(h_AK8TopTagsPtr);
+  vector<TopJet> TopTags = event.get(h_DeepAK8TopTags); //mistag
+  vector<const TopJet*> TopTagsPtr = event.get(h_DeepAK8TopTagsPtr); //mistag
 
   if((event.muons->size() < 1 && event.electrons->size() < 1)) throw runtime_error("Event content did not allow reconstructing the Zprime: Leptons");
   if((event.jets->size() < 2 && TopTags.size() == 0)) throw runtime_error("Event content did not allow reconstructing the Zprime: AK4");
