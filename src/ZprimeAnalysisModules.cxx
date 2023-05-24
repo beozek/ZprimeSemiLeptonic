@@ -545,14 +545,14 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   topjet_puppi_cleaner->process(event); //this line was taken from preselection module
 
   // Run top-tagging
-  // if(ishotvr){
-  //   TopTaggerHOTVR->process(event);
-  //   hadronic_top->process(event);
-  // }
-  // else if(isdeepAK8){
-  //   TopTaggerDeepAK8->process(event);
-  //   hadronic_top->process(event);
-  // }
+  if(ishotvr){
+    TopTaggerHOTVR->process(event);
+    hadronic_top->process(event);
+  }
+  else if(isdeepAK8){
+    TopTaggerDeepAK8->process(event);
+    hadronic_top->process(event);
+  }
 
   // fill_histograms(event, "Weights_Init");
   // lumihists_Weights_Init->fill(event);
@@ -1030,16 +1030,28 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
    if(debug) cout<<"Chi2_selection is ok"<<endl;
 
      // Run top-tagging
-  if(ishotvr){
-    TopTaggerHOTVR->process(event);
-    hadronic_top->process(event);
-  }
-  else if(isdeepAK8){
-    TopTaggerDeepAK8->process(event);
-     if(debug)cout << "toptagger" << endl;
-    fill_histograms(event,"Toptagger_hist");
+  // if(ishotvr){
+  //   TopTaggerHOTVR->process(event);
+  //   // hadronic_top->process(event);
+  // }
+  // else if(isdeepAK8){
+  //   TopTaggerDeepAK8->process(event);
+  //    if(debug)cout << "toptagger" << endl;
+  //   fill_histograms(event,"Toptagger_hist");
       
-  }
+  // }
+
+  // Run top-tagging
+  // if(ishotvr){
+  //   TopTaggerHOTVR->process(event);
+  //   hadronic_top->process(event);
+  // }
+  // else if(isdeepAK8){
+  //   TopTaggerDeepAK8->process(event);
+  //      if(debug)cout << "toptagger" << endl;
+  //   hadronic_top->process(event);
+  // }
+
 
   // histograms for systematics
   // if(!isEleTriggerMeasurement) SystematicsModule->process(event);
