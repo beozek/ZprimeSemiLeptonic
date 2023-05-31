@@ -404,7 +404,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
 //mistag
 // Cleaning: Jets
-  topjet_puppi_cleaner.reset(new TopJetCleaner(ctx, TopJetId(PtEtaCut(200., 2.4)), "toppuppijets")); //this line was taken from preselection module
+  topjet_puppi_cleaner.reset(new TopJetCleaner(ctx, TopJetId(PtEtaCut(400., 2.4)), "toppuppijets")); //this line was taken from preselection module
   
 
   // Split interference signal samples by sign
