@@ -29,7 +29,6 @@
 
 #include <UHH2/ZprimeSemiLeptonic/include/ModuleBASE.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicSelections.h>
-//#include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicModules.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicPreselectionHists.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicGeneratorHists.h>
 #include <UHH2/ZprimeSemiLeptonic/include/CHSJetCorrections.h>
@@ -48,7 +47,7 @@ public:
   void fill_histograms(uhh2::Event&, string);
 
 protected:
-bool debug;
+  bool debug;
 
   // Corrections
   std::unique_ptr<CommonModules> common;
@@ -103,6 +102,8 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
     
     debug = false;
 
+  debug = false; // true/false
+
   for(auto & kv : ctx.get_all()){
     cout << " " << kv.first << " = " << kv.second << endl;
   }
@@ -118,14 +119,15 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
   isUL17        = (ctx.get("dataset_version").find("UL17")        != std::string::npos);
   isUL18        = (ctx.get("dataset_version").find("UL18")        != std::string::npos);
 
-  // lepton IDs 
+  // lepton IDs
+  // ElectronId eleID_veto = ElectronID_Fall17_tight_noIso; - eleID_veto tag changed
   ElectronId eleID_veto = ElectronTagID(Electron::mvaEleID_Fall17_noIso_V2_wp90);
   MuonId     muID_veto  = MuonID(Muon::CutBasedIdTight);
 
   double electron_pt(25.);
   double muon_pt(25.);
-  double jet1_pt(20.);
-  double jet2_pt(20.);
+  double jet1_pt(30.);
+  double jet2_pt(30.);
   double MET(20.);
 
 
@@ -146,7 +148,7 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
   const ElectronId electronID_veto(AndId<Electron>(PtEtaSCCut(electron_pt, 2.5), eleID_veto));
   const JetPFID jetID_CHS(JetPFID::WP_TIGHT_CHS);
   const JetPFID jetID_PUPPI(JetPFID::WP_TIGHT_PUPPI);
-   
+
   jet_IDcleaner.reset(new JetCleaner(ctx, jetID_PUPPI));
   jet_cleaner1.reset(new JetCleaner(ctx, 15., 3.0));
   jet_cleaner2.reset(new JetCleaner(ctx, 20., 2.5));
@@ -157,7 +159,7 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
   // common modules
   common.reset(new CommonModules());
   common->switch_jetlepcleaner(true);
-  common->disable_pvfilter();
+  // common->disable_pvfilter();
   common->disable_jetpfidfilter();
   common->switch_jetPtSorter(true);
   common->switch_metcorrection(true);
@@ -198,17 +200,8 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
 
 bool ZprimePreselectionModule::process(uhh2::Event& event){
 
-
- 
-  
-//  cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
-//  cout << " run.event: " << event.run << ". " << event.event << endl;
-
-  event.set(h_DeltaY,-100); //-beren
-  event.set(h_DeltaY_N,-100); //-beren
-  event.set(h_DeltaY_P,-100); //-beren
-
-
+  if(debug) cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
+  if(debug) cout << " run.event: " << event.run << ". " << event.event << endl;
 
   fill_histograms(event, "Input");
 
@@ -239,7 +232,7 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
   bool commonResult = common->process(event);
   if (!commonResult) return false;
   if(debug) cout << "CommonModules: ok" << endl;
-  // fill_histograms(event, "CommonModules");
+  fill_histograms(event, "CommonModules");
 
   sort_by_pt<Muon>(*event.muons);
   sort_by_pt<Electron>(*event.electrons);
@@ -249,33 +242,36 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
 
   if(isHOTVR){
     hotvrjetCorr->process(event);
+    fill_histograms(event, "HOTVRCorrections");
   }
-  // fill_histograms(event, "HOTVRCorrections");
 
   toppuppijetCorr->process(event);
-    if(debug) cout << "TopPuppiJetCorrections: ok" << endl;
-  // fill_histograms(event, "PUPPICorrections");
+  if(debug) cout << "TopPuppiJetCorrections: ok" << endl;
+  fill_histograms(event, "PUPPICorrections");
 
 
   // GEN ME quark-flavor selection
   if(!event.isRealData){
     if(!genflavor_sel->passes(event)) return false;
   }
+  if(debug) cout << "GenFlavorSelection: ok" << endl;
 
-  //cout<<"GEN ME quark-flavor selection ... "<<event.event<<endl;
-
+  // cout << "event.muons->size(): " << event.muons->size() << endl;
+  // cout << "event.electrons->size(): " << event.electrons->size() << endl;
   const bool pass_lep1 = ((event.muons->size() >= 1) || (event.electrons->size() >= 1));
+  // cout << "pass_lep1: " << pass_lep1 << endl;
   if(!pass_lep1) return false;
-
-  // fill_histograms(event, "Lepton1");
+  if(debug) cout << "≥1 leptons: ok" << endl;
+  fill_histograms(event, "Lepton1");
 
   jet_IDcleaner->process(event);
-  // fill_histograms(event, "JetID");
+  fill_histograms(event, "JetID");
+  if(debug) cout << "JetCleaner ID: ok" << endl;
 
   jet_cleaner1->process(event);
   sort_by_pt<Jet>(*event.jets);
-  // fill_histograms(event, "JetCleaner1");
-  //cout<<"JetCleaner1 ... "<<event.event<<endl;
+  fill_histograms(event, "JetCleaner1");
+  if(debug) cout << "JetCleaner1: ok" << endl;
 
   // Lepton-2Dcut variables
   for(auto& muo : *event.muons){
@@ -297,8 +293,8 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
 
   jet_cleaner2->process(event);
   sort_by_pt<Jet>(*event.jets);
-  // fill_histograms(event, "JetCleaner2");
-  //cout<<"JetCleaner2 ... "<<event.event<<endl;
+  fill_histograms(event, "JetCleaner2");
+  if(debug) cout << "JetCleaner2: ok" << endl;
 
   hotvrjet_cleaner->process(event);
   sort_by_pt<TopJet>(*event.topjets);
@@ -307,23 +303,26 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
   topjet_puppi_cleaner->process(event);
   sort_by_pt<TopJet>(*event.toppuppijets);
 
-  // fill_histograms(event, "TopjetCleaner");
-  //cout<<"TopjetCleaner ... "<<event.event<<endl;
+  fill_histograms(event, "TopjetCleaner");
+  if(debug) cout << "TopJetCleaner: ok" << endl;
 
   // 1st AK4 jet selection
   const bool pass_jet1 = jet1_sel->passes(event);
   if(!pass_jet1) return false;
-  // fill_histograms(event, "Jet1");
+  if(debug) cout << "NJetSelection1: ok" << endl;
+  fill_histograms(event, "Jet1");
 
   // 2nd AK4 jet selection
   const bool pass_jet2 = jet2_sel->passes(event);
   if(!pass_jet2) return false;
-  // fill_histograms(event, "Jet2");
+  if(debug) cout << "NJetSelection2: ok" << endl;
+  fill_histograms(event, "Jet2");
 
   // MET selection
   const bool pass_met = met_sel->passes(event);
   if(!pass_met) return false;
-  // fill_histograms(event, "MET");
+  if(debug) cout << "METCut: ok" << endl;
+  fill_histograms(event, "MET");
 
   return true;
 }
