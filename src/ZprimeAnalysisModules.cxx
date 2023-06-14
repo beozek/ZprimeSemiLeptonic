@@ -159,9 +159,6 @@ protected:
   
   std::vector<TopJet> toptags;
   vector<const TopJet*> toptags_ptr;
-  std::vector<TopJet> wtags;
-  vector<const TopJet*> wtags_ptr;
-
 
 
   // Configuration
@@ -763,10 +760,10 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     sf_ele_reco->process(event);
     // fill_histograms(event, "RecoEle_SF");
   }
-
-  // apply muon reco scale factors
+  
+    // apply muon reco scale factors
   sf_muon_reco->process(event);
-  // fill_histograms(event, "MuonReco_SF");
+  // fill_histograms(event, "MuonReco_SF"); 
 
   // Trigger MUON channel
   if(isMuon){
@@ -985,10 +982,10 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
   // b-tagging: >= 1 b-tag medium WP (on matched CHS jet)
   // if(!AK4PuppiCHS_BTagging->passes(event)) return false;
-  if(AK4PuppiCHS_BTagging->passes(event)) return false;  //mistag
+  // if(AK4PuppiCHS_BTagging->passes(event)) return false;  //mistag
 
   fill_histograms(event, "Btags1");
-  h_CHSMatchHists_afterBTag->fill(event);
+  // h_CHSMatchHists_afterBTag->fill(event);
 
   // Higher order corrections - EWK & QCD NLO
   NLOCorrections_module->process(event);
@@ -1028,33 +1025,6 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
    lumihists_Chi2->fill(event);
   
    if(debug) cout<<"Chi2_selection is ok"<<endl;
-
-     // Run top-tagging
-  // if(ishotvr){
-  //   TopTaggerHOTVR->process(event);
-  //   // hadronic_top->process(event);
-  // }
-  // else if(isdeepAK8){
-  //   TopTaggerDeepAK8->process(event);
-  //    if(debug)cout << "toptagger" << endl;
-  //   fill_histograms(event,"Toptagger_hist");
-      
-  // }
-
-  // Run top-tagging
-  // if(ishotvr){
-  //   TopTaggerHOTVR->process(event);
-  //   hadronic_top->process(event);
-  // }
-  // else if(isdeepAK8){
-  //   TopTaggerDeepAK8->process(event);
-  //      if(debug)cout << "toptagger" << endl;
-  //   hadronic_top->process(event);
-  // }
-
-
-  // histograms for systematics
-  // if(!isEleTriggerMeasurement) SystematicsModule->process(event);
 
   return true;
 }
