@@ -106,7 +106,7 @@
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
-		<InputData Lumi="79684571.3184" NEventsMax="&NEVT;" Type="MC" Version="TTToHadronic_UL16preVFP" Cacheable="&b_Cacheable;">
+		<!--<InputData Lumi="79684571.3184" NEventsMax="&NEVT;" Type="MC" Version="TTToHadronic_UL16preVFP" Cacheable="&b_Cacheable;">
 			&TTToHadronic_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -115,9 +115,9 @@
 			&TTTo2L2Nu_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
-		</InputData> 
+		</InputData> -->
 		<!-- WJets -->
-		<InputData Lumi="13236.1683714" NEventsMax="&NEVT;" Type="MC" Version="WJetsToLNu_HT-70To100_UL16preVFP" Cacheable="&b_Cacheable;">
+		<!--<InputData Lumi="13236.1683714" NEventsMax="&NEVT;" Type="MC" Version="WJetsToLNu_HT-70To100_UL16preVFP" Cacheable="&b_Cacheable;">
 			&WJetsToLNu_HT-70To100_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -156,9 +156,9 @@
 			&WJetsToLNu_HT-2500ToInf_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
-		</InputData>
+		</InputData>-->
 		<!-- DY -->
-		<InputData Lumi="46901.5203426" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M-50_HT-70to100_UL16preVFP" Cacheable="&b_Cacheable;">
+		<!--<InputData Lumi="46901.5203426" NEventsMax="&NEVT;" Type="MC" Version="DYJetsToLL_M-50_HT-70to100_UL16preVFP" Cacheable="&b_Cacheable;">
 			&DYJetsToLL_M-50_HT-70to100_UL16preVFP;
 			<InputTree Name="AnalysisTree"/>
 			<OutputTree Name="AnalysisTree"/>
@@ -197,9 +197,9 @@
 			&DYJetsToLL_M-50_HT-2500toInf_UL16preVFP;
 			<InputTree Name="AnalysisTree"/>
 			<OutputTree Name="AnalysisTree"/>
-		</InputData> 
+		</InputData> -->
 		<!-- Diboson -->
-		<InputData Lumi="207339.329717" NEventsMax="&NEVT;" Type="MC" Version="WW_UL16preVFP" Cacheable="&b_Cacheable;">
+		<!--<InputData Lumi="207339.329717" NEventsMax="&NEVT;" Type="MC" Version="WW_UL16preVFP" Cacheable="&b_Cacheable;">
 			&WW_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -213,9 +213,9 @@
 			&ZZ_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
-		</InputData> 
+		</InputData> -->
 		<!-- ST -->
-		<InputData Lumi="5186119.82827" NEventsMax="&NEVT;" Type="MC" Version="ST_tW_antitop_5f_NoFullyHadronicDecays_UL16preVFP" Cacheable="&b_Cacheable;">
+		<!--<InputData Lumi="5186119.82827" NEventsMax="&NEVT;" Type="MC" Version="ST_tW_antitop_5f_NoFullyHadronicDecays_UL16preVFP" Cacheable="&b_Cacheable;">
 			&ST_tW_antitop_5f_NoFullyHadronicDecays_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -239,9 +239,9 @@
 			&ST_s-channel_4f_leptonDecays_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
-		</InputData> 
+		</InputData> -->
 		<!-- QCD -->
-		<InputData Lumi="0.192198558365" NEventsMax="&NEVT;" Type="MC" Version="QCD_HT50to100_UL16preVFP" Cacheable="&b_Cacheable;">
+		<!--<InputData Lumi="0.192198558365" NEventsMax="&NEVT;" Type="MC" Version="QCD_HT50to100_UL16preVFP" Cacheable="&b_Cacheable;">
 			&QCD_HT50to100_UL16preVFP;
 			<InputTree Name="AnalysisTree"/>
 			<OutputTree Name="AnalysisTree"/>
@@ -284,7 +284,7 @@
 		<InputData Lumi="219438.227273" NEventsMax="&NEVT;" Type="MC" Version="QCD_HT2000toInf_UL16preVFP" Cacheable="&b_Cacheable;">
 			&QCD_HT2000toInf_UL16preVFP;
 			<InputTree Name="AnalysisTree"/>
-			<OutputTree Name="AnalysisTree"/>
+			<OutputTree Name="AnalysisTree"/>-->
 		</InputData> 
 
 		<UserConfig>
@@ -330,6 +330,8 @@
 			<Item Name="SystDirection_ElectronId"    Value="nominal"/>
 			<Item Name="SystDirection_ElectronReco"  Value="nominal"/>
 			<Item Name="Sys_PU"                      Value="central"/>
+			<Item Name="GenParticleCollection" Value="GenParticles"/>
+			<Item Name="GenJetCollection" Value="slimmedGenJets"/>
 			<Item Name="SystDirection_BTaggingShape" Value="central"/>
 			<Item Name="Sys_prefiring"               Value="nominal"/>
 			<Item Name="Sys_TopTag"                  Value="nominal"/>

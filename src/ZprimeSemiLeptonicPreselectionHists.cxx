@@ -54,9 +54,12 @@ void ZprimeSemiLeptonicPreselectionHists::init(){
   m_jet3            = book<TH1F>("m_jet3", "m^{jet 3}", 50, 0, 500);
 
 //-beren -new variables for unfolding study
-  DeltaY            = book<TH1F>("DeltaY", "#Delta y",2,-2.,2.); 
-  DeltaY_N          = book<TH1F>("DeltaY_N", "#Delta y",1,-2.,0); 
-  DeltaY_P          = book<TH1F>("DeltaY_P", "#Delta y",1,0.,2.); 
+  DeltaY_ele        = book<TH1F>("DeltaY_ele", "#Delta y",2,-2.,2.); 
+  DeltaY_N_ele      = book<TH1F>("DeltaY_N_ele", "#Delta y",1,-2.,0); 
+  DeltaY_P_ele      = book<TH1F>("DeltaY_P_ele", "#Delta y",1,0.,2.); 
+  DeltaY_muon       = book<TH1F>("DeltaY_muon", "#Delta y",2,-2.,2.); 
+  DeltaY_N_muon     = book<TH1F>("DeltaY_N_muon", "#Delta y",1,-2.,0); 
+  DeltaY_P_muon     = book<TH1F>("DeltaY_P_muon", "#Delta y",1,0.,2.); 
   M_top             = book<TH1F>("M_top", "M_{t}^{gen} [GeV]", 30, 0, 300);
   M_antitop         = book<TH1F>("M_antitop", "M_{#bar{t}}^{gen} [GeV]", 30, 0, 300);
   Pt_ttbar          = book<TH1F>("Pt_ttbar", "p_{T}^{t#bar{t}, gen} [GeV]", 100, 0, 1000);
@@ -294,38 +297,44 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
 
 //-beren Delta Y
 
-  GenParticle top, antitop;
-   for(const GenParticle & gp : *event.genparticles){
-     if(gp.pdgId() == 6){
-       top = gp;
-     }
-     else if(gp.pdgId() == -6){
-       antitop = gp;
-     }
-   }
-  
-    // ?? DeltaY = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
-    // for(unsigned int i = 0; i<math.length(); i++){
-    //   if (DeltaY[i]<0){
-    //     DeltaY_N->Fill(DeltaY,weight);
-    //   }
-    //   else if(DeltaY[i]>0){
-    //     DeltaY_P->Fill(DeltaY,weight);
-    //   }
-    // }
+  GenParticle electron, antielectron, muon, antimuon;
 
-  DeltaY->Fill(TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity()),weight);
+  for (const GenParticle& gp : *event.genparticles) {
 
-    double_t Delta_Y = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
-      if (Delta_Y<0){
-        DeltaY_N->Fill(Delta_Y,weight);
+      // cout << "Size of genparticle vector: " << genparticles.size() << endl; 
+      if (gp.pdgId() == 11) {
+          electron = gp;
       }
-      else if(Delta_Y>0){
-        DeltaY_P->Fill(Delta_Y,weight);
+      else if (gp.pdgId() == -11) {
+          antielectron = gp;
       }
+      else if (gp.pdgId() == 13) {
+          muon = gp;
+      }
+      else if (gp.pdgId() == -13) {
+          antimuon = gp;
+      }
+  }
+
+  double_t DeltaY_gen_ele = TMath::Abs(0.5*TMath::Log((electron.energy() + electron.pt()*TMath::SinH(electron.eta()))/(electron.energy() - electron.pt()*TMath::SinH(electron.eta())))) - TMath::Abs(0.5*TMath::Log((antielectron.energy() + antielectron.pt()*TMath::SinH(antielectron.eta()))/(antielectron.energy() - antielectron.pt()*TMath::SinH(antielectron.eta()))));
+  double_t DeltaY_gen_muon= TMath::Abs(0.5*TMath::Log((muon.energy() + muon.pt()*TMath::SinH(muon.eta()))/(muon.energy() - muon.pt()*TMath::SinH(muon.eta())))) - TMath::Abs(0.5*TMath::Log((antimuon.energy() + antimuon.pt()*TMath::SinH(antimuon.eta()))/(antimuon.energy() - antimuon.pt()*TMath::SinH(antimuon.eta()))));
   
+  DeltaY_ele->Fill(DeltaY_gen_ele);
+  DeltaY_muon->Fill(DeltaY_gen_muon);
 
+  if(DeltaY_gen_ele <0){
+    DeltaY_N_ele->Fill(DeltaY_gen_ele,weight);
+  }
+  else if(DeltaY_gen_ele>0){
+    DeltaY_P_ele->Fill(DeltaY_gen_ele,weight);
+  }
 
+  if(DeltaY_gen_muon <0){
+    DeltaY_N_muon->Fill(DeltaY_gen_muon,weight);
+  }
+  else if(DeltaY_gen_muon>0){
+    DeltaY_P_muon->Fill(DeltaY_gen_muon,weight);
+  }
 
 
  /// -beren Delta Y

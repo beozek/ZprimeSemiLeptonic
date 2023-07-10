@@ -66,6 +66,44 @@ protected:
   std::unique_ptr<uhh2::Selection> jet2_sel;
   std::unique_ptr<uhh2::Selection> met_sel;
 
+  Event::Handle<float> h_DeltaY_gen_ele; //-beren 
+  Event::Handle<float> h_DeltaY_gen_muon; //-beren 
+  Event::Handle<float> h_DeltaY_gen_mass; //-beren
+
+  Event::Handle<float> h_DeltaY_N_gen_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_muon; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_pt_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_pt_muon; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_eta_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_eta_muon; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_2d_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_2d_muon; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_met_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_met_muon; //-beren
+
+  Event::Handle<float> h_DeltaY_P_gen_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_muon; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_pt_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_pt_muon; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_eta_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_eta_muon; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_2d_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_2d_muon; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_met_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_met_muon; //-beren
+
+  Event::Handle<float> h_DeltaY_N_gen_jet_pt_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_jet_pt_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_jet_pt_muon; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_jet_pt_muon; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_jet_eta_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_jet_eta_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_jet_eta_muon; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_jet_eta_muon; //-beren
+
+  
+
+
   bool isMC, isHOTVR;
   string Sys_PU;
 
@@ -76,6 +114,8 @@ protected:
 
   // additional branch with AK4 CHS jets -> for b-tagging
   Event::Handle<vector<Jet>> h_CHSjets;
+  // Event::Handle<vector<Particle>> h_mygenjets;
+
 
   //DeltaY variable to save them to tree
   Event::Handle<float> h_DeltaY; //-beren
@@ -83,6 +123,7 @@ protected:
   Event::Handle<float> h_DeltaY_P; //-beren
 
 };
+
 
 void ZprimePreselectionModule::book_histograms(uhh2::Context& ctx, vector<string> tags){
   for(const auto & tag : tags){
@@ -100,9 +141,7 @@ void ZprimePreselectionModule::fill_histograms(uhh2::Event& event, string tag){
 
 ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
     
-    debug = false;
-
-  debug = false; // true/false
+  debug = false;
 
   for(auto & kv : ctx.get_all()){
     cout << " " << kv.first << " = " << kv.second << endl;
@@ -156,6 +195,7 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
   topjet_puppi_IDcleaner.reset(new TopJetCleaner(ctx, jetID_PUPPI, "toppuppijets"));
   topjet_puppi_cleaner.reset(new TopJetCleaner(ctx, TopJetId(PtEtaCut(200., 2.5)), "toppuppijets"));
 
+
   // common modules
   common.reset(new CommonModules());
   common->switch_jetlepcleaner(true);
@@ -184,14 +224,48 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
   h_CHSjets = ctx.get_handle<vector<Jet>>("jetsAk4CHS");
 
   //DeltaY variables
-  h_DeltaY = ctx.declare_event_output<float> ("DeltaY"); //-beren DeltaY
-  h_DeltaY_N = ctx.declare_event_output<float> ("DeltaY_N"); //-beren DeltaY
-  h_DeltaY_P = ctx.declare_event_output<float> ("DeltaY_P"); //-beren DeltaY
+  h_DeltaY_gen_ele = ctx.declare_event_output<float> ("DeltaY_gen_ele"); //-beren DeltaY 
+  h_DeltaY_gen_muon = ctx.declare_event_output<float> ("DeltaY_gen_muon"); //-beren DeltaY 
 
+  h_DeltaY_N_gen_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_muon"); //-beren DeltaY
+  h_DeltaY_N_gen_pt_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_pt_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_pt_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_pt_muon"); //-beren DeltaY
+  h_DeltaY_N_gen_eta_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_eta_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_eta_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_eta_muon"); //-beren DeltaY
+  h_DeltaY_N_gen_2d_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_2d_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_2d_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_2d_muon"); //-beren DeltaY
+  h_DeltaY_N_gen_met_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_met_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_met_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_met_muon"); //-beren DeltaY
+
+  h_DeltaY_P_gen_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_muon"); //-beren DeltaY
+  h_DeltaY_P_gen_pt_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_pt_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_pt_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_pt_muon"); //-beren DeltaY
+  h_DeltaY_P_gen_eta_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_eta_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_eta_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_eta_muon"); //-beren DeltaY
+  
+  h_DeltaY_P_gen_2d_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_2d_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_2d_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_2d_muon"); //-beren DeltaY
+  h_DeltaY_P_gen_met_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_met_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_met_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_met_muon"); //-beren DeltaY
+
+  h_DeltaY_N_gen_jet_pt_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_pt_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_jet_pt_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_pt_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_jet_pt_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_pt_muon"); //-beren DeltaY
+  h_DeltaY_P_gen_jet_pt_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_pt_muon"); //-beren DeltaY
+
+  h_DeltaY_N_gen_jet_eta_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_eta_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_jet_eta_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_eta_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_jet_eta_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_eta_muon"); //-beren DeltaY
+  h_DeltaY_P_gen_jet_eta_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_eta_muon"); //-beren DeltaY
+
+
+  // h_mygenjets = ctx.declare_event_output<vector<Particle>>("mygenjets");
 
 
   // Book histograms
-  vector<string> histogram_tags = {"Input", "CommonModules", "HOTVRCorrections", "PUPPICorrections", "Lepton1", "JetID", "JetCleaner1", "JetCleaner2", "TopjetCleaner", "Jet1", "Jet2", "MET"};
+  vector<string> histogram_tags = {"Input", "Gen_ele_N","Ele_N_Pt","Ele_N_Pt_Eta","Ele_N_JetPt","Ele_N_JetPt_Eta", "DeltaY_gen", "CommonModules", "HOTVRCorrections", "PUPPICorrections", "Lepton1", "JetID", "JetCleaner1", "JetCleaner2", "TopjetCleaner", "Jet1", "Jet2", "MET"};
   book_histograms(ctx, histogram_tags);
 
   lumihists.reset(new LuminosityHists(ctx, "lumi"));
@@ -203,36 +277,198 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
   if(debug) cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
   if(debug) cout << " run.event: " << event.run << ". " << event.event << endl;
 
+  event.set(h_DeltaY_gen_ele,-100); //-beren
+  event.set(h_DeltaY_gen_muon,-100); //-beren
+  event.set(h_DeltaY_N_gen_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_muon,-100); //-beren
+  event.set(h_DeltaY_N_gen_pt_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_pt_muon,-100); //-beren
+  event.set(h_DeltaY_N_gen_eta_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_eta_muon,-100); //-beren
+  event.set(h_DeltaY_N_gen_2d_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_2d_muon,-100); //-beren
+  event.set(h_DeltaY_N_gen_met_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_met_muon,-100); //-beren
+
+  event.set(h_DeltaY_P_gen_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_muon,-100); //-beren
+  event.set(h_DeltaY_P_gen_pt_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_pt_muon,-100); //-beren
+  event.set(h_DeltaY_P_gen_eta_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_eta_muon,-100); //-beren
+  event.set(h_DeltaY_P_gen_2d_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_2d_muon,-100); //-beren
+  event.set(h_DeltaY_P_gen_met_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_met_muon,-100); //-beren
+
+  event.set(h_DeltaY_N_gen_jet_pt_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_jet_pt_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_jet_pt_muon,-100); //-beren
+  event.set(h_DeltaY_P_gen_jet_pt_muon,-100); //-beren
+
+  event.set(h_DeltaY_N_gen_jet_eta_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_jet_eta_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_jet_eta_muon,-100); //-beren
+  event.set(h_DeltaY_P_gen_jet_eta_muon,-100); //-beren
+
   fill_histograms(event, "Input");
+  if(debug) cout << "1" << endl;
 
   //-beren
 
-  GenParticle top, antitop;
-   for(const GenParticle & gp : *event.genparticles){
-     if(gp.pdgId() == 6){
-       top = gp;
-     }
-     else if(gp.pdgId() == -6){
-       antitop = gp;
-     }
-   }
+ GenParticle electron, antielectron, muon, antimuon;
 
-  double_t Delta_Y = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
-  if (Delta_Y<0){
-    event.set(h_DeltaY_N, Delta_Y);
-          }
-  if(Delta_Y>0){
-    event.set(h_DeltaY_P, Delta_Y);
+  for (const GenParticle& gp : *event.genparticles) {
+
+      // cout << "Size of genparticle vector: " << genparticles.size() << endl; 
+      if (gp.pdgId() == 11) {
+          electron = gp;
       }
+      else if (gp.pdgId() == -11) {
+          antielectron = gp;
+      }
+      else if (gp.pdgId() == 13) {
+          muon = gp;
+      }
+      else if (gp.pdgId() == -13) {
+          antimuon = gp;
+      }
+  }
+  if(debug) cout << "2" << endl;
+
+
+  double_t DeltaY_gen_ele=0, DeltaY_gen_muon=0;
+  double_t pt_ele = electron.pt();
+  double_t pt_muon = muon.pt();
+  double_t eta_ele = electron.eta();
+  double_t eta_muon = muon.eta();
+  if(debug) cout << "3" << endl;
+
+  DeltaY_gen_ele = TMath::Abs(0.5*TMath::Log((electron.energy() + electron.pt()*TMath::SinH(electron.eta()))/(electron.energy() - electron.pt()*TMath::SinH(electron.eta())))) - TMath::Abs(0.5*TMath::Log((antielectron.energy() + antielectron.pt()*TMath::SinH(antielectron.eta()))/(antielectron.energy() - antielectron.pt()*TMath::SinH(antielectron.eta()))));
+  DeltaY_gen_muon= TMath::Abs(0.5*TMath::Log((muon.energy() + muon.pt()*TMath::SinH(muon.eta()))/(muon.energy() - muon.pt()*TMath::SinH(muon.eta())))) - TMath::Abs(0.5*TMath::Log((antimuon.energy() + antimuon.pt()*TMath::SinH(antimuon.eta()))/(antimuon.energy() - antimuon.pt()*TMath::SinH(antimuon.eta()))));
+  if(debug) cout << "4" << endl;
+
+
+ // Plot without cuts
+  // event.set(h_DeltaY_gen_ele, DeltaY_gen_ele);
+  // event.set(h_DeltaY_gen_muon, DeltaY_gen_muon);
+
+
+  if(!(DeltaY_gen_ele < 0)) {
+    return false;
+    // event.set(h_DeltaY_N_gen_ele, DeltaY_gen_ele);
+  }
+  fill_histograms(event, "Gen_ele_N");
+  // if(DeltaY_gen_ele > 0) {
+  //     event.set(h_DeltaY_P_gen_ele, DeltaY_gen_ele);
+  // }
+  // if(DeltaY_gen_muon < 0) {
+  //     event.set(h_DeltaY_N_gen_muon, DeltaY_gen_muon);
+  // }
+  // if(DeltaY_gen_muon > 0) {
+  //     event.set(h_DeltaY_P_gen_muon, DeltaY_gen_muon);
+  // }
+
+  if(debug) cout << "5" << endl;
+
+
+  //pt & eta & jet_pt cut
+  for (const auto gj : *event.genjets) {
+
+  // for (const Particle & genjet : mygenjets) {
+    double_t jet_pt = gj.pt();
+    // cout << "jet_pt:" << jet_pt << endl;
+    double_t jet_eta = gj.eta();
+    // cout << "jet_eta:" << jet_eta << endl;
+    // cout << "----------------" << endl;
+
+    // Apply pt cuts and plot  //1
+    if (!(DeltaY_gen_ele < 0 && pt_ele > 35)){
+      return false;
+        // event.set(h_DeltaY_N_gen_pt_ele, DeltaY_gen_ele);
+    }
+    fill_histograms(event, "Ele_N_Pt");
+
+  //   if(DeltaY_gen_ele > 0 && pt_ele > 35) {
+  //       // event.set(h_DeltaY_P_gen_pt_ele, DeltaY_gen_ele);
+  //   }
+  //   if(DeltaY_gen_muon < 0 && pt_muon > 30) {
+  //       // event.set(h_DeltaY_N_gen_pt_muon, DeltaY_gen_muon);
+  //   }
+  //   if(DeltaY_gen_muon > 0 && pt_muon > 30) {
+  //     // event.set(h_DeltaY_P_gen_pt_muon, DeltaY_gen_muon);
+  // }
+
+    // Apply pt and eta cuts and plot 
+    if(!(DeltaY_gen_ele < 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+      return false;
+        // event.set(h_DeltaY_N_gen_eta_ele, DeltaY_gen_ele);
+    }
+    fill_histograms(event, "Ele_N_Pt_Eta");
+
+    // if(DeltaY_gen_ele > 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5) {
+    //     event.set(h_DeltaY_P_gen_eta_ele, DeltaY_gen_ele);
+    // }
+    // if(DeltaY_gen_muon < 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.4) {
+    //     event.set(h_DeltaY_N_gen_eta_muon, DeltaY_gen_muon);
+    // }
+    // if(DeltaY_gen_muon > 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.4) {
+    //     event.set(h_DeltaY_P_gen_eta_muon, DeltaY_gen_muon);
+    // }
+
+    // pt & eta & jet_pt cut   
+    if(!(DeltaY_gen_ele<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+      return false;
+    }
+    fill_histograms(event, "Ele_N_JetPt");
+
+    // if(DeltaY_gen_ele>0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) ){
+    //   event.set(h_DeltaY_P_gen_jet_pt_ele, DeltaY_gen_ele);
+    // }
+    // fill_histograms(event, "GenJet_Pt")
+
+    // if(DeltaY_gen_muon<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.4) && (jet_pt >50) ){
+    //   event.set(h_DeltaY_N_gen_jet_pt_muon, DeltaY_gen_muon);
+    // }
+
+    // if(DeltaY_gen_muon>0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.4) && (jet_pt >50)){
+    //   event.set(h_DeltaY_P_gen_jet_pt_muon, DeltaY_gen_muon);
+    // }
+
+  // pt & eta & jet_pt eta cut
+    if(!(DeltaY_gen_ele<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+      return false;
+      // event.set(h_DeltaY_N_gen_jet_eta_ele, DeltaY_gen_ele);
+    }
+    fill_histograms(event, "Ele_N_JetPt_Eta");
+
+    // if(DeltaY_gen_ele>0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5) ){
+    //   event.set(h_DeltaY_P_gen_jet_eta_ele, DeltaY_gen_ele);
+    // }
+
+    // if(DeltaY_gen_muon<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.4) && (jet_pt >50) && (TMath::Abs(jet_eta) < 2.5)){
+    //   event.set(h_DeltaY_N_gen_jet_eta_muon, DeltaY_gen_muon);
+    // }
+
+    // if(DeltaY_gen_muon>0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.4) && (jet_pt >50) && (TMath::Abs(jet_eta) < 2.5)){
+    //   event.set(h_DeltaY_P_gen_jet_eta_muon, DeltaY_gen_muon);
+    // }
+  }
+
+    
+
+  if(debug) cout << "6" << endl;
+
   
-  event.set(h_DeltaY, Delta_Y);
+  fill_histograms(event, "DeltaY_gen");
 
   //beren
+  if(debug) cout << "7" << endl;
 
   bool commonResult = common->process(event);
   if (!commonResult) return false;
   if(debug) cout << "CommonModules: ok" << endl;
-  fill_histograms(event, "CommonModules");
+  // fill_histograms(event, "CommonModules");
 
   sort_by_pt<Muon>(*event.muons);
   sort_by_pt<Electron>(*event.electrons);
@@ -242,12 +478,12 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
 
   if(isHOTVR){
     hotvrjetCorr->process(event);
-    fill_histograms(event, "HOTVRCorrections");
+    // fill_histograms(event, "HOTVRCorrections");
   }
 
   toppuppijetCorr->process(event);
   if(debug) cout << "TopPuppiJetCorrections: ok" << endl;
-  fill_histograms(event, "PUPPICorrections");
+  // fill_histograms(event, "PUPPICorrections");
 
 
   // GEN ME quark-flavor selection
@@ -262,15 +498,15 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
   // cout << "pass_lep1: " << pass_lep1 << endl;
   if(!pass_lep1) return false;
   if(debug) cout << "≥1 leptons: ok" << endl;
-  fill_histograms(event, "Lepton1");
+  // fill_histograms(event, "Lepton1");
 
   jet_IDcleaner->process(event);
-  fill_histograms(event, "JetID");
+  // fill_histograms(event, "JetID");
   if(debug) cout << "JetCleaner ID: ok" << endl;
 
   jet_cleaner1->process(event);
   sort_by_pt<Jet>(*event.jets);
-  fill_histograms(event, "JetCleaner1");
+  // fill_histograms(event, "JetCleaner1");
   if(debug) cout << "JetCleaner1: ok" << endl;
 
   // Lepton-2Dcut variables
@@ -293,7 +529,7 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
 
   jet_cleaner2->process(event);
   sort_by_pt<Jet>(*event.jets);
-  fill_histograms(event, "JetCleaner2");
+  // fill_histograms(event, "JetCleaner2");
   if(debug) cout << "JetCleaner2: ok" << endl;
 
   hotvrjet_cleaner->process(event);
@@ -303,26 +539,26 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
   topjet_puppi_cleaner->process(event);
   sort_by_pt<TopJet>(*event.toppuppijets);
 
-  fill_histograms(event, "TopjetCleaner");
+  // fill_histograms(event, "TopjetCleaner");
   if(debug) cout << "TopJetCleaner: ok" << endl;
 
   // 1st AK4 jet selection
   const bool pass_jet1 = jet1_sel->passes(event);
   if(!pass_jet1) return false;
   if(debug) cout << "NJetSelection1: ok" << endl;
-  fill_histograms(event, "Jet1");
+  // fill_histograms(event, "Jet1");
 
   // 2nd AK4 jet selection
   const bool pass_jet2 = jet2_sel->passes(event);
   if(!pass_jet2) return false;
   if(debug) cout << "NJetSelection2: ok" << endl;
-  fill_histograms(event, "Jet2");
+  // fill_histograms(event, "Jet2");
 
   // MET selection
   const bool pass_met = met_sel->passes(event);
   if(!pass_met) return false;
   if(debug) cout << "METCut: ok" << endl;
-  fill_histograms(event, "MET");
+  // fill_histograms(event, "MET");
 
   return true;
 }

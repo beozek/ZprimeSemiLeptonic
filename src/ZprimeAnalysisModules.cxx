@@ -159,24 +159,14 @@ protected:
   Event::Handle<float> h_DeltaY_P_gen_met_ele; //-beren
   Event::Handle<float> h_DeltaY_P_gen_met_muon; //-beren
 
-  Event::Handle<float> h_DeltaY_N_gen_jet_ele; //-beren
-  Event::Handle<float> h_DeltaY_P_gen_jet_ele; //-beren
-  Event::Handle<float> h_DeltaY_N_gen_jet_muon; //-beren
-  Event::Handle<float> h_DeltaY_P_gen_jet_muon; //-beren
-
-
-
-  // Event::Handle<float> pp; //-beren
-  // Event::Handle<float> pn; //-beren
-  // Event::Handle<float> np; //-beren
-  // Event::Handle<float> nn; //-beren
-  
-  
-  
-
-  
-
-
+  Event::Handle<float> h_DeltaY_N_gen_jet_pt_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_jet_pt_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_jet_pt_muon; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_jet_pt_muon; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_jet_eta_ele; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_jet_eta_ele; //-beren
+  Event::Handle<float> h_DeltaY_N_gen_jet_eta_muon; //-beren
+  Event::Handle<float> h_DeltaY_P_gen_jet_eta_muon; //-beren
 
 
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
@@ -485,10 +475,15 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_DeltaY_P_gen_met_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_met_ele"); //-beren DeltaY
   h_DeltaY_P_gen_met_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_met_muon"); //-beren DeltaY
 
-  h_DeltaY_N_gen_jet_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_ele"); //-beren DeltaY
-  h_DeltaY_P_gen_jet_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_ele"); //-beren DeltaY
-  h_DeltaY_N_gen_jet_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_muon"); //-beren DeltaY
-  h_DeltaY_P_gen_jet_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_muon"); //-beren DeltaY
+  h_DeltaY_N_gen_jet_pt_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_pt_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_jet_pt_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_pt_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_jet_pt_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_pt_muon"); //-beren DeltaY
+  h_DeltaY_P_gen_jet_pt_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_pt_muon"); //-beren DeltaY
+
+  h_DeltaY_N_gen_jet_eta_ele = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_eta_ele"); //-beren DeltaY
+  h_DeltaY_P_gen_jet_eta_ele = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_eta_ele"); //-beren DeltaY
+  h_DeltaY_N_gen_jet_eta_muon = ctx.declare_event_output<float> ("DeltaY_N_gen_jet_eta_muon"); //-beren DeltaY
+  h_DeltaY_P_gen_jet_eta_muon = ctx.declare_event_output<float> ("DeltaY_P_gen_jet_eta_muon"); //-beren DeltaY
 
 
 
@@ -517,8 +512,8 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_CHSMatchHists_afterBTag.reset(new ZprimeSemiLeptonicCHSMatchHists(ctx, "CHSMatch_afterBTag"));
 
   // Book histograms
-  // vector<string> histogram_tags = {"Weights_Init", "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_PS", "Weights_TopTag_SF", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "1Mu1Ele_LowPt", "1Mu1Ele_HighPt", "1Mu1Ele_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "BeforeBtagSF", "AfterBtagSF", "AfterCustomBtagSF", "Btags1", "NLOCorrections", "TriggerEle_SF", "TTbarCandidate", "CorrectMatchDiscriminator", "Chi2Discriminator", "NNInputsBeforeReweight"};
-  vector<string> histogram_tags = {"DeltaY_gen", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "TriggerMuon", "TriggerEle", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET"};
+  vector<string> histogram_tags = {"Weights_Init", "DeltaY_reco_N_muon", "DeltaY_reco_P_muon", "DeltaY_reco_N_electron", "DeltaY_reco_P_electron", "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_PS", "Weights_TopTag_SF", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "1Mu1Ele_LowPt", "1Mu1Ele_HighPt", "1Mu1Ele_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "BeforeBtagSF", "AfterBtagSF", "AfterCustomBtagSF", "Btags1", "NLOCorrections", "TriggerEle_SF", "TTbarCandidate", "CorrectMatchDiscriminator", "Chi2Discriminator", "NNInputsBeforeReweight", "Chi2"};
+  // vector<string> histogram_tags = {"DeltaY_gen", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "TriggerMuon", "TriggerEle", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET"};
 
   book_histograms(ctx, histogram_tags);
 
@@ -616,10 +611,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   event.set(h_DeltaY_P_gen_met_ele,-100); //-beren
   event.set(h_DeltaY_P_gen_met_muon,-100); //-beren
 
-  event.set(h_DeltaY_N_gen_jet_ele,-100); //-beren
-  event.set(h_DeltaY_P_gen_jet_ele,-100); //-beren
-  event.set(h_DeltaY_N_gen_jet_muon,-100); //-beren
-  event.set(h_DeltaY_P_gen_jet_muon,-100); //-beren
+  event.set(h_DeltaY_N_gen_jet_pt_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_jet_pt_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_jet_pt_muon,-100); //-beren
+  event.set(h_DeltaY_P_gen_jet_pt_muon,-100); //-beren
+
+  event.set(h_DeltaY_N_gen_jet_eta_ele,-100); //-beren
+  event.set(h_DeltaY_P_gen_jet_eta_ele,-100); //-beren
+  event.set(h_DeltaY_N_gen_jet_eta_muon,-100); //-beren
+  event.set(h_DeltaY_P_gen_jet_eta_muon,-100); //-beren
+
 
   if(!event.isRealData){
     if(!SignSplit->passes(event)) return false;
@@ -638,164 +639,34 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
       }
    if(debug) cout << "after tagger" << endl;
 
-
-
-   GenParticle electron, antielectron, muon, antimuon;
-
-    for (const GenParticle& gp : *event.genparticles) {
-
-        // cout << "Size of genparticle vector: " << genparticles.size() << endl; 
-        if (gp.pdgId() == 11) {
-            electron = gp;
-        }
-        else if (gp.pdgId() == -11) {
-            antielectron = gp;
-        }
-        else if (gp.pdgId() == 13) {
-            muon = gp;
-        }
-        else if (gp.pdgId() == -13) {
-            antimuon = gp;
-        }
-    }
-
-    GenJet jet;
-
-    double_t DeltaY_gen_ele = TMath::Abs(0.5*TMath::Log((electron.energy() + electron.pt()*TMath::SinH(electron.eta()))/(electron.energy() - electron.pt()*TMath::SinH(electron.eta())))) - TMath::Abs(0.5*TMath::Log((antielectron.energy() + antielectron.pt()*TMath::SinH(antielectron.eta()))/(antielectron.energy() - antielectron.pt()*TMath::SinH(antielectron.eta()))));
-    double_t DeltaY_gen_muon= TMath::Abs(0.5*TMath::Log((muon.energy() + muon.pt()*TMath::SinH(muon.eta()))/(muon.energy() - muon.pt()*TMath::SinH(muon.eta())))) - TMath::Abs(0.5*TMath::Log((antimuon.energy() + antimuon.pt()*TMath::SinH(antimuon.eta()))/(antimuon.energy() - antimuon.pt()*TMath::SinH(antimuon.eta()))));
-
-    double_t pt_ele =  electron.pt();
-    double_t pt_muon =  muon.pt();
-
-    double_t eta_ele =  electron.eta();
-    double_t eta_muon = muon.eta();
-
-    double_t jet_muon_pt = jet.pt();
-    double_t jet_electron_pt = jet.pt();
-    double_t jet_muon_eta = jet.eta();
-    double_t jet_electron_eta = jet.eta();
-
-
-    if(debug) cout << "before deltaY_gen_ele" << endl;
-
-    event.set(h_DeltaY_gen_ele, DeltaY_gen_ele);
-
-    if(debug) cout << "before deltaY_gen_muon" << endl;
-
-    event.set(h_DeltaY_gen_muon, DeltaY_gen_muon);
-
-//Without cut
-    if(DeltaY_gen_ele<0){
-      event.set(h_DeltaY_N_gen_ele, DeltaY_gen_ele);
-    }
-
-    if(DeltaY_gen_ele>0){
-      event.set(h_DeltaY_P_gen_ele, DeltaY_gen_ele);
-    }
-
-    if(DeltaY_gen_muon<0){
-      event.set(h_DeltaY_N_gen_muon, DeltaY_gen_muon);
-    }
-
-    if(DeltaY_gen_muon>0){
-      event.set(h_DeltaY_P_gen_muon, DeltaY_gen_muon);
-    }
-
-//pt cut
-    if(DeltaY_gen_ele<0 && pt_ele > 120){
-      event.set(h_DeltaY_N_gen_pt_ele, DeltaY_gen_ele);
-    }
-
-    if(DeltaY_gen_ele>0 && pt_ele > 120){
-      event.set(h_DeltaY_P_gen_pt_ele, DeltaY_gen_ele);
-    }
-
-    if(DeltaY_gen_muon<0 && pt_muon > 55 ){
-      event.set(h_DeltaY_N_gen_pt_muon, DeltaY_gen_muon);
-    }
-
-    if(DeltaY_gen_muon>0 && pt_muon > 55 ){
-      event.set(h_DeltaY_P_gen_pt_muon, DeltaY_gen_muon);
-    }
-
-//pt & eta cut
-
-    if(DeltaY_gen_ele<0 && pt_ele > 120 && (TMath::Abs(eta_ele) < 2.5)){
-      event.set(h_DeltaY_N_gen_eta_ele, DeltaY_gen_ele);
-    }
-
-    if(DeltaY_gen_ele>0 && pt_ele > 120 && (TMath::Abs(eta_ele) < 2.5 )){
-      event.set(h_DeltaY_P_gen_eta_ele, DeltaY_gen_ele);
-    }
-
-    if(DeltaY_gen_muon<0 && pt_muon > 55 && (TMath::Abs(eta_muon) < 2.4)){
-      event.set(h_DeltaY_N_gen_eta_muon, DeltaY_gen_muon);
-    }
-
-    if(DeltaY_gen_muon>0 && pt_muon > 55 && (TMath::Abs(eta_muon) < 2.4)){
-      event.set(h_DeltaY_P_gen_eta_muon, DeltaY_gen_muon);
-    }
-
-  //pt & eta & jet_pt cut
-
-    if(DeltaY_gen_ele<0 && pt_ele > 120 && (TMath::Abs(eta_ele) < 2.5) & (jet_electron_pt >40) && (TMath::Abs(jet_electron_eta) < 2.5) ){
-      event.set(h_DeltaY_N_gen_jet_ele, DeltaY_gen_ele);
-    }
-
-    if(DeltaY_gen_ele>0 && pt_ele > 120 && (TMath::Abs(eta_ele) < 2.5) & (jet_electron_pt >40) && (TMath::Abs(jet_electron_eta) < 2.5) ){
-      event.set(h_DeltaY_P_gen_jet_ele, DeltaY_gen_ele);
-    }
-
-    if(DeltaY_gen_muon<0 && pt_muon > 55 && (TMath::Abs(eta_muon) < 2.4) & (jet_muon_pt >50) && (TMath::Abs(jet_muon_eta) < 2.5)){
-      event.set(h_DeltaY_N_gen_jet_muon, DeltaY_gen_muon);
-    }
-
-    if(DeltaY_gen_muon>0 && pt_muon > 55 && (TMath::Abs(eta_muon) < 2.4) & (jet_muon_pt >50) && (TMath::Abs(jet_muon_eta) < 2.5)){
-      event.set(h_DeltaY_P_gen_jet_muon, DeltaY_gen_muon);
-    }
-
-  fill_histograms(event, "DeltaY_gen");
-
-//pt & eta cut & 2D cut
-
-    // if(DeltaY_gen_ele<0 && pt_ele > 120 && eta_ele > 2.5){
-    //   event.set(h_DeltaY_N_gen_2d_ele, DeltaY_gen_ele);
-    // }
-
-    // if(DeltaY_gen_ele>0 && pt_ele > 120 && eta_ele > 2.5 ){
-    //   event.set(h_DeltaY_P_gen_2d_ele, DeltaY_gen_ele);
-    // }
-
-    // if(DeltaY_gen_muon<0 && pt_muon > 55 && eta_muon > 2.4){
-    //   event.set(h_DeltaY_N_gen_2d_muon, DeltaY_gen_muon);
-    // }
-
-    // if(DeltaY_gen_muon>0 && pt_muon > 55 && eta_muon > 2.4){
-    //   event.set(h_DeltaY_P_gen_2d_muon, DeltaY_gen_muon);
-    // } 
-
-//pt & eta cut & 2D cut & MET cut
-
-    // if(DeltaY_gen_ele<0 && pt_muon > 55 && eta_ele > 2.4){
-    //   event.set(h_DeltaY_N_gen_met_ele, DeltaY_gen_ele);
-    // }
-
-    // if(DeltaY_gen_ele>0&& pt_muon > 55 && eta_muon> 2.4){
-    //   event.set(h_DeltaY_P_gen_met_ele, DeltaY_gen_ele);
-    // }
-
-    // if(DeltaY_gen_muon<0 && pt_muon > 55 && eta_muon> 2.4){
-    //   event.set(h_DeltaY_N_gen_met_muon, DeltaY_gen_muon);
-    // }
-
-    // if(DeltaY_gen_muon>0){
-    //   event.set(h_DeltaY_P_gen_met_muon, DeltaY_gen_muon);
-    // }
-
-
-
-  // fill_histograms(event, "Weights_Init");
   // lumihists_Weights_Init->fill(event);
+
+  // Adding all GenJets to the genjets vector 
+ 
+
+
+  GenParticle electron, antielectron, muon, antimuon;
+
+  for (const GenParticle& gp : *event.genparticles) {
+
+      // cout << "Size of genparticle vector: " << genparticles.size() << endl; 
+      if (gp.pdgId() == 11) {
+          electron = gp;
+      }
+      else if (gp.pdgId() == -11) {
+          antielectron = gp;
+      }
+      else if (gp.pdgId() == 13) {
+          muon = gp;
+      }
+      else if (gp.pdgId() == -13) {
+          antimuon = gp;
+      }
+  }
+
+
+  // double_t DeltaY_gen_ele = TMath::Abs(0.5*TMath::Log((electron.energy() + electron.pt()*TMath::SinH(electron.eta()))/(electron.energy() - electron.pt()*TMath::SinH(electron.eta())))) - TMath::Abs(0.5*TMath::Log((antielectron.energy() + antielectron.pt()*TMath::SinH(antielectron.eta()))/(antielectron.energy() - antielectron.pt()*TMath::SinH(antielectron.eta()))));
+  // double_t DeltaY_gen_muon= TMath::Abs(0.5*TMath::Log((muon.energy() + muon.pt()*TMath::SinH(muon.eta()))/(muon.energy() - muon.pt()*TMath::SinH(muon.eta())))) - TMath::Abs(0.5*TMath::Log((antimuon.energy() + antimuon.pt()*TMath::SinH(antimuon.eta()))/(antimuon.energy() - antimuon.pt()*TMath::SinH(antimuon.eta()))));
 
   if(!HEM_selection->passes(event)){
     if(!isMC) return false;
@@ -840,6 +711,63 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(isdeepAK8) sf_toptag->process(event);
   if(debug) cout << "Weights_TopTag_SF: ok" << endl;
   // fill_histograms(event, "Weights_TopTag_SF");
+
+  fill_histograms(event, "Weights_Init");
+
+  if(isMC){
+
+    if (isMuon){
+      if(debug) cout << "inside dY" << endl;
+      ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+      double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))));
+          
+      //Number of NEGATIVE deltaY events without mass cut
+      if (!(DeltaY_reco<0)){
+        return false;
+      }
+      fill_histograms(event, "DeltaY_reco_N_muon");
+
+
+      //Number of POSITIVE deltaY events without mass cut
+      if(!(DeltaY_reco>0)){
+        return false;
+      }
+      fill_histograms(event, "DeltaY_reco_P_muon");
+      if(debug) cout << "inside dY end" << endl;
+    }
+
+    if(debug) cout << "outside dY" << endl;
+            
+
+    if (isElectron){
+      if(debug) cout << "inside dY ele" << endl;
+
+      // ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+      
+      if(debug) cout << "inside dY ele 2" << endl;
+
+      // double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))));
+      
+      //Number of NEGATIVE deltaY events without mass cut
+      // if (!(DeltaY_reco<0)){
+      //   return false;
+      // }
+      fill_histograms(event, "DeltaY_reco_N_electron");
+
+
+      //Number of POSITIVE deltaY events without mass cut
+    //   if(!(DeltaY_reco>0)){
+    //     return false;
+    //   }
+    //     if(debug) cout << "inside dY ele 5" << endl;
+    //   fill_histograms(event, "DeltaY_reco_P_electron");
+    //   if(debug) cout << "inside dY ele end" << endl;
+
+     }
+  }
+  
+  if(debug) cout << "outside dY ele" << endl;
+
 
   //Clean muon collection with ID based on muon pT
   double muon_pt_high(55.);
@@ -905,16 +833,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
       if(!NEle1_selection->passes(event)) return false;
       electron_cleaner_low->process(event);
       if(!NEle1_selection->passes(event)) return false;
-      // fill_histograms(event, "1Mu1Ele_LowPt");
+      fill_histograms(event, "1Mu1Ele_LowPt");
     }
     if(ele_is_high){
       if(!NEle1_selection->passes(event)) return false;
       electron_cleaner_high->process(event);
       if(!NEle1_selection->passes(event)) return false;
-      // fill_histograms(event, "1Mu1Ele_HighPt");
+      fill_histograms(event, "1Mu1Ele_HighPt");
     }
     if( !(ele_is_high || ele_is_low) ) return false;
-    // fill_histograms(event, "1Mu1Ele_Tot");
+    fill_histograms(event, "1Mu1Ele_Tot");
   }
 
   // Select exactly 1 electron and 0 muons
@@ -956,7 +884,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(ele_is_high){
       sf_ele_id_high->process(event);
     }
-    // fill_histograms(event, "IdEle_SF");
+    fill_histograms(event, "IdEle_SF");
   }
 
 
@@ -968,7 +896,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(muon_is_high){
       sf_muon_iso_low_dummy->process(event);
     }
-    // fill_histograms(event, "IsoMuon_SF");
+    fill_histograms(event, "IsoMuon_SF");
   }
   if(isElectron){
     sf_muon_iso_low_dummy->process(event);
@@ -981,7 +909,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(muon_is_high){
       sf_muon_id_high->process(event);
     }
-    // fill_histograms(event, "IdMuon_SF");
+    fill_histograms(event, "IdMuon_SF");
   }
   if(isElectron){
     sf_muon_id_dummy->process(event);
@@ -1000,7 +928,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
   // apply muon reco scale factors
   sf_muon_reco->process(event);
-  // fill_histograms(event, "MuonReco_SF");
+  fill_histograms(event, "MuonReco_SF");
 
   // Trigger MUON channel
   if(isMuon){
@@ -1125,7 +1053,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     if(muon_is_high){
       sf_muon_trigger_high->process(event);
     }
-    // fill_histograms(event, "TriggerMuon_SF");
+    fill_histograms(event, "TriggerMuon_SF");
   }
   if(isElectron){
     sf_muon_trigger_dummy->process(event);
@@ -1175,21 +1103,21 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   lumihists_MET->fill(event);
   if(isMuon){
     if(!htlep_sel->passes(event)) return false;
-    // fill_histograms(event, "HTlep");
+    fill_histograms(event, "HTlep");
     // lumihists_HTlep->fill(event);
     if(debug) cout << "HTlep: ok" << endl;
   }
 
   //Fill histograms before BTagging SF - used to extract Custom BTag SF in (NJets,HT)
   h_CHSMatchHists_beforeBTagSF->fill(event);
-  // fill_histograms(event, "BeforeBtagSF");
+  fill_histograms(event, "BeforeBtagSF");
 
   // btag shape sf (Ak4 chs jets)
   // new: using new modules, with PUPPI-CHS matching
   sf_btagging->process(event);
 
   h_CHSMatchHists_afterBTagSF->fill(event);
-  // fill_histograms(event, "AfterBtagSF");
+  fill_histograms(event, "AfterBtagSF");
 
   // apply custom SF to correct for BTag SF shape effects on NJets/HT
   if(isMC && isMuon){
@@ -1216,11 +1144,11 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   }
       if(debug) cout << "finito" << endl;
   h_CHSMatchHists_after2DBTagSF->fill(event);
-  // fill_histograms(event, "AfterCustomBtagSF");
+  fill_histograms(event, "AfterCustomBtagSF");
 
    // b-tagging: >= 1 b-tag medium WP (on matched CHS jet)
   if(!AK4PuppiCHS_BTagging->passes(event)) return false;
-  // fill_histograms(event, "Btags1");
+  fill_histograms(event, "Btags1");
   h_CHSMatchHists_afterBTag->fill(event);
 
   // Higher order corrections - EWK & QCD NLO
@@ -1256,6 +1184,8 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   // fill_histograms(event, "NNInputsBeforeReweight");
   if(debug) cout << "NNInputsBeforeReweight: ok" << endl;
 
+  if(!Chi2_selection->passes(event)) return false;
+  fill_histograms(event, "Chi2");
   // histograms for systematics
   // if(!isEleTriggerMeasurement) SystematicsModule->process(event);
 
