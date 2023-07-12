@@ -41,8 +41,9 @@ Hists(ctx, dirname) {
 void ZprimeSemiLeptonicHists::init(){
 
   //-beren -generator
-  DeltaY            = book<TH1F>("DeltaY", "#Delta y",2,-2.,2.); 
-  DeltaY_ele        = book<TH1F>("DeltaY_ele", "#Delta y e",2,-2.,2.); 
+  DeltaY            = book<TH1F>("DeltaY", "#Delta y",2,-2.,2.);
+  DeltaY_reco       = book<TH1F>("DeltaY_reco", "#Delta y_reco",2,-2.5,2.5);
+  DeltaY_ele        = book<TH1F>("DeltaY_ele", "#Delta y e",2,-2.5,2.5); 
   DeltaY_muon       = book<TH1F>("DeltaY_muon", "#Delta y muon",2,-2.,2.); 
   DeltaY_N          = book<TH1F>("DeltaY_N", "#Delta y",1,-2.,0); 
   DeltaY_P          = book<TH1F>("DeltaY_P", "#Delta y",1,0.,2.); 
@@ -690,7 +691,26 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
         }
     }
 
-  
+    ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);        
+    DeltaY_reco->Fill((TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))))), weight);
+
+    // DeltaY_reco->Fill(
+    //     TMath::Abs(
+    //         0.5 * TMath::Log(
+    //             (BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt() * TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())) /
+    //             (BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt() * TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))
+    //         )
+    //     ) - 
+    //     TMath::Abs(
+    //         0.5 * TMath::Log(
+    //             (BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt() * TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta())) /
+    //             (BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt() * TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))
+    //         )
+    //     ),
+    //     weight
+    // );
+
+
     DeltaY_ele->Fill(TMath::Abs(0.5*TMath::Log((electron.energy() + electron.pt()*TMath::SinH(electron.eta()))/(electron.energy() - electron.pt()*TMath::SinH(electron.eta())))) - TMath::Abs(0.5*TMath::Log((antielectron.energy() + antielectron.pt()*TMath::SinH(antielectron.eta()))/(antielectron.energy() - antielectron.pt()*TMath::SinH(antielectron.eta())))),weight);
     DeltaY_muon->Fill(TMath::Abs(0.5*TMath::Log((muon.energy() + muon.pt()*TMath::SinH(muon.eta()))/(muon.energy() - muon.pt()*TMath::SinH(muon.eta())))) - TMath::Abs(0.5*TMath::Log((antimuon.energy() + antimuon.pt()*TMath::SinH(antimuon.eta()))/(antimuon.energy() - antimuon.pt()*TMath::SinH(antimuon.eta())))),weight);
 
@@ -709,6 +729,9 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
       else if(DeltaY_gen_muon>0){
         DeltaY_P_muon->Fill(DeltaY_gen_muon,weight);
       }
+
+
+      
 //-beren Delta Y
   /*
   █      ██ ███████ ████████ ███████

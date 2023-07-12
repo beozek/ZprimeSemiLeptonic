@@ -512,8 +512,9 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   h_CHSMatchHists_afterBTag.reset(new ZprimeSemiLeptonicCHSMatchHists(ctx, "CHSMatch_afterBTag"));
 
   // Book histograms
-  vector<string> histogram_tags = {"Weights_Init", "DeltaY_reco_N_muon", "DeltaY_reco_P_muon", "DeltaY_reco_N_electron", "DeltaY_reco_P_electron", "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_PS", "Weights_TopTag_SF", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "1Mu1Ele_LowPt", "1Mu1Ele_HighPt", "1Mu1Ele_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "BeforeBtagSF", "AfterBtagSF", "AfterCustomBtagSF", "Btags1", "NLOCorrections", "TriggerEle_SF", "TTbarCandidate", "CorrectMatchDiscriminator", "Chi2Discriminator", "NNInputsBeforeReweight", "Chi2"};
+  // vector<string> histogram_tags = {"Weights_Init", "DeltaY_reco_N_muon", "DeltaY_reco_P_muon", "DeltaY_reco_N_electron", "DeltaY_reco_P_electron", "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_PS", "Weights_TopTag_SF", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "1Mu1Ele_LowPt", "1Mu1Ele_HighPt", "1Mu1Ele_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "BeforeBtagSF", "AfterBtagSF", "AfterCustomBtagSF", "Btags1", "NLOCorrections", "TriggerEle_SF", "TTbarCandidate", "CorrectMatchDiscriminator", "Chi2Discriminator", "NNInputsBeforeReweight", "Chi2"};
   // vector<string> histogram_tags = {"DeltaY_gen", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "TriggerMuon", "TriggerEle", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET"};
+  vector<string> histogram_tags = {"DeltaY_gen_N","DY_P_P_Mass_0_250_NOT_reco_ele","DY_P_P_Mass_250_500_NOT_reco_ele","DY_P_P_Mass_500_750_NOT_reco_ele", "DY_P_P_Mass_750_900_NOT_reco_ele","DY_P_P_Mass_900Inf_NOT_reco_ele", "DY_P_P_Mass_0_250_NOT_reco_muon","DY_P_P_Mass_250_500_NOT_reco_muon","DY_P_P_Mass_500_750_NOT_reco_muon", "DY_P_P_Mass_750_900_NOT_reco_muon","DY_P_P_Mass_900Inf_NOT_reco_muon", "DeltaY_gen_P","DY_N_Mass_0_250_gen","DY_N_Mass_250_500_gen", "DY_N_Mass_500_750_gen", "DY_N_Mass_750_900_gen", "DY_N_Mass_900Inf_gen", "DeltaY_reco_N_muon","DeltaY_reco_P_muon", "DY_N_Mass_0_250_reco_muon", "DY_N_Mass_250_500_reco_muon", "DY_N_Mass_500_750_reco_muon", "DY_N_Mass_750_900_reco_muon", "DY_N_Mass_900Inf_reco_muon", "DY_P_Mass_0_250_reco_muon", "DY_P_Mass_250_500_reco_muon", "DY_P_Mass_500_750_reco_muon","DY_P_Mass_750_900_reco_muon", "DY_P_Mass_900Inf_reco_muon", "DY_P_P_muon", "DY_P_P_Mass_0_250_reco_muon", "DY_P_P_Mass_250_500_reco_muon", "DY_P_P_Mass_500_750_reco_muon", "DY_P_P_Mass_750_900_reco_muon", "DY_P_P_Mass_900Inf_reco_muon", "DY_P_N_muon", "DY_P_N_Mass_0_250_reco_muon", "DY_P_N_Mass_250_500_reco_muon", "DY_P_N_Mass_500_750_reco_muon", "DY_P_N_Mass_750_900_reco_muon", "DY_P_N_Mass_900Inf_reco_muon", "DY_N_P_muon", "DY_N_P_Mass_0_250_reco_muon", "DY_N_P_Mass_250_500_reco_muon", "DY_N_P_Mass_500_750_reco_muon", "DY_N_P_Mass_750_900_reco_muon", "DY_N_P_Mass_900Inf_reco_muon", "DY_N_N_muon", "DY_N_N_Mass_0_250_reco_muon", "DY_N_N_Mass_250_500_reco_muon", "DY_N_N_Mass_500_750_reco_muon", "DY_N_N_Mass_750_900_reco_muon", "DY_N_N_Mass_900Inf_reco_muon", "DeltaY_reco_N_ele","DeltaY_reco_P_ele", "DY_N_Mass_0_250_reco_ele", "DY_N_Mass_250_500_reco_ele", "DY_N_Mass_500_750_reco_ele", "DY_N_Mass_750_900_reco_ele", "DY_N_Mass_900Inf_reco_ele", "DY_P_Mass_0_250_reco_ele", "DY_P_Mass_250_500_reco_ele", "DY_P_Mass_500_750_reco_ele","DY_P_Mass_750_900_reco_ele", "DY_P_Mass_900Inf_reco_ele", "DY_P_P_ele", "DY_P_P_Mass_0_250_reco_ele", "DY_P_P_Mass_250_500_reco_ele", "DY_P_P_Mass_500_750_reco_ele", "DY_P_P_Mass_750_900_reco_ele", "DY_P_P_Mass_900Inf_reco_ele", "DY_P_N_ele", "DY_P_N_Mass_0_250_reco_ele", "DY_P_N_Mass_250_500_reco_ele", "DY_P_N_Mass_500_750_reco_ele", "DY_P_N_Mass_750_900_reco_ele", "DY_P_N_Mass_900Inf_reco_ele", "DY_N_P_ele", "DY_N_P_Mass_0_250_reco_ele", "DY_N_P_Mass_250_500_reco_ele", "DY_N_P_Mass_500_750_reco_ele", "DY_N_P_Mass_750_900_reco_ele", "DY_N_P_Mass_900Inf_reco_ele", "DY_N_N_ele", "DY_N_N_Mass_0_250_reco_ele", "DY_N_N_Mass_250_500_reco_ele", "DY_N_N_Mass_500_750_reco_ele", "DY_N_N_Mass_750_900_reco_ele", "DY_N_N_Mass_900Inf_reco_ele"};
 
   book_histograms(ctx, histogram_tags);
 
@@ -712,61 +713,8 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(debug) cout << "Weights_TopTag_SF: ok" << endl;
   // fill_histograms(event, "Weights_TopTag_SF");
 
-  fill_histograms(event, "Weights_Init");
+  // fill_histograms(event, "Weights_Init");
 
-  if(isMC){
-
-    if (isMuon){
-      if(debug) cout << "inside dY" << endl;
-      ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
-      double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))));
-          
-      //Number of NEGATIVE deltaY events without mass cut
-      if (!(DeltaY_reco<0)){
-        return false;
-      }
-      fill_histograms(event, "DeltaY_reco_N_muon");
-
-
-      //Number of POSITIVE deltaY events without mass cut
-      if(!(DeltaY_reco>0)){
-        return false;
-      }
-      fill_histograms(event, "DeltaY_reco_P_muon");
-      if(debug) cout << "inside dY end" << endl;
-    }
-
-    if(debug) cout << "outside dY" << endl;
-            
-
-    if (isElectron){
-      if(debug) cout << "inside dY ele" << endl;
-
-      // ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
-      
-      if(debug) cout << "inside dY ele 2" << endl;
-
-      // double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))));
-      
-      //Number of NEGATIVE deltaY events without mass cut
-      // if (!(DeltaY_reco<0)){
-      //   return false;
-      // }
-      fill_histograms(event, "DeltaY_reco_N_electron");
-
-
-      //Number of POSITIVE deltaY events without mass cut
-    //   if(!(DeltaY_reco>0)){
-    //     return false;
-    //   }
-    //     if(debug) cout << "inside dY ele 5" << endl;
-    //   fill_histograms(event, "DeltaY_reco_P_electron");
-    //   if(debug) cout << "inside dY ele end" << endl;
-
-     }
-  }
-  
-  if(debug) cout << "outside dY ele" << endl;
 
 
   //Clean muon collection with ID based on muon pT
@@ -796,16 +744,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
        if(!NMuon1_selection->passes(event)) return false;
        muon_cleaner_low->process(event);
        if(!NMuon1_selection->passes(event)) return false;
-       fill_histograms(event, "Muon1_LowPt");
+      //  fill_histograms(event, "Muon1_LowPt");
     }
     if(muon_is_high){
        if(!NMuon1_selection->passes(event)) return false;
        muon_cleaner_high->process(event);
        if(!NMuon1_selection->passes(event)) return false;
-       fill_histograms(event, "Muon1_HighPt");
+      //  fill_histograms(event, "Muon1_HighPt");
     }
     if( !(muon_is_high || muon_is_low) ) return false;
-    fill_histograms(event, "Muon1_Tot");
+    // fill_histograms(event, "Muon1_Tot");
   }
 
   //Clean ele collection with ID based on ele pT
@@ -833,16 +781,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
       if(!NEle1_selection->passes(event)) return false;
       electron_cleaner_low->process(event);
       if(!NEle1_selection->passes(event)) return false;
-      fill_histograms(event, "1Mu1Ele_LowPt");
+      // fill_histograms(event, "1Mu1Ele_LowPt");
     }
     if(ele_is_high){
       if(!NEle1_selection->passes(event)) return false;
       electron_cleaner_high->process(event);
       if(!NEle1_selection->passes(event)) return false;
-      fill_histograms(event, "1Mu1Ele_HighPt");
+      // fill_histograms(event, "1Mu1Ele_HighPt");
     }
     if( !(ele_is_high || ele_is_low) ) return false;
-    fill_histograms(event, "1Mu1Ele_Tot");
+    // fill_histograms(event, "1Mu1Ele_Tot");
   }
 
   // Select exactly 1 electron and 0 muons
@@ -852,16 +800,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
        if(!NEle1_selection->passes(event)) return false;
        electron_cleaner_low->process(event);
        if(!NEle1_selection->passes(event)) return false;
-       fill_histograms(event, "Ele1_LowPt");
+      //  fill_histograms(event, "Ele1_LowPt");
     }
     if(ele_is_high){
        if(!NEle1_selection->passes(event)) return false;
        electron_cleaner_high->process(event);
        if(!NEle1_selection->passes(event)) return false;
-       fill_histograms(event, "Ele1_HighPt");
+      //  fill_histograms(event, "Ele1_HighPt");
     }
     if( !(ele_is_high || ele_is_low)) return false;
-    fill_histograms(event, "Ele1_Tot");
+    // fill_histograms(event, "Ele1_Tot");
   }
 
 
@@ -884,7 +832,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(ele_is_high){
       sf_ele_id_high->process(event);
     }
-    fill_histograms(event, "IdEle_SF");
+    // fill_histograms(event, "IdEle_SF");
   }
 
 
@@ -896,7 +844,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(muon_is_high){
       sf_muon_iso_low_dummy->process(event);
     }
-    fill_histograms(event, "IsoMuon_SF");
+    // fill_histograms(event, "IsoMuon_SF");
   }
   if(isElectron){
     sf_muon_iso_low_dummy->process(event);
@@ -909,7 +857,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(muon_is_high){
       sf_muon_id_high->process(event);
     }
-    fill_histograms(event, "IdMuon_SF");
+    // fill_histograms(event, "IdMuon_SF");
   }
   if(isElectron){
     sf_muon_id_dummy->process(event);
@@ -928,7 +876,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
   // apply muon reco scale factors
   sf_muon_reco->process(event);
-  fill_histograms(event, "MuonReco_SF");
+  // fill_histograms(event, "MuonReco_SF");
 
   // Trigger MUON channel
   if(isMuon){
@@ -978,7 +926,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
         if(!(Trigger_mu_C_selection->passes(event) || Trigger_mu_E_selection->passes(event) || Trigger_mu_F_selection->passes(event))) return false;
       }
     }
-    fill_histograms(event, "TriggerMuon");
+    // fill_histograms(event, "TriggerMuon");
     lumihists_TriggerMuon->fill(event);
   }
 
@@ -1040,7 +988,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
       }
     }
-    fill_histograms(event, "TriggerEle");
+    // fill_histograms(event, "TriggerEle");
     lumihists_TriggerEle->fill(event);
   }
 
@@ -1053,7 +1001,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     if(muon_is_high){
       sf_muon_trigger_high->process(event);
     }
-    fill_histograms(event, "TriggerMuon_SF");
+    // fill_histograms(event, "TriggerMuon_SF");
   }
   if(isElectron){
     sf_muon_trigger_dummy->process(event);
@@ -1070,12 +1018,12 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(isMuon && !isEleTriggerMeasurement && muon_is_high){
     if(!TwoDCut_selection->passes(event)) return false;
   }
-  fill_histograms(event, "TwoDCut_Muon");
+  // fill_histograms(event, "TwoDCut_Muon");
   lumihists_TwoDCut_Muon->fill(event);
   if(isElectron && ele_is_high){
     if(!TwoDCut_selection->passes(event)) return false;
   }
-  fill_histograms(event, "TwoDCut_Ele");
+  // fill_histograms(event, "TwoDCut_Ele");
   lumihists_TwoDCut_Ele->fill(event);
 
   if(isMuon && isEleTriggerMeasurement && (muon_is_high || ele_is_high)){
@@ -1088,36 +1036,36 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
   if(!Jet1_selection->passes(event)) return false;
   if(debug) cout << "Jet1_selection: ok" << endl;
-  fill_histograms(event, "Jet1");
+  // fill_histograms(event, "Jet1");
   lumihists_Jet1->fill(event);
 
   if(!Jet2_selection->passes(event)) return false;
   if(debug) cout << "Jet2_selection: is ok" << endl;
-  fill_histograms(event, "Jet2");
+  // fill_histograms(event, "Jet2");
   lumihists_Jet2->fill(event);
 
   // MET selection
   if(!met_sel->passes(event)) return false;
   if(debug) cout << "MET: ok" << endl;
-  fill_histograms(event, "MET");
+  // fill_histograms(event, "MET");
   lumihists_MET->fill(event);
   if(isMuon){
     if(!htlep_sel->passes(event)) return false;
-    fill_histograms(event, "HTlep");
+    // fill_histograms(event, "HTlep");
     // lumihists_HTlep->fill(event);
     if(debug) cout << "HTlep: ok" << endl;
   }
 
   //Fill histograms before BTagging SF - used to extract Custom BTag SF in (NJets,HT)
   h_CHSMatchHists_beforeBTagSF->fill(event);
-  fill_histograms(event, "BeforeBtagSF");
+  // fill_histograms(event, "BeforeBtagSF");
 
   // btag shape sf (Ak4 chs jets)
   // new: using new modules, with PUPPI-CHS matching
   sf_btagging->process(event);
 
   h_CHSMatchHists_afterBTagSF->fill(event);
-  fill_histograms(event, "AfterBtagSF");
+  // fill_histograms(event, "AfterBtagSF");
 
   // apply custom SF to correct for BTag SF shape effects on NJets/HT
   if(isMC && isMuon){
@@ -1144,11 +1092,11 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   }
       if(debug) cout << "finito" << endl;
   h_CHSMatchHists_after2DBTagSF->fill(event);
-  fill_histograms(event, "AfterCustomBtagSF");
+  // fill_histograms(event, "AfterCustomBtagSF");
 
    // b-tagging: >= 1 b-tag medium WP (on matched CHS jet)
   if(!AK4PuppiCHS_BTagging->passes(event)) return false;
-  fill_histograms(event, "Btags1");
+  // fill_histograms(event, "Btags1");
   h_CHSMatchHists_afterBTag->fill(event);
 
   // Higher order corrections - EWK & QCD NLO
@@ -1185,9 +1133,566 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   if(debug) cout << "NNInputsBeforeReweight: ok" << endl;
 
   if(!Chi2_selection->passes(event)) return false;
-  fill_histograms(event, "Chi2");
+  // fill_histograms(event, "Chi2");
   // histograms for systematics
   // if(!isEleTriggerMeasurement) SystematicsModule->process(event);
+
+
+  ////DeltaY lines start here
+
+
+  if(isMC){
+
+    GenParticle top, antitop;
+    for(const GenParticle & gp : *event.genparticles){
+
+      if(gp.pdgId() == 6){
+        top = gp;
+      }
+      else if(gp.pdgId() == -6){
+      antitop = gp;
+        }
+    }
+
+    float m_ttbar = inv_mass(top.v4() + antitop.v4());
+
+    double_t DeltaY_gen= TMath::Abs(0.5*TMath::Log((top.energy() + top.pt()*TMath::SinH(top.eta()))/(top.energy() - top.pt()*TMath::SinH(top.eta())))) - TMath::Abs(0.5*TMath::Log((antitop.energy() + antitop.pt()*TMath::SinH(antitop.eta()))/(antitop.energy() - antitop.pt()*TMath::SinH(antitop.eta()))));
+
+
+    if (DeltaY_gen<0){
+          fill_histograms(event, "DeltaY_gen_N");
+        }
+
+        //Number of POSITIVE deltaY events without mass cut
+        if(DeltaY_gen>0){
+          fill_histograms(event, "DeltaY_gen_P");
+        } 
+
+        //Number of events with DeltaY NEGATIVE and 0<M_tt<250
+        if(DeltaY_gen<0 && m_ttbar>0 && m_ttbar<250){
+            fill_histograms(event, "DY_N_Mass_0_250_gen");
+        }
+        
+        //Number of events with DeltaY NEGATIVE and 250<M_tt<500
+        if(DeltaY_gen<0 && m_ttbar>250 && m_ttbar<500){
+            fill_histograms(event, "DY_N_Mass_250_500_gen");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 500<M_tt<750
+        if(DeltaY_gen<0 && m_ttbar>500 && m_ttbar<750){
+            fill_histograms(event, "DY_N_Mass_500_750_gen");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 750<M_tt<900
+        if(DeltaY_gen<0 && m_ttbar>750 && m_ttbar<900){
+            fill_histograms(event, "DY_N_Mass_750_900_gen");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 900<M_tt
+        if(DeltaY_gen<0 && m_ttbar>900){
+            fill_histograms(event, "DY_N_Mass_900Inf_gen");
+        }
+
+    
+
+      if (isMuon){
+        ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+        double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))));
+        
+        //Mass of ttbar
+        float Mass_tt = BestZprimeCandidate->Zprime_v4().M();
+
+        //Number of NEGATIVE deltaY events without mass cut
+        if (DeltaY_reco<0){
+          fill_histograms(event, "DeltaY_reco_N_muon");
+        }
+
+        //Number of POSITIVE deltaY events without mass cut
+        if(DeltaY_reco>0){
+          fill_histograms(event, "DeltaY_reco_P_muon");
+        } 
+
+        //Number of events with DeltaY NEGATIVE and 0<M_tt<250
+        if(DeltaY_reco<0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_N_Mass_0_250_reco_muon");
+        }
+        
+        //Number of events with DeltaY NEGATIVE and 250<M_tt<500
+        if(DeltaY_reco<0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_N_Mass_250_500_reco_muon");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 500<M_tt<750
+        if(DeltaY_reco<0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_N_Mass_500_750_reco_muon");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 750<M_tt<900
+        if(DeltaY_reco<0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_N_Mass_750_900_reco_muon");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 900<M_tt
+        if(DeltaY_reco<0 && Mass_tt>900){
+            fill_histograms(event, "DY_N_Mass_900Inf_reco_muon");
+        }
+
+        // ---- DY>0 ---
+
+        //Number of events with DeltaY POSITIVE and 0<M_tt<250
+        if(DeltaY_reco>0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_P_Mass_0_250_reco_muon");
+        }
+        
+        //Number of events with DeltaY POSITIVE and 250<M_tt<500
+        if(DeltaY_reco>0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_P_Mass_250_500_reco_muon");
+        }
+
+        //Number of events with DeltaY POSITIVE and 500<M_tt<750
+        if(DeltaY_reco>0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_P_Mass_500_750_reco_muon");
+        }
+
+        //Number of events with DeltaY POSITIVE and 750<M_tt<900
+        if(DeltaY_reco>0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_P_Mass_750_900_reco_muon");
+        }
+
+        //Number of events with DeltaY POSITIVE and 900<M_tt
+        if(DeltaY_reco>0 && Mass_tt>900){
+            fill_histograms(event, "DY_P_Mass_900Inf_reco_muon");
+        }
+
+        /// ----- IN DeltaY GEN BUT NOT IN RECO ------
+
+        // 0<M_tt<250
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt<250 && Mass_tt>0 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_0_250_NOT_reco_muon");
+        }
+
+        // 250<M_tt<500
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt>250 && Mass_tt<500 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_250_500_NOT_reco_muon");
+        }
+
+        // 500<M_tt<750
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt>500 && Mass_tt<750 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_500_750_NOT_reco_muon");
+
+        }
+        
+        // 750<M_tt<900
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt>750 && Mass_tt<900 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_750_900_NOT_reco_muon");
+        }
+
+        // 900<M_tt
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt>900 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_900Inf_NOT_reco_muon");
+        }
+
+
+
+        /// ------ RECO & GEN P_P -----
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen>0 && DeltaY_reco>0){
+            fill_histograms(event, "DY_P_P_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 0<M_tt<250
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_P_P_Mass_0_250_reco_muon");
+        }
+
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_P_P_Mass_0_250_reco_muon");
+        }
+        
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 250<M_tt<500
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_P_P_Mass_250_500_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 500<M_tt<750
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_P_P_Mass_500_750_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 750<M_tt<900
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_P_P_Mass_750_900_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 900<M_tt
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>900){
+            fill_histograms(event, "DY_P_P_Mass_900Inf_reco_muon");
+        }
+
+
+        /// ------ RECO & GEN P_N -----
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen>0 && DeltaY_reco<0){
+            fill_histograms(event, "DY_P_N_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 0<M_tt<250
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_P_N_Mass_0_250_reco_muon");
+        }
+        
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 250<M_tt<500
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_P_N_Mass_250_500_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 500<M_tt<750
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_P_N_Mass_500_750_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 750<M_tt<900
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_P_N_Mass_750_900_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 900<M_tt
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>900){
+            fill_histograms(event, "DY_P_N_Mass_900Inf_reco_muon");
+        }
+
+
+
+        /// ------ RECO & GEN N_P -----
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen<0 && DeltaY_reco>0){
+            fill_histograms(event, "DY_N_P_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 0<M_tt<250
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_N_P_Mass_0_250_reco_muon");
+        }
+        
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 250<M_tt<500
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_N_P_Mass_250_500_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 500<M_tt<750
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_N_P_Mass_500_750_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 750<M_tt<900
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_N_P_Mass_750_900_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 900<M_tt
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>900){
+            fill_histograms(event, "DY_N_P_Mass_900Inf_reco_muon");
+        }
+
+
+        /// ------ RECO & GEN N_N -----
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen<0 && DeltaY_reco<0){
+            fill_histograms(event, "DY_N_N_muon");
+        }
+
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 0<M_tt<250
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_N_N_Mass_0_250_reco_muon");
+        }
+        
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 250<M_tt<500
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_N_N_Mass_250_500_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 500<M_tt<750
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_N_N_Mass_500_750_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 750<M_tt<900
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_N_N_Mass_750_900_reco_muon");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 900<M_tt
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>900){
+            fill_histograms(event, "DY_N_N_Mass_900Inf_reco_muon");
+        }
+
+      } 
+              
+
+      if (isElectron){
+        ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+        double_t DeltaY_reco= TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))));
+        
+        //Mass of ttbar
+        float Mass_tt = BestZprimeCandidate->Zprime_v4().M();
+
+        //Number of NEGATIVE deltaY events without mass cut
+        if (DeltaY_reco<0){
+          fill_histograms(event, "DeltaY_reco_N_ele");
+        }
+
+        //Number of POSITIVE deltaY events without mass cut
+        if(DeltaY_reco>0){
+          fill_histograms(event, "DeltaY_reco_P_ele");
+        } 
+
+        //Number of events with DeltaY NEGATIVE and 0<M_tt<250
+        if(DeltaY_reco<0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_N_Mass_0_250_reco_ele");
+        }
+        
+        //Number of events with DeltaY NEGATIVE and 250<M_tt<500
+        if(DeltaY_reco<0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_N_Mass_250_500_reco_ele");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 500<M_tt<750
+        if(DeltaY_reco<0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_N_Mass_500_750_reco_ele");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 750<M_tt<900
+        if(DeltaY_reco<0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_N_Mass_750_900_reco_ele");
+        }
+
+        //Number of events with DeltaY NEGATIVE and 900<M_tt
+        if(DeltaY_reco<0 && Mass_tt>900){
+            fill_histograms(event, "DY_N_Mass_900Inf_reco_ele");
+        }
+
+        // ---- DY>0 ---
+
+        //Number of events with DeltaY POSITIVE and 0<M_tt<250
+        if(DeltaY_reco>0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_P_Mass_0_250_reco_ele");
+        }
+        
+        //Number of events with DeltaY POSITIVE and 250<M_tt<500
+        if(DeltaY_reco>0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_P_Mass_250_500_reco_ele");
+        }
+
+        //Number of events with DeltaY POSITIVE and 500<M_tt<750
+        if(DeltaY_reco>0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_P_Mass_500_750_reco_ele");
+        }
+
+        //Number of events with DeltaY POSITIVE and 750<M_tt<900
+        if(DeltaY_reco>0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_P_Mass_750_900_reco_ele");
+        }
+
+        //Number of events with DeltaY POSITIVE and 900<M_tt
+        if(DeltaY_reco>0 && Mass_tt>900){
+            fill_histograms(event, "DY_P_Mass_900Inf_reco_ele");
+        }
+
+
+        /// ----- IN DeltaY GEN BUT NOT IN RECO ------
+
+        // 0<M_tt<250
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt<250 && Mass_tt>0 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_0_250_NOT_reco_ele");
+        }
+
+        // 250<M_tt<500
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt>250 && Mass_tt<500 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_250_500_NOT_reco_ele");
+        }
+
+        // 500<M_tt<750
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt>500 && Mass_tt<750 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_500_750_NOT_reco_ele");
+
+        }
+        
+        // 750<M_tt<900
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt>750 && Mass_tt<900 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_750_900_NOT_reco_ele");
+        }
+
+        // 900<M_tt
+        if((DeltaY_gen>0 ||DeltaY_gen <0 ) && Mass_tt>900 && !(DeltaY_reco>0 || DeltaY_reco <0)){
+            fill_histograms(event, "DY_P_P_Mass_900Inf_NOT_reco_ele");
+        }
+
+
+
+        /// ------ RECO & GEN P_P -----
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen>0 && DeltaY_reco>0){
+            fill_histograms(event, "DY_P_P_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt){
+            fill_histograms(event, "DY_P_P_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 0<M_tt<250
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_P_P_Mass_0_250_reco_ele");
+        }
+        
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 250<M_tt<500
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_P_P_Mass_250_500_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 500<M_tt<750
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_P_P_Mass_500_750_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 750<M_tt<900
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_P_P_Mass_750_900_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 900<M_tt
+        if(DeltaY_gen>0 && DeltaY_reco>0 && Mass_tt>900){
+            fill_histograms(event, "DY_P_P_Mass_900Inf_reco_ele");
+        }
+
+
+        /// ------ RECO & GEN P_N -----
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen>0 && DeltaY_reco<0){
+            fill_histograms(event, "DY_P_N_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt){
+            fill_histograms(event, "DY_P_N_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 0<M_tt<250
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_P_N_Mass_0_250_reco_ele");
+        }
+        
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 250<M_tt<500
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_P_N_Mass_250_500_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 500<M_tt<750
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_P_N_Mass_500_750_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 750<M_tt<900
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_P_N_Mass_750_900_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 900<M_tt
+        if(DeltaY_gen>0 && DeltaY_reco<0 && Mass_tt>900){
+            fill_histograms(event, "DY_P_N_Mass_900Inf_reco_ele");
+        }
+
+
+
+        /// ------ RECO & GEN N_P -----
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen<0 && DeltaY_reco>0){
+            fill_histograms(event, "DY_N_P_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt){
+            fill_histograms(event, "DY_N_P_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 0<M_tt<250
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_N_P_Mass_0_250_reco_ele");
+        }
+        
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 250<M_tt<500
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_N_P_Mass_250_500_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 500<M_tt<750
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_N_P_Mass_500_750_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 750<M_tt<900
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_N_P_Mass_750_900_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 900<M_tt
+        if(DeltaY_gen<0 && DeltaY_reco>0 && Mass_tt>900){
+            fill_histograms(event, "DY_N_P_Mass_900Inf_reco_ele");
+        }
+
+
+        /// ------ RECO & GEN N_N -----
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen<0 && DeltaY_reco<0){
+            fill_histograms(event, "DY_N_N_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt){
+            fill_histograms(event, "DY_N_N_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 0<M_tt<250
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>0 && Mass_tt<250){
+            fill_histograms(event, "DY_N_N_Mass_0_250_reco_ele");
+        }
+        
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 250<M_tt<500
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>250 && Mass_tt<500){
+            fill_histograms(event, "DY_N_N_Mass_250_500_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 500<M_tt<750
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>500 && Mass_tt<750){
+            fill_histograms(event, "DY_N_N_Mass_500_750_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 750<M_tt<900
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>750 && Mass_tt<900){
+            fill_histograms(event, "DY_N_N_Mass_750_900_reco_ele");
+        }
+
+        //Number of events with DeltaY_gen POSITIVE and DeltaY_reco POSITIVE and 900<M_tt
+        if(DeltaY_gen<0 && DeltaY_reco<0 && Mass_tt>900){
+            fill_histograms(event, "DY_N_N_Mass_900Inf_reco_ele");
+        }
+
+      } 
+  }
+
+
+
+
+
 
   return true;
 }

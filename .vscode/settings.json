@@ -66,6 +66,19 @@
         "DeltaY_plots3.C": "cpp",
         "ResponseMatrix_electron.C": "cpp",
         "ele_trig_eff.C": "cpp",
-        "ResponseMatrix_2electron.C": "cpp"
+        "ResponseMatrix_2electron.C": "cpp",
+        "ResponseMatrix_muon copy.C": "cpp",
+        "ResponseMatrix_0_250.C": "cpp",
+        "HistogramAnalysis.C": "cpp",
+        "Matrix_0_250.C": "cpp",
+        "Matrix_0_250 copy.C": "cpp",
+        "Matrix_750_900.C": "cpp",
+        "Matrix_750_900 copy.C": "cpp",
+        "Matrix_750_900 copy 2.C": "cpp",
+        "Matrix_750_900 copy 3.C": "cpp",
+        "Matrix_750_900 copy 4.C": "cpp",
+        "Matrix_250_500.C": "cpp",
+        "Matrix_500_750.C": "cpp",
+        "Matrix_900Inf.C": "cpp"
     }
 }
