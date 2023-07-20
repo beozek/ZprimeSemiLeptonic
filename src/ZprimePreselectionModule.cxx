@@ -265,7 +265,14 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
 
 
   // Book histograms
-  vector<string> histogram_tags = {"Input", "Gen_ele_N","Ele_N_Pt","Ele_N_Pt_Eta","Ele_N_JetPt","Ele_N_JetPt_Eta", "DeltaY_gen", "CommonModules", "HOTVRCorrections", "PUPPICorrections", "Lepton1", "JetID", "JetCleaner1", "JetCleaner2", "TopjetCleaner", "Jet1", "Jet2", "MET"};
+  vector<string> histogram_tags = {"Input", "Gen_N", "Gen_P",
+
+  "Ele_gen_N_0_250","Ele_N_Pt_0_250","Ele_N_Pt_Eta_0_250","Ele_N_JetPt_0_250","Ele_N_JetPt_Eta_0_250","Ele_gen_N_250_500","Ele_N_Pt_250_500","Ele_N_Pt_Eta_250_500","Ele_N_JetPt_250_500","Ele_N_JetPt_Eta_250_500", "Ele_gen_N_500_750","Ele_N_Pt_500_750","Ele_N_Pt_Eta_500_750","Ele_N_JetPt_500_750","Ele_N_JetPt_Eta_500_750","Ele_gen_N_750_900","Ele_N_Pt_750_900","Ele_N_Pt_Eta_750_900","Ele_N_JetPt_750_900","Ele_N_JetPt_Eta_750_900","Ele_gen_N_900Inf","Ele_N_Pt_900Inf","Ele_N_Pt_Eta_900Inf","Ele_N_JetPt_900Inf","Ele_N_JetPt_Eta_900Inf", 
+  "Ele_gen_P_0_250","Ele_P_Pt_0_250","Ele_P_Pt_Eta_0_250","Ele_P_JetPt_0_250","Ele_P_JetPt_Eta_0_250","Ele_gen_P_250_500","Ele_P_Pt_250_500","Ele_P_Pt_Eta_250_500","Ele_P_JetPt_250_500","Ele_P_JetPt_Eta_250_500", "Ele_gen_P_500_750","Ele_P_Pt_500_750","Ele_P_Pt_Eta_500_750","Ele_P_JetPt_500_750","Ele_P_JetPt_Eta_500_750","Ele_gen_P_750_900","Ele_P_Pt_750_900","Ele_P_Pt_Eta_750_900","Ele_P_JetPt_750_900","Ele_P_JetPt_Eta_750_900","Ele_gen_P_900Inf","Ele_P_Pt_900Inf","Ele_P_Pt_Eta_900Inf","Ele_P_JetPt_900Inf","Ele_P_JetPt_Eta_900Inf", 
+  "muon_gen_N_0_250","muon_N_Pt_0_250","muon_N_Pt_Eta_0_250","muon_N_JetPt_0_250","muon_N_JetPt_Eta_0_250","muon_gen_N_250_500","muon_N_Pt_250_500","muon_N_Pt_Eta_250_500","muon_N_JetPt_250_500","muon_N_JetPt_Eta_250_500", "muon_gen_N_500_750","muon_N_Pt_500_750","muon_N_Pt_Eta_500_750","muon_N_JetPt_500_750","muon_N_JetPt_Eta_500_750","muon_gen_N_750_900","muon_N_Pt_750_900","muon_N_Pt_Eta_750_900","muon_N_JetPt_750_900","muon_N_JetPt_Eta_750_900","muon_gen_N_900Inf","muon_N_Pt_900Inf","muon_N_Pt_Eta_900Inf","muon_N_JetPt_900Inf","muon_N_JetPt_Eta_900Inf", 
+  "muon_gen_P_0_250","muon_P_Pt_0_250","muon_P_Pt_Eta_0_250","muon_P_JetPt_0_250","muon_P_JetPt_Eta_0_250","muon_gen_P_250_500","muon_P_Pt_250_500","muon_P_Pt_Eta_250_500","muon_P_JetPt_250_500","muon_P_JetPt_Eta_250_500", "muon_gen_P_500_750","muon_P_Pt_500_750","muon_P_Pt_Eta_500_750","muon_P_JetPt_500_750","muon_P_JetPt_Eta_500_750","muon_gen_P_750_900","muon_P_Pt_750_900","muon_P_Pt_Eta_750_900","muon_P_JetPt_750_900","muon_P_JetPt_Eta_750_900","muon_gen_P_900Inf","muon_P_Pt_900Inf","muon_P_Pt_Eta_900Inf","muon_P_JetPt_900Inf","muon_P_JetPt_Eta_900Inf", 
+  
+  "DeltaY_gen", "CommonModules", "HOTVRCorrections", "PUPPICorrections", "Lepton1", "JetID", "JetCleaner1", "JetCleaner2", "TopjetCleaner", "Jet1", "Jet2", "MET"};
   book_histograms(ctx, histogram_tags);
 
   lumihists.reset(new LuminosityHists(ctx, "lumi"));
@@ -316,150 +323,882 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
 
   //-beren
 
- GenParticle electron, antielectron, muon, antimuon;
+ GenParticle electron, antielectron, muon, antimuon, top, antitop;
 
   for (const GenParticle& gp : *event.genparticles) {
-
-      // cout << "Size of genparticle vector: " << genparticles.size() << endl; 
       if (gp.pdgId() == 11) {
-          electron = gp;
+        electron = gp;
       }
       else if (gp.pdgId() == -11) {
-          antielectron = gp;
+        antielectron = gp;
       }
       else if (gp.pdgId() == 13) {
-          muon = gp;
+        muon = gp;
       }
       else if (gp.pdgId() == -13) {
-          antimuon = gp;
+        antimuon = gp;
       }
+      else if(gp.pdgId() == 6){
+        top = gp;
+      }
+      else if(gp.pdgId() == -6){
+        antitop = gp;
+    }
   }
-  if(debug) cout << "2" << endl;
 
 
-  double_t DeltaY_gen_ele=0, DeltaY_gen_muon=0;
+  
   double_t pt_ele = electron.pt();
   double_t pt_muon = muon.pt();
   double_t eta_ele = electron.eta();
   double_t eta_muon = muon.eta();
   if(debug) cout << "3" << endl;
 
-  DeltaY_gen_ele = TMath::Abs(0.5*TMath::Log((electron.energy() + electron.pt()*TMath::SinH(electron.eta()))/(electron.energy() - electron.pt()*TMath::SinH(electron.eta())))) - TMath::Abs(0.5*TMath::Log((antielectron.energy() + antielectron.pt()*TMath::SinH(antielectron.eta()))/(antielectron.energy() - antielectron.pt()*TMath::SinH(antielectron.eta()))));
-  DeltaY_gen_muon= TMath::Abs(0.5*TMath::Log((muon.energy() + muon.pt()*TMath::SinH(muon.eta()))/(muon.energy() - muon.pt()*TMath::SinH(muon.eta())))) - TMath::Abs(0.5*TMath::Log((antimuon.energy() + antimuon.pt()*TMath::SinH(antimuon.eta()))/(antimuon.energy() - antimuon.pt()*TMath::SinH(antimuon.eta()))));
-  if(debug) cout << "4" << endl;
+  // double_t DeltaY_gen_ele = TMath::Abs(0.5*TMath::Log((electron.energy() + electron.pt()*TMath::SinH(electron.eta()))/(electron.energy() - electron.pt()*TMath::SinH(electron.eta())))) - TMath::Abs(0.5*TMath::Log((antielectron.energy() + antielectron.pt()*TMath::SinH(antielectron.eta()))/(antielectron.energy() - antielectron.pt()*TMath::SinH(antielectron.eta()))));
+  // double_t DeltaY_gen_muon= TMath::Abs(0.5*TMath::Log((muon.energy() + muon.pt()*TMath::SinH(muon.eta()))/(muon.energy() - muon.pt()*TMath::SinH(muon.eta())))) - TMath::Abs(0.5*TMath::Log((antimuon.energy() + antimuon.pt()*TMath::SinH(antimuon.eta()))/(antimuon.energy() - antimuon.pt()*TMath::SinH(antimuon.eta()))));
+  
+  float m_ttbar = inv_mass(top.v4() + antitop.v4());
+
+  double_t DeltaY_gen= TMath::Abs(0.5*TMath::Log((top.energy() + top.pt()*TMath::SinH(top.eta()))/(top.energy() - top.pt()*TMath::SinH(top.eta())))) - TMath::Abs(0.5*TMath::Log((antitop.energy() + antitop.pt()*TMath::SinH(antitop.eta()))/(antitop.energy() - antitop.pt()*TMath::SinH(antitop.eta()))));
 
 
- // Plot without cuts
-  // event.set(h_DeltaY_gen_ele, DeltaY_gen_ele);
-  // event.set(h_DeltaY_gen_muon, DeltaY_gen_muon);
 
-
-  if(!(DeltaY_gen_ele < 0)) {
-    return false;
-    // event.set(h_DeltaY_N_gen_ele, DeltaY_gen_ele);
+  if((DeltaY_gen < 0)) {
+    fill_histograms(event, "Gen_N");
   }
-  fill_histograms(event, "Gen_ele_N");
-  // if(DeltaY_gen_ele > 0) {
-  //     event.set(h_DeltaY_P_gen_ele, DeltaY_gen_ele);
-  // }
-  // if(DeltaY_gen_muon < 0) {
-  //     event.set(h_DeltaY_N_gen_muon, DeltaY_gen_muon);
-  // }
-  // if(DeltaY_gen_muon > 0) {
-  //     event.set(h_DeltaY_P_gen_muon, DeltaY_gen_muon);
-  // }
-
-  if(debug) cout << "5" << endl;
-
-
-  //pt & eta & jet_pt cut
-  for (const auto gj : *event.genjets) {
-
-  // for (const Particle & genjet : mygenjets) {
-    double_t jet_pt = gj.pt();
-    // cout << "jet_pt:" << jet_pt << endl;
-    double_t jet_eta = gj.eta();
-    // cout << "jet_eta:" << jet_eta << endl;
-    // cout << "----------------" << endl;
-
-    // Apply pt cuts and plot  //1
-    if (!(DeltaY_gen_ele < 0 && pt_ele > 35)){
-      return false;
-        // event.set(h_DeltaY_N_gen_pt_ele, DeltaY_gen_ele);
-    }
-    fill_histograms(event, "Ele_N_Pt");
-
-  //   if(DeltaY_gen_ele > 0 && pt_ele > 35) {
-  //       // event.set(h_DeltaY_P_gen_pt_ele, DeltaY_gen_ele);
-  //   }
-  //   if(DeltaY_gen_muon < 0 && pt_muon > 30) {
-  //       // event.set(h_DeltaY_N_gen_pt_muon, DeltaY_gen_muon);
-  //   }
-  //   if(DeltaY_gen_muon > 0 && pt_muon > 30) {
-  //     // event.set(h_DeltaY_P_gen_pt_muon, DeltaY_gen_muon);
-  // }
-
-    // Apply pt and eta cuts and plot 
-    if(!(DeltaY_gen_ele < 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
-      return false;
-        // event.set(h_DeltaY_N_gen_eta_ele, DeltaY_gen_ele);
-    }
-    fill_histograms(event, "Ele_N_Pt_Eta");
-
-    // if(DeltaY_gen_ele > 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5) {
-    //     event.set(h_DeltaY_P_gen_eta_ele, DeltaY_gen_ele);
-    // }
-    // if(DeltaY_gen_muon < 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.4) {
-    //     event.set(h_DeltaY_N_gen_eta_muon, DeltaY_gen_muon);
-    // }
-    // if(DeltaY_gen_muon > 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.4) {
-    //     event.set(h_DeltaY_P_gen_eta_muon, DeltaY_gen_muon);
-    // }
-
-    // pt & eta & jet_pt cut   
-    if(!(DeltaY_gen_ele<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
-      return false;
-    }
-    fill_histograms(event, "Ele_N_JetPt");
-
-    // if(DeltaY_gen_ele>0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) ){
-    //   event.set(h_DeltaY_P_gen_jet_pt_ele, DeltaY_gen_ele);
-    // }
-    // fill_histograms(event, "GenJet_Pt")
-
-    // if(DeltaY_gen_muon<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.4) && (jet_pt >50) ){
-    //   event.set(h_DeltaY_N_gen_jet_pt_muon, DeltaY_gen_muon);
-    // }
-
-    // if(DeltaY_gen_muon>0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.4) && (jet_pt >50)){
-    //   event.set(h_DeltaY_P_gen_jet_pt_muon, DeltaY_gen_muon);
-    // }
-
-  // pt & eta & jet_pt eta cut
-    if(!(DeltaY_gen_ele<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
-      return false;
-      // event.set(h_DeltaY_N_gen_jet_eta_ele, DeltaY_gen_ele);
-    }
-    fill_histograms(event, "Ele_N_JetPt_Eta");
-
-    // if(DeltaY_gen_ele>0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5) ){
-    //   event.set(h_DeltaY_P_gen_jet_eta_ele, DeltaY_gen_ele);
-    // }
-
-    // if(DeltaY_gen_muon<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.4) && (jet_pt >50) && (TMath::Abs(jet_eta) < 2.5)){
-    //   event.set(h_DeltaY_N_gen_jet_eta_muon, DeltaY_gen_muon);
-    // }
-
-    // if(DeltaY_gen_muon>0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.4) && (jet_pt >50) && (TMath::Abs(jet_eta) < 2.5)){
-    //   event.set(h_DeltaY_P_gen_jet_eta_muon, DeltaY_gen_muon);
-    // }
+  
+  if((DeltaY_gen > 0)) {
+    fill_histograms(event, "Gen_P");
   }
+
+
+//////////////////////////////////////
+ /////////////////////////////////////
+ ////////        ELECTRON   
+ //////////////////////////////////////
+ /////////////////////////////////////
+
+  // 0 <mtt <250 Negative
+  if(m_ttbar>0 && m_ttbar<250 && DeltaY_gen < 0){
+    fill_histograms(event, "Ele_gen_N_0_250");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_0_250");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_Eta_0_250");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_0_250");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_Eta_0_250");
 
     
+    }
+  }
 
-  if(debug) cout << "6" << endl;
-
+  // 0 <mtt <250 Positive
+  if(m_ttbar>0 && m_ttbar<250 && DeltaY_gen > 0){
+    fill_histograms(event, "Ele_gen_P_0_250");
   
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_0_250");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_Eta_0_250");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_0_250");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_Eta_0_250");
+
+    
+    }
+  }
+
+   // 250 <mtt <500 Negative
+  if(m_ttbar>250 && m_ttbar<500 && DeltaY_gen < 0){
+    fill_histograms(event, "Ele_gen_N_250_500");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_250_500");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_Eta_250_500");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_250_500");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_Eta_250_500");
+
+    
+    }
+  }
+
+  // 250 <mtt <500 Positive
+  if(m_ttbar>250 && m_ttbar<500 && DeltaY_gen > 0){
+    fill_histograms(event, "Ele_gen_P_250_500");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_250_500");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_Eta_250_500");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_250_500");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_Eta_250_500");
+
+    
+    }
+  }
+
+  /// -----
+
+  // 500 <mtt < 750 Negative
+  if(m_ttbar>500 && m_ttbar<750 && DeltaY_gen < 0){
+    fill_histograms(event, "Ele_gen_N_500_750");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_500_750");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_Eta_500_750");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_500_750");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_Eta_500_750");
+
+    
+    }
+  }
+
+  // 500 <mtt < 750 Positive
+  if(m_ttbar>500 && m_ttbar<750 && DeltaY_gen > 0){
+    fill_histograms(event, "Ele_gen_P_500_750");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_500_750");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_Eta_500_750");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_500_750");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_Eta_500_750");
+
+    
+    }
+  }
+
+  // -----
+
+
+
+  // 750 <mtt < 900 Negative
+  if(m_ttbar>750 && m_ttbar<900 && DeltaY_gen < 0){
+    fill_histograms(event, "Ele_gen_N_750_900");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_750_900");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_Eta_750_900");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_750_900");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_Eta_750_900");
+
+    
+    }
+  }
+
+  // 750 <mtt < 900 Positive
+  if(m_ttbar>750 && m_ttbar<900 && DeltaY_gen > 0){
+    fill_histograms(event, "Ele_gen_P_750_900");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_750_900");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_Eta_750_900");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_750_900");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_Eta_750_900");
+
+    
+    }
+  }
+
+
+
+  //--- 
+  
+  // 900 <mtt  Negative
+  if(m_ttbar>900 && DeltaY_gen < 0){
+    fill_histograms(event, "Ele_gen_N_900Inf");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_900Inf");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_N_Pt_Eta_900Inf");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_900Inf");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_N_JetPt_Eta_900Inf");
+
+    
+    }
+  }
+
+  // 900 <mtt Positive
+  if(m_ttbar>900 && DeltaY_gen > 0){
+    fill_histograms(event, "Ele_gen_P_900Inf");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_ele > 35)){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_900Inf");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && TMath::Abs(eta_ele) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "Ele_P_Pt_Eta_900Inf");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_900Inf");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_ele > 35 && (TMath::Abs(eta_ele) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "Ele_P_JetPt_Eta_900Inf");
+
+    
+    }
+  }
+  //////////////////////////////////////
+ /////////////////////////////////////
+ ////////          END OF ELECTRON   
+ //////////////////////////////////////
+ /////////////////////////////////////
+
+    
+ //////////////////////////////////////
+ /////////////////////////////////////
+ ////////              MUON
+ //////////////////////////////////////
+ /////////////////////////////////////
+
+
+
+ // 0 <mtt <250 Negative
+  if(m_ttbar>0 && m_ttbar<250 && DeltaY_gen < 0){
+    fill_histograms(event, "muon_gen_N_0_250");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_0_250");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_Eta_0_250");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_0_250");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_Eta_0_250");
+
+    
+    }
+  }
+
+  // 0 <mtt <250 Positive
+  if(m_ttbar>0 && m_ttbar<250 && DeltaY_gen > 0){
+    fill_histograms(event, "muon_gen_P_0_250");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_0_250");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_Eta_0_250");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_0_250");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_Eta_0_250");
+
+    
+    }
+  }
+
+   // 250 <mtt <500 Negative
+  if(m_ttbar>250 && m_ttbar<500 && DeltaY_gen < 0){
+    fill_histograms(event, "muon_gen_N_250_500");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_250_500");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_Eta_250_500");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_250_500");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_Eta_250_500");
+
+    
+    }
+  }
+
+  // 250 <mtt <500 Positive
+  if(m_ttbar>250 && m_ttbar<500 && DeltaY_gen > 0){
+    fill_histograms(event, "muon_gen_P_250_500");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_250_500");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_Eta_250_500");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_250_500");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_Eta_250_500");
+
+    
+    }
+  }
+
+  /// -----
+
+  // 500 <mtt < 750 Negative
+  if(m_ttbar>500 && m_ttbar<750 && DeltaY_gen < 0){
+    fill_histograms(event, "muon_gen_N_500_750");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_500_750");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_Eta_500_750");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_500_750");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_Eta_500_750");
+
+    
+    }
+  }
+
+  // 500 <mtt < 750 Positive
+  if(m_ttbar>500 && m_ttbar<750 && DeltaY_gen > 0){
+    fill_histograms(event, "muon_gen_P_500_750");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_500_750");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_Eta_500_750");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_500_750");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_Eta_500_750");
+
+    
+    }
+  }
+
+  // -----
+
+
+
+  // 750 <mtt < 900 Negative
+  if(m_ttbar>750 && m_ttbar<900 && DeltaY_gen < 0){
+    fill_histograms(event, "muon_gen_N_750_900");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_750_900");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_Eta_750_900");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_750_900");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_Eta_750_900");
+
+    
+    }
+  }
+
+  // 750 <mtt < 900 Positive
+  if(m_ttbar>750 && m_ttbar<900 && DeltaY_gen > 0){
+    fill_histograms(event, "muon_gen_P_750_900");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_750_900");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_Eta_750_900");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_750_900");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_Eta_750_900");
+
+    
+    }
+  }
+
+
+
+  //--- 
+  
+  // 900 <mtt  Negative
+  if(m_ttbar>900 && DeltaY_gen < 0){
+    fill_histograms(event, "muon_gen_N_900Inf");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen< 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_900Inf");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen< 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_N_Pt_Eta_900Inf");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_900Inf");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen<0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_N_JetPt_Eta_900Inf");
+
+    
+    }
+  }
+
+  // 900 <mtt Positive
+  if(m_ttbar>900 && DeltaY_gen > 0){
+    fill_histograms(event, "muon_gen_P_900Inf");
+  
+    //pt & eta & jet_pt cut
+    for (const auto gj : *event.genjets) {
+
+      double_t jet_pt = gj.pt();
+      double_t jet_eta = gj.eta();
+    
+      // Apply pt cuts and plot  //1
+      if (!(DeltaY_gen> 0 && pt_muon > 30)){
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_900Inf");
+
+      // Apply pt and eta cuts and plot 
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && TMath::Abs(eta_muon) < 2.5)) {
+        return false;
+      }
+      fill_histograms(event, "muon_P_Pt_Eta_900Inf");
+
+      // pt & eta & jet_pt cut   
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt > 40))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_900Inf");
+
+
+    // pt & eta & jet_pt eta cut
+      if(!(DeltaY_gen > 0 && pt_muon > 30 && (TMath::Abs(eta_muon) < 2.5) && (jet_pt >40) && (TMath::Abs(jet_eta) < 2.5))){
+        return false;
+      }
+      fill_histograms(event, "muon_P_JetPt_Eta_900Inf");
+
+    
+    }
+  }
+
+
+
+  //////////////////////////////////////
+ /////////////////////////////////////
+ ////////             END OF mUON
+ //////////////////////////////////////
+ /////////////////////////////////////
   fill_histograms(event, "DeltaY_gen");
 
   //beren
