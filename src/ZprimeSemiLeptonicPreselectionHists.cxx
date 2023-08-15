@@ -21,6 +21,14 @@ ZprimeSemiLeptonicPreselectionHists::ZprimeSemiLeptonicPreselectionHists(uhh2::C
 Hists(ctx, dirname) {
 
   is_mc = ctx.get("dataset_type") == "MC";
+  is_dy = ctx.get("dataset_version").find("DYJets") == 0;
+  is_wjets = ctx.get("dataset_version").find("WJets") == 0;
+  is_qcd_HTbinned = ctx.get("dataset_version").find("QCD_HT") == 0;
+  is_alps = ctx.get("dataset_version").find("ALP") == 0;
+  is_azh = ctx.get("dataset_version").find("AZH") == 0;
+  is_htott_scalar = ctx.get("dataset_version").find("HscalarToTTTo") == 0;
+  is_htott_pseudo = ctx.get("dataset_version").find("HpseudoToTTTo") == 0;
+  is_zprimetott = ctx.get("dataset_version").find("ZPrimeToTT_") == 0;
   init();
 }
 
@@ -46,13 +54,12 @@ void ZprimeSemiLeptonicPreselectionHists::init(){
   m_jet3            = book<TH1F>("m_jet3", "m^{jet 3}", 50, 0, 500);
 
 //-beren -new variables for unfolding study
-  DeltaY            = book<TH1F>("DeltaY", "#Delta y",2,-2.,2.); 
-  DeltaY_N          = book<TH1F>("DeltaY_N", "#Delta y",1,-2.,0); 
-  DeltaY_P          = book<TH1F>("DeltaY_P", "#Delta y",1,0.,2.); 
-  M_ttbar           = book<TH1F>("M_ttbar","M_{t#bar{t}}^{gen} [GEV]",280,0,7000);
-  M_ttbar_750Inf    = book<TH1F>("M_ttbar", "M_{t#bar{t}750Inf}^{gen} [GeV]", 280, 750, 7000);
-  M_ttbar_750_900   = book<TH1F>("M_ttbar", "M_{t#bar{t}750-900}^{gen} [GeV]", 280, 750, 900);
-  M_ttbar_900Inf    = book<TH1F>("M_ttbar", "M_{t#bar{t}900Inf}^{gen} [GeV]", 280, 900, 7000);
+  DeltaY_ele        = book<TH1F>("DeltaY_ele", "#Delta y",2,-2.,2.); 
+  DeltaY_N_ele      = book<TH1F>("DeltaY_N_ele", "#Delta y",1,-2.,0); 
+  DeltaY_P_ele      = book<TH1F>("DeltaY_P_ele", "#Delta y",1,0.,2.); 
+  DeltaY_muon       = book<TH1F>("DeltaY_muon", "#Delta y",2,-2.,2.); 
+  DeltaY_N_muon     = book<TH1F>("DeltaY_N_muon", "#Delta y",1,-2.,0); 
+  DeltaY_P_muon     = book<TH1F>("DeltaY_P_muon", "#Delta y",1,0.,2.); 
   M_top             = book<TH1F>("M_top", "M_{t}^{gen} [GeV]", 30, 0, 300);
   M_antitop         = book<TH1F>("M_antitop", "M_{#bar{t}}^{gen} [GeV]", 30, 0, 300);
   Pt_ttbar          = book<TH1F>("Pt_ttbar", "p_{T}^{t#bar{t}, gen} [GeV]", 100, 0, 1000);
@@ -256,7 +263,30 @@ void ZprimeSemiLeptonicPreselectionHists::init(){
   S33 = book<TH1F>("S33", "S_{33}", 50, 0, 1);
 
   sum_event_weights = book<TH1F>("sum_event_weights", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_mcscale_upup = book<TH1F>("sum_event_weights_mcscale_upup", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_mcscale_upnone = book<TH1F>("sum_event_weights_mcscale_upnone", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_mcscale_noneup = book<TH1F>("sum_event_weights_mcscale_noneup", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_mcscale_nonedown = book<TH1F>("sum_event_weights_mcscale_nonedown", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_mcscale_downnone = book<TH1F>("sum_event_weights_mcscale_downnone", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_mcscale_downdown = book<TH1F>("sum_event_weights_mcscale_downdown", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_isr_up = book<TH1F>("sum_event_weights_isr_up", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_isr_down = book<TH1F>("sum_event_weights_isr_down", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_fsr_up = book<TH1F>("sum_event_weights_fsr_up", "counting experiment", 1, 0.5, 1.5);
+  sum_event_weights_fsr_down = book<TH1F>("sum_event_weights_fsr_down", "counting experiment", 1, 0.5, 1.5);
 
+  // calculate sum of event weights with PDF replicas
+  for(int i=0; i<100; i++){
+    std::stringstream ss_name;
+    ss_name << "sum_event_weights_PDF_" << i+1;
+    stringstream ss_title;
+    ss_title << "counting experiment for PDF No. "  << i+1 << " out of 100" ;
+    std::string s_name = ss_name.str();
+    std::string s_title = ss_title.str();
+    const char* char_name = s_name.c_str();
+    const char* char_title = s_title.c_str();
+    hist_names[i] = s_name;
+    book<TH1F>(char_name, char_title,  1, 0.5, 1.5);
+  }
 }
 
 
@@ -267,38 +297,44 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
 
 //-beren Delta Y
 
-  GenParticle top, antitop;
-   for(const GenParticle & gp : *event.genparticles){
-     if(gp.pdgId() == 6){
-       top = gp;
-     }
-     else if(gp.pdgId() == -6){
-       antitop = gp;
-     }
-   }
-  
-    // ?? DeltaY = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
-    // for(unsigned int i = 0; i<math.length(); i++){
-    //   if (DeltaY[i]<0){
-    //     DeltaY_N->Fill(DeltaY,weight);
-    //   }
-    //   else if(DeltaY[i]>0){
-    //     DeltaY_P->Fill(DeltaY,weight);
-    //   }
-    // }
+  GenParticle electron, antielectron, muon, antimuon;
 
-  DeltaY->Fill(TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity()),weight);
+  for (const GenParticle& gp : *event.genparticles) {
 
-    double_t Delta_Y = TMath::Abs(top.v4().Rapidity()) - TMath::Abs(antitop.v4().Rapidity());
-      if (Delta_Y<0){
-        DeltaY_N->Fill(Delta_Y,weight);
+      // cout << "Size of genparticle vector: " << genparticles.size() << endl; 
+      if (gp.pdgId() == 11) {
+          electron = gp;
       }
-      else if(Delta_Y>0){
-        DeltaY_P->Fill(Delta_Y,weight);
+      else if (gp.pdgId() == -11) {
+          antielectron = gp;
       }
+      else if (gp.pdgId() == 13) {
+          muon = gp;
+      }
+      else if (gp.pdgId() == -13) {
+          antimuon = gp;
+      }
+  }
+
+  double_t DeltaY_gen_ele = TMath::Abs(0.5*TMath::Log((electron.energy() + electron.pt()*TMath::SinH(electron.eta()))/(electron.energy() - electron.pt()*TMath::SinH(electron.eta())))) - TMath::Abs(0.5*TMath::Log((antielectron.energy() + antielectron.pt()*TMath::SinH(antielectron.eta()))/(antielectron.energy() - antielectron.pt()*TMath::SinH(antielectron.eta()))));
+  double_t DeltaY_gen_muon= TMath::Abs(0.5*TMath::Log((muon.energy() + muon.pt()*TMath::SinH(muon.eta()))/(muon.energy() - muon.pt()*TMath::SinH(muon.eta())))) - TMath::Abs(0.5*TMath::Log((antimuon.energy() + antimuon.pt()*TMath::SinH(antimuon.eta()))/(antimuon.energy() - antimuon.pt()*TMath::SinH(antimuon.eta()))));
   
+  DeltaY_ele->Fill(DeltaY_gen_ele);
+  DeltaY_muon->Fill(DeltaY_gen_muon);
 
+  if(DeltaY_gen_ele <0){
+    DeltaY_N_ele->Fill(DeltaY_gen_ele,weight);
+  }
+  else if(DeltaY_gen_ele>0){
+    DeltaY_P_ele->Fill(DeltaY_gen_ele,weight);
+  }
 
+  if(DeltaY_gen_muon <0){
+    DeltaY_N_muon->Fill(DeltaY_gen_muon,weight);
+  }
+  else if(DeltaY_gen_muon>0){
+    DeltaY_P_muon->Fill(DeltaY_gen_muon,weight);
+  }
 
 
  /// -beren Delta Y
@@ -702,33 +738,42 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
   S33->Fill(s33, weight);
 
   sum_event_weights->Fill(1., weight);
-
-
-//-beren new variables for unfolding study
-
-float m_ttbar = inv_mass(top.v4() + antitop.v4());
-  M_ttbar->Fill(m_ttbar, weight);
-  M_top->Fill(inv_mass(top.v4()), weight);
-  M_antitop->Fill(inv_mass(antitop.v4()), weight);
-  Pt_ttbar->Fill((top.v4() + antitop.v4()).Pt());
-  Pt_top->Fill(top.pt(), weight);
-  Pt_antitop->Fill(antitop.pt(), weight);
-  Eta_ttbar->Fill((top.v4() + antitop.v4()).Eta());
-  Eta_top->Fill(top.eta(), weight);
-  Eta_antitop->Fill(antitop.eta(), weight);
-
-  if (m_ttbar>750){
-    M_ttbar_750Inf->Fill(m_ttbar,weight);
+  if(is_mc){
+    if(event.genInfo->systweights().size() > 0){ // for some samples (e.g. Diboson, RSGluon) these weights don't exist
+      if(is_dy || is_wjets || is_qcd_HTbinned || is_alps || is_azh || is_htott_scalar || is_htott_pseudo || is_zprimetott){
+        sum_event_weights_mcscale_upup->Fill(1., weight * event.genInfo->systweights().at(20) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_upnone->Fill(1., weight * event.genInfo->systweights().at(5) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_noneup->Fill(1., weight * event.genInfo->systweights().at(15) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_nonedown->Fill(1., weight * event.genInfo->systweights().at(30) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_downnone->Fill(1., weight * event.genInfo->systweights().at(10) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_downdown->Fill(1., weight * event.genInfo->systweights().at(40) / event.genInfo->originalXWGTUP());
+      }
+      else{
+        sum_event_weights_mcscale_upup->Fill(1., weight * event.genInfo->systweights().at(4) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_upnone->Fill(1., weight * event.genInfo->systweights().at(1) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_noneup->Fill(1., weight * event.genInfo->systweights().at(3) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_nonedown->Fill(1., weight * event.genInfo->systweights().at(6) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_downnone->Fill(1., weight * event.genInfo->systweights().at(2) / event.genInfo->originalXWGTUP());
+        sum_event_weights_mcscale_downdown->Fill(1., weight * event.genInfo->systweights().at(8) / event.genInfo->originalXWGTUP());
+      }
+    }
+    // isr, fsr
+    sum_event_weights_isr_up->Fill(1., weight * event.genInfo->weights().at(27) / event.genInfo->weights().at(0));
+    sum_event_weights_isr_down->Fill(1., weight * event.genInfo->weights().at(26) / event.genInfo->weights().at(0));
+    sum_event_weights_fsr_up->Fill(1., weight * event.genInfo->weights().at(5) / event.genInfo->weights().at(0));
+    sum_event_weights_fsr_down->Fill(1., weight * event.genInfo->weights().at(4) / event.genInfo->weights().at(0));
+    // pdf
+    int MY_FIRST_INDEX = 9;
+    if(is_dy || is_wjets || is_qcd_HTbinned || is_alps || is_azh || is_htott_scalar || is_htott_pseudo || is_zprimetott) MY_FIRST_INDEX = 47;
+    if(event.genInfo->systweights().size() > (unsigned int) 100 + MY_FIRST_INDEX){
+      float orig_weight = event.genInfo->originalXWGTUP();
+      for(int i=0; i<100; i++){
+        double pdf_weight = event.genInfo->systweights().at(i+MY_FIRST_INDEX);
+        const char* name = hist_names[i].c_str();
+        hist(name)->Fill(1.,weight * pdf_weight / orig_weight);
+      }
+    }
   }
-  if(m_ttbar>900){
-    M_ttbar_900Inf->Fill(m_ttbar,weight);
-  }
-  if(m_ttbar>750 && m_ttbar<900){
-    M_ttbar_750_900->Fill(m_ttbar,weight);
-  }
-
-///-beren
-
 } //Method
 
 
