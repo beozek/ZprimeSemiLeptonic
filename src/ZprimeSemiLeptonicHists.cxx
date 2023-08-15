@@ -59,6 +59,14 @@ void ZprimeSemiLeptonicHists::init(){
   Eta_ttbar         = book<TH1F>("Eta_ttbar", "#eta^{T}^{t#bar{t}, gen} [GeV]", 50, -3, 3);
   Eta_top           = book<TH1F>("Eta_top", "#eta^{t, gen} [GeV]", 50, -3, 3);
   Eta_antitop       = book<TH1F>("Eta_antitop", "#eta^{#bar{t}, gen} [GeV]", 50, -3, 3);
+
+  // match_0_250       = book<TH2F>("match_0_250", "Gen Reco match for 0 <= mtt < 250", 2, -2.5, 2.5, 2, -2.5,2.5);
+  // match_250_500     = book<TH2F>("match_250_500", "Gen Reco match for 250 <= mtt < 500", 2, -2.5, 2.5, 2, -2.5,2.5);
+  // match_500_750     = book<TH2F>("match_500_750", "Gen Reco match for 500 <= mtt < 750", 2, -2.5, 2.5, 2, -2.5,2.5);
+  // match_750_900     = book<TH2F>("match_750_900", "Gen Reco match for 750 <= mtt < 900", 2, -2.5, 2.5, 2, -2.5,2.5);
+  // match_900In       = book<TH2F>("match_900Inf", "Gen Reco match for 900 <= mtt ", 2, -2.5, 2.5, 2, -2.5,2.5);
+
+
   //-beren
 
   // jets
