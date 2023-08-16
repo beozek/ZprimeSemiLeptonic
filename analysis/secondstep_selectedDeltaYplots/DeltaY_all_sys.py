@@ -33,7 +33,6 @@ scale_factors_nominal = [
     "weight_sfelec_reco",
     "weight_sfmu_id",
     "weight_sfmu_trigger",
-    "muonrecSF_nominal",
     "prefiringWeight",
     "weight_btagdisc_central"
 ]
@@ -44,7 +43,6 @@ scale_factors_up = {
     "weight_sfelec_reco_up": "elecRecoUp",
     "weight_sfmu_id_up" : "muonIDUp",
     "weight_sfmu_trigger_up" : "muonTriggerUp",
-    "muonrecSF_up" : "muonRecoUp",
     "prefiringWeightUp" : "prefiringWeightUp"
     
 }
@@ -55,7 +53,6 @@ scale_factors_up_division = {
     "weight_sfelec_reco_up": "weight_sfelec_reco",
     "weight_sfmu_id_up" : "weight_sfmu_id",
     "weight_sfmu_trigger_up" : "weight_sfmu_trigger",
-    "muonrecSF_up" : "muonrecSF_nominal",
     "prefiringWeightUp" : "prefiringWeight"
     
 }
@@ -66,7 +63,6 @@ scale_factors_down = {
     "weight_sfelec_reco_down": "elecRecoDown",
     "weight_sfmu_id_down" : "muonIDDown",
     "weight_sfmu_trigger_down" : "muonTriggerDown",
-    "muonrecSF_down" : "muonRecoDown",
     "prefiringWeightDown" : "prefiringWeightDown"
     
 }
@@ -77,7 +73,6 @@ scale_factors_down_division = {
     "weight_sfelec_reco_down": "weight_sfelec_reco",
     "weight_sfmu_id_down" : "weight_sfmu_id",
     "weight_sfmu_trigger_down" : "weight_sfmu_trigger",
-    "muonrecSF_down" : "muonrecSF_nominal",
     "prefiringWeightDown" : "prefiringWeight"
     
 }

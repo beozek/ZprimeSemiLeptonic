@@ -49,7 +49,7 @@ void nom_sys_ST()
     // reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_latest/WJets/nominal/uhh2.AnalysisModuleRunner.WJets.root");
     // reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_latest/DY/nominal/uhh2.AnalysisModuleRunner.DY.root");
     // reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_latest/Diboson/nominal/uhh2.AnalysisModuleRunner.Diboson.root");
-    reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_latest/ST/nominal/uhh2.AnalysisModuleRunner.ST.root");
+    reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Analysis_UL18_muon_Combine_allMtt/nominal/ST.root");
     // reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_latest/QCD/nominal/uhh2.AnalysisModuleRunner.QCD.root");
 
     TTree *treereco = (TTree*) reco;
@@ -129,6 +129,8 @@ void nom_sys_ST()
     TH1D *h_muonrecSF_nominal = new TH1D("muonrecSF_nominal","muonrecSF_nominal",1,-1,1);
     TH1D *h_muonrecSF_down = new TH1D("muonrecSF_down","muonrecSF_down",1,-1,1);
     TH1D *h_muonrecSF_up = new TH1D("muonrecSF_up","muonrecSF_up",1,-1,1);
+
+
 
     
     // TH1F Muon Trigger
@@ -345,10 +347,10 @@ void nom_sys_ST()
     treereco->SetBranchAddress("DeltaY_N_P", &DeltaY_N_P);
     treereco->SetBranchAddress("DeltaY_P_P", &DeltaY_P_P);
     treereco->SetBranchAddress("DeltaY_P_N", &DeltaY_P_N);
-    treereco->SetBranchAddress("DeltaY_N_N_nomass", &DeltaY_N_N_nomass);
-    treereco->SetBranchAddress("DeltaY_N_P_nomass", &DeltaY_N_P_nomass);
-    treereco->SetBranchAddress("DeltaY_P_N_nomass", &DeltaY_P_N_nomass);
-    treereco->SetBranchAddress("DeltaY_P_P_nomass", &DeltaY_P_P_nomass);
+   //  treereco->SetBranchAddress("DeltaY_N_N_nomass", &DeltaY_N_N_nomass);
+   //  treereco->SetBranchAddress("DeltaY_N_P_nomass", &DeltaY_N_P_nomass);
+   //  treereco->SetBranchAddress("DeltaY_P_N_nomass", &DeltaY_P_N_nomass);
+   //  treereco->SetBranchAddress("DeltaY_P_P_nomass", &DeltaY_P_P_nomass);
 
     treereco->SetBranchAddress("weight_pu", &weight_pu);
     treereco->SetBranchAddress("weight_pu_down", &weight_pu_down);
@@ -358,9 +360,9 @@ void nom_sys_ST()
     treereco->SetBranchAddress("weight_sfmu_id_down", &weight_sfmu_id_down);
     treereco->SetBranchAddress("weight_sfmu_id_up", &weight_sfmu_id_up);
 
-    treereco->SetBranchAddress("muonrecSF_nominal", &muonrecSF_nominal);
-    treereco->SetBranchAddress("muonrecSF_down", &muonrecSF_down);
-    treereco->SetBranchAddress("muonrecSF_up", &muonrecSF_up);
+   //  treereco->SetBranchAddress("muonrecSF_nominal", &muonrecSF_nominal);
+   //  treereco->SetBranchAddress("muonrecSF_down", &muonrecSF_down);
+   //  treereco->SetBranchAddress("muonrecSF_up", &muonrecSF_up);
 
     treereco->SetBranchAddress("weight_sfmu_trigger", &weight_sfmu_trigger);
     treereco->SetBranchAddress("weight_sfmu_trigger_down", &weight_sfmu_trigger_down);
@@ -456,10 +458,10 @@ void nom_sys_ST()
         h_DeltaY_P_N->Fill(DeltaY_P_N);
         h_DeltaY_N_N->Fill(DeltaY_N_N);
         h_DeltaY_N_P->Fill(DeltaY_N_P);
-        h_DeltaY_P_P_nomass->Fill(DeltaY_P_P_nomass);
-        h_DeltaY_P_N_nomass->Fill(DeltaY_P_N_nomass);
-        h_DeltaY_N_P_nomass->Fill(DeltaY_N_P_nomass);
-        h_DeltaY_N_N_nomass->Fill(DeltaY_N_N_nomass);
+      //   h_DeltaY_P_P_nomass->Fill(DeltaY_P_P_nomass);
+      //   h_DeltaY_P_N_nomass->Fill(DeltaY_P_N_nomass);
+      //   h_DeltaY_N_P_nomass->Fill(DeltaY_N_P_nomass);
+      //   h_DeltaY_N_N_nomass->Fill(DeltaY_N_N_nomass);
         
         h_weight_pu->Fill(weight_pu);
         h_weight_pu_down->Fill(weight_pu_down);
@@ -469,9 +471,9 @@ void nom_sys_ST()
         h_weight_sfmu_id_down->Fill(weight_sfmu_id_down);
         h_weight_sfmu_id_up->Fill(weight_sfmu_id_up);
 
-        h_muonrecSF_nominal->Fill(muonrecSF_nominal);
-        h_muonrecSF_down->Fill(muonrecSF_down); 
-        h_muonrecSF_up->Fill(muonrecSF_up);
+      //   h_muonrecSF_nominal->Fill(muonrecSF_nominal);
+      //   h_muonrecSF_down->Fill(muonrecSF_down); 
+      //   h_muonrecSF_up->Fill(muonrecSF_up);
 
         h_weight_sfmu_trigger->Fill(weight_sfmu_trigger); 
         h_weight_sfmu_trigger_down->Fill(weight_sfmu_trigger_down); 
@@ -590,10 +592,10 @@ void nom_sys_ST()
     h_DeltaY_P_N->Write();
     h_DeltaY_N_P->Write();
     h_DeltaY_N_N->Write();
-    h_DeltaY_P_P_nomass->Write();
-    h_DeltaY_P_N_nomass->Write();
-    h_DeltaY_N_P_nomass->Write();
-    h_DeltaY_N_N_nomass->Write();
+   //  h_DeltaY_P_P_nomass->Write();
+   //  h_DeltaY_P_N_nomass->Write();
+   //  h_DeltaY_N_P_nomass->Write();
+   //  h_DeltaY_N_N_nomass->Write();
 
     Matrix->Write();
 
@@ -610,9 +612,9 @@ void nom_sys_ST()
     h_weight_sfmu_id_down->Write();
     h_weight_sfmu_id_up->Write();
 
-    h_muonrecSF_nominal->Write();
-    h_muonrecSF_down->Write();
-    h_muonrecSF_up->Write();
+   //  h_muonrecSF_nominal->Write();
+   //  h_muonrecSF_down->Write();
+   //  h_muonrecSF_up->Write();
 
     h_weight_sfmu_trigger->Write();
     h_weight_sfmu_trigger_down->Write(); 

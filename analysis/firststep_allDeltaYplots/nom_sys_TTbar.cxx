@@ -39,10 +39,10 @@ void nom_sys_TTbar()
 
     TChain *reco = new TChain("AnalysisTree","");
 
-    reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_ttbar/nominal/uhh2.AnalysisModuleRunner.ttbar1.root");
-    reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_ttbar/nominal/uhh2.AnalysisModuleRunner.ttbar2.root");
-    reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_ttbar/nominal/uhh2.AnalysisModuleRunner.ttbar3.root");
-    reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_ttbar/nominal/uhh2.AnalysisModuleRunner.ttbar4.root");
+    reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Analysis_UL18_muon_Combine_allMtt/nominal/ttbar1.root");
+    reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Analysis_UL18_muon_Combine_allMtt/nominal/ttbar2.root");
+   //  reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_ttbar/nominal/uhh2.AnalysisModuleRunner.ttbar3.root");
+   //  reco-> Add("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_combine/UL18/muon/workdir_Zprime_Analysis_UL18_muon_combine_ttbar/nominal/uhh2.AnalysisModuleRunner.ttbar4.root");
 
     TTree *treereco = (TTree*) reco;
 
@@ -77,23 +77,35 @@ void nom_sys_TTbar()
     //NEGATIVE reco with mass
     TH1D *h_DeltaY_N_reco = new TH1D("DeltaY_N_reco","#Delta_Y_{reco}<0, M>750",1,-2.5,0);
 
+    
 
-    // POSITIVE gen, POSITIVE reco, without mass cut
-    TH1D *h_DeltaY_P_P_nomass = new TH1D("DeltaY_P_P_nomass","#Delta_Y_{gen} > 0, #Delta_Y_{reco} > 0 ",1,0,2.5);
     // POSITIVE gen, POSITIVE reco, with mass cut
-    TH1D *h_DeltaY_P_P = new TH1D("DeltaY_P_P","#Delta_Y_{gen} > 0, #Delta_Y_{reco} > 0, M >750",1,0,2.5);
-    // POSITIVE gen, NEGATIVE reco, without mass cut
-    TH1D *h_DeltaY_P_N_nomass = new TH1D("DeltaY_P_N_nomass","#Delta_Y_{gen} > 0, #Delta_Y_{reco} < 0",1,-2.5,2.5);
+    TH1D *h_DeltaY_P_P_750_900_muon = new TH1D("DeltaY_P_P_750_900_muon","750<Mtt<900, #Delta_Y_{gen} > 0, #Delta_Y_{reco} > 0 ",1,0,2.5);
     // POSITIVE gen, NEGATIVE reco, with mass cut
-    TH1D *h_DeltaY_P_N = new TH1D("DeltaY_P_N","#Delta_Y_{gen} > 0, #Delta_Y_{reco} < 0, M >750",1,-2.5,2.5);
-    // NEAGATIVE gen, POSITIVE reco, without mass cut
-    TH1D *h_DeltaY_N_P_nomass = new TH1D("DeltaY_N_P_nomass","#Delta_Y_{gen} < 0, #Delta_Y_{reco} > 0",1,-2.5,2.5);
+    TH1D *h_DeltaY_P_N_750_900_muon = new TH1D("DeltaY_P_N_750_900_muon","750<Mtt<900, #Delta_Y_{gen} > 0, #Delta_Y_{reco} < 0",1,-2.5,0);
     // NEGATIVE gen, POSITIVE reco, with mass cut
-    TH1D *h_DeltaY_N_P = new TH1D("DeltaY_N_P","#Delta_Y_{gen} < 0, #Delta_Y_{reco} > 0, M >750",1,-2.5,2.5);
-    // NEGATIVE gen, NEGATIVE reco, without mass cut
-    TH1D *h_DeltaY_N_N_nomass = new TH1D("DeltaY_N_N_nomass","#Delta_Y_{gen} < 0, #Delta_Y_{reco} < 0",1,-2.5,0);
-    // NEGATIVE gen, NEGATIVE reco, with mass cut
-    TH1D *h_DeltaY_N_N = new TH1D("DeltaY_N_N","#Delta_Y_{gen} < 0, #Delta_Y_{reco} < 0, M >750",1,-2.5,0);
+    TH1D *h_DeltaY_N_P_750_900_muon = new TH1D("h_DeltaY_N_P_750_900_muon","750<Mtt<900, #Delta_Y_{gen} < 0, #Delta_Y_{reco} > 0",1,0,2.5);
+    // NEAGATIVE gen, NEGATIVE reco, without mass cut
+    TH1D *h_DeltaY_N_N_750_900_muon = new TH1D("h_DeltaY_N_N_750_900_muon","750<Mtt<900, #Delta_Y_{gen} < 0, #Delta_Y_{reco} < 0",1,-2.5,0);
+    
+
+
+   //  // POSITIVE gen, POSITIVE reco, without mass cut
+   //  TH1D *h_DeltaY_P_P_nomass = new TH1D("DeltaY_P_P_nomass","#Delta_Y_{gen} > 0, #Delta_Y_{reco} > 0 ",1,0,2.5);
+   //  // POSITIVE gen, POSITIVE reco, with mass cut
+   //  TH1D *h_DeltaY_P_P = new TH1D("DeltaY_P_P","#Delta_Y_{gen} > 0, #Delta_Y_{reco} > 0, M >750",1,0,2.5);
+   //  // POSITIVE gen, NEGATIVE reco, without mass cut
+   //  TH1D *h_DeltaY_P_N_nomass = new TH1D("DeltaY_P_N_nomass","#Delta_Y_{gen} > 0, #Delta_Y_{reco} < 0",1,-2.5,2.5);
+   //  // POSITIVE gen, NEGATIVE reco, with mass cut
+   //  TH1D *h_DeltaY_P_N = new TH1D("DeltaY_P_N","#Delta_Y_{gen} > 0, #Delta_Y_{reco} < 0, M >750",1,-2.5,2.5);
+   //  // NEAGATIVE gen, POSITIVE reco, without mass cut
+   //  TH1D *h_DeltaY_N_P_nomass = new TH1D("DeltaY_N_P_nomass","#Delta_Y_{gen} < 0, #Delta_Y_{reco} > 0",1,-2.5,2.5);
+   //  // NEGATIVE gen, POSITIVE reco, with mass cut
+   //  TH1D *h_DeltaY_N_P = new TH1D("DeltaY_N_P","#Delta_Y_{gen} < 0, #Delta_Y_{reco} > 0, M >750",1,-2.5,2.5);
+   //  // NEGATIVE gen, NEGATIVE reco, without mass cut
+   //  TH1D *h_DeltaY_N_N_nomass = new TH1D("DeltaY_N_N_nomass","#Delta_Y_{gen} < 0, #Delta_Y_{reco} < 0",1,-2.5,0);
+   //  // NEGATIVE gen, NEGATIVE reco, with mass cut
+   //  TH1D *h_DeltaY_N_N = new TH1D("DeltaY_N_N","#Delta_Y_{gen} < 0, #Delta_Y_{reco} < 0, M >750",1,-2.5,0);
     
 
     // TH1D Projection Plots
@@ -226,6 +238,11 @@ void nom_sys_TTbar()
     float DeltaY_N_reco;
     float DeltaY_N_reco_nomass;
 
+    float DeltaY_P_P_750_900_muon;
+    float DeltaY_P_N_750_900_muon;
+    float DeltaY_N_P_750_900_muon;
+    float DeltaY_N_N_750_900_muon;
+
     float DeltaY_N_N;
     float DeltaY_N_P;
     float DeltaY_P_N;
@@ -333,14 +350,19 @@ void nom_sys_TTbar()
     treereco->SetBranchAddress("DeltaY_N_reco", &DeltaY_N_reco);
     treereco->SetBranchAddress("DeltaY_N_reco_nomass", &DeltaY_N_reco_nomass);
 
-    treereco->SetBranchAddress("DeltaY_N_N", &DeltaY_N_N);
-    treereco->SetBranchAddress("DeltaY_N_P", &DeltaY_N_P);
-    treereco->SetBranchAddress("DeltaY_P_P", &DeltaY_P_P);
-    treereco->SetBranchAddress("DeltaY_P_N", &DeltaY_P_N);
-    treereco->SetBranchAddress("DeltaY_N_N_nomass", &DeltaY_N_N_nomass);
-    treereco->SetBranchAddress("DeltaY_N_P_nomass", &DeltaY_N_P_nomass);
-    treereco->SetBranchAddress("DeltaY_P_N_nomass", &DeltaY_P_N_nomass);
-    treereco->SetBranchAddress("DeltaY_P_P_nomass", &DeltaY_P_P_nomass);
+    treereco->SetBranchAddress("DeltaY_P_P_750_900_muon",&DeltaY_P_P_750_900_muon);
+    treereco->SetBranchAddress("DeltaY_P_N_750_900_muon",&DeltaY_P_N_750_900_muon);
+    treereco->SetBranchAddress("DeltaY_N_P_750_900_muon",&DeltaY_N_P_750_900_muon);
+    treereco->SetBranchAddress("DeltaY_N_N_750_900_muon",&DeltaY_N_N_750_900_muon);
+
+   //  treereco->SetBranchAddress("DeltaY_N_N", &DeltaY_N_N);
+   //  treereco->SetBranchAddress("DeltaY_N_P", &DeltaY_N_P);
+   //  treereco->SetBranchAddress("DeltaY_P_P", &DeltaY_P_P);
+   //  treereco->SetBranchAddress("DeltaY_P_N", &DeltaY_P_N);
+   //  treereco->SetBranchAddress("DeltaY_N_N_nomass", &DeltaY_N_N_nomass);
+   //  treereco->SetBranchAddress("DeltaY_N_P_nomass", &DeltaY_N_P_nomass);
+   //  treereco->SetBranchAddress("DeltaY_P_N_nomass", &DeltaY_P_N_nomass);
+   //  treereco->SetBranchAddress("DeltaY_P_P_nomass", &DeltaY_P_P_nomass);
 
     treereco->SetBranchAddress("weight_pu", &weight_pu);
     treereco->SetBranchAddress("weight_pu_down", &weight_pu_down);
@@ -350,9 +372,9 @@ void nom_sys_TTbar()
     treereco->SetBranchAddress("weight_sfmu_id_down", &weight_sfmu_id_down);
     treereco->SetBranchAddress("weight_sfmu_id_up", &weight_sfmu_id_up);
 
-    treereco->SetBranchAddress("muonrecSF_nominal", &muonrecSF_nominal);
-    treereco->SetBranchAddress("muonrecSF_down", &muonrecSF_down);
-    treereco->SetBranchAddress("muonrecSF_up", &muonrecSF_up);
+   //  treereco->SetBranchAddress("muonrecSF_nominal", &muonrecSF_nominal);
+   //  treereco->SetBranchAddress("muonrecSF_down", &muonrecSF_down);
+   //  treereco->SetBranchAddress("muonrecSF_up", &muonrecSF_up);
 
     treereco->SetBranchAddress("weight_sfmu_trigger", &weight_sfmu_trigger);
     treereco->SetBranchAddress("weight_sfmu_trigger_down", &weight_sfmu_trigger_down);
@@ -444,14 +466,19 @@ void nom_sys_TTbar()
         h_DeltaY_N_reco_nomass->Fill(DeltaY_N_reco_nomass);
         h_DeltaY_N_reco->Fill(DeltaY_N_reco);
 
-        h_DeltaY_P_P->Fill(DeltaY_P_P);
-        h_DeltaY_P_N->Fill(DeltaY_P_N);
-        h_DeltaY_N_N->Fill(DeltaY_N_N);
-        h_DeltaY_N_P->Fill(DeltaY_N_P);
-        h_DeltaY_P_P_nomass->Fill(DeltaY_P_P_nomass);
-        h_DeltaY_P_N_nomass->Fill(DeltaY_P_N_nomass);
-        h_DeltaY_N_P_nomass->Fill(DeltaY_N_P_nomass);
-        h_DeltaY_N_N_nomass->Fill(DeltaY_N_N_nomass);
+       h_DeltaY_P_P_750_900_muon->Fill(DeltaY_P_P_750_900_muon);
+       h_DeltaY_P_N_750_900_muon->Fill(DeltaY_P_N_750_900_muon);
+       h_DeltaY_N_P_750_900_muon->Fill(DeltaY_N_P_750_900_muon);
+       h_DeltaY_N_N_750_900_muon->Fill(DeltaY_N_N_750_900_muon);
+
+      //   h_DeltaY_P_P->Fill(DeltaY_P_P);
+      //   h_DeltaY_P_N->Fill(DeltaY_P_N);
+      //   h_DeltaY_N_N->Fill(DeltaY_N_N);
+      //   h_DeltaY_N_P->Fill(DeltaY_N_P);
+      //   h_DeltaY_P_P_nomass->Fill(DeltaY_P_P_nomass);
+      //   h_DeltaY_P_N_nomass->Fill(DeltaY_P_N_nomass);
+      //   h_DeltaY_N_P_nomass->Fill(DeltaY_N_P_nomass);
+      //   h_DeltaY_N_N_nomass->Fill(DeltaY_N_N_nomass);
         
         h_weight_pu->Fill(weight_pu);
         h_weight_pu_down->Fill(weight_pu_down);
@@ -461,9 +488,9 @@ void nom_sys_TTbar()
         h_weight_sfmu_id_down->Fill(weight_sfmu_id_down);
         h_weight_sfmu_id_up->Fill(weight_sfmu_id_up);
 
-        h_muonrecSF_nominal->Fill(muonrecSF_nominal);
-        h_muonrecSF_down->Fill(muonrecSF_down); 
-        h_muonrecSF_up->Fill(muonrecSF_up);
+      //   h_muonrecSF_nominal->Fill(muonrecSF_nominal);
+      //   h_muonrecSF_down->Fill(muonrecSF_down); 
+      //   h_muonrecSF_up->Fill(muonrecSF_up);
 
         h_weight_sfmu_trigger->Fill(weight_sfmu_trigger); 
         h_weight_sfmu_trigger_down->Fill(weight_sfmu_trigger_down); 
@@ -538,7 +565,7 @@ void nom_sys_TTbar()
         
     }
 
-    double integral [2][2] = {{h_DeltaY_N_N->Integral(),h_DeltaY_P_N->Integral()},{h_DeltaY_N_P->Integral(),h_DeltaY_P_P->Integral()}};
+    double integral [2][2] = {{h_DeltaY_N_N_750_900_muon->Integral(),h_DeltaY_P_N_750_900_muon->Integral()},{h_DeltaY_N_P_750_900_muon->Integral(),h_DeltaY_P_P_750_900_muon->Integral()}};
 
      for(int i=0; i<2; i++){
         for(int j=0; j<2; j++){
@@ -577,15 +604,20 @@ void nom_sys_TTbar()
     h_DeltaY_P_reco->Write();
     h_DeltaY_N_reco_nomass->Write();
     h_DeltaY_N_reco->Write();  
+
+    h_DeltaY_P_P_750_900_muon->Write();
+    h_DeltaY_P_N_750_900_muon->Write();
+    h_DeltaY_N_P_750_900_muon->Write();
+    h_DeltaY_N_N_750_900_muon->Write();
     
-    h_DeltaY_P_P->Write();
-    h_DeltaY_P_N->Write();
-    h_DeltaY_N_P->Write();
-    h_DeltaY_N_N->Write();
-    h_DeltaY_P_P_nomass->Write();
-    h_DeltaY_P_N_nomass->Write();
-    h_DeltaY_N_P_nomass->Write();
-    h_DeltaY_N_N_nomass->Write();
+   //  h_DeltaY_P_P->Write();
+   //  h_DeltaY_P_N->Write();
+   //  h_DeltaY_N_P->Write();
+   //  h_DeltaY_N_N->Write();
+   //  h_DeltaY_P_P_nomass->Write();
+   //  h_DeltaY_P_N_nomass->Write();
+   //  h_DeltaY_N_P_nomass->Write();
+   //  h_DeltaY_N_N_nomass->Write();
 
     Matrix->Write();
 
@@ -602,9 +634,9 @@ void nom_sys_TTbar()
     h_weight_sfmu_id_down->Write();
     h_weight_sfmu_id_up->Write();
 
-    h_muonrecSF_nominal->Write();
-    h_muonrecSF_down->Write();
-    h_muonrecSF_up->Write();
+   //  h_muonrecSF_nominal->Write();
+   //  h_muonrecSF_down->Write();
+   //  h_muonrecSF_up->Write();
 
     h_weight_sfmu_trigger->Write();
     h_weight_sfmu_trigger_down->Write(); 
