@@ -30,7 +30,7 @@ using namespace RooFit ;
 void noreco_perc_900Inf() {
 
     TFile *file1 = TFile::Open("semi.root");
-    TFile *file2 = TFile::Open("other.root");
+    // TFile *file2 = TFile::Open("other.root");
 
     const char* folderNames[] = {
         "DY_Match_N_N_900Inf_muon_General", "DY_Match_N_P_900Inf_muon_General",
@@ -38,19 +38,30 @@ void noreco_perc_900Inf() {
         "DY_Mass_900Inf_NOT_reco_muon_General"
     };
 
-    const char* histName = "DeltaY_reco";
+    // const char* histName = "DeltaY_reco";
     
     TH1D* combinedHists[5];
 
     for (int i = 0; i < 5; ++i) {
         TDirectory* dir1 = (TDirectory*)file1->Get(folderNames[i]);
-        TDirectory* dir2 = (TDirectory*)file2->Get(folderNames[i]);
-        TH1D *hist1 = (TH1D*)dir1->Get(histName);
-        TH1D *hist2 = (TH1D*)dir2->Get(histName);
+        // TDirectory* dir2 = (TDirectory*)file2->Get(folderNames[i]);
+         if (!dir1) {
+        std::cerr << "Directory " << folderNames[i] << " not found in semi.root" << std::endl;
+        return;
+    }
+        const char* currentHistName = (i == 4) ? "DeltaY_gen" : "DeltaY_reco";
+        TH1D* hist = (TH1D*)dir1->Get(currentHistName);
+         if (!hist) {
+        std::cerr << "Histogram " << currentHistName << " not found in directory " << folderNames[i] << std::endl;
+        return;
+    }
+        combinedHists[i] = (TH1D*)hist->Clone();
+        // TH1D *hist1 = (TH1D*)dir1->Get(histName);
+        // TH1D *hist2 = (TH1D*)dir2->Get(histName);
 
-        TString combinedHistName = TString::Format("combined_%s", folderNames[i]);
-        combinedHists[i] = (TH1D*)hist1->Clone(combinedHistName);
-        combinedHists[i]->Add(hist2);
+        // TString combinedHistName = TString::Format("combined_%s", folderNames[i]);
+        // combinedHists[i] = (TH1D*)hist1->Clone(combinedHistName);
+        // combinedHists[i]->Add(hist2);
     }
 
 
@@ -86,15 +97,15 @@ void noreco_perc_900Inf() {
     std::cout << "Number of gen bin P incorrectly matched in reco bin N: " 
               << (combinedHists[2]->Integral()) << std::endl;
 
+//65596 + 848128
 
-
-    double unmatchedPercentage = (combinedHists[4]->Integral() / (totalN + totalP)) * 100;
+    double unmatchedPercentage = (79037/ (913724)) * 100;
     std::cout << "Number of unmatched gen particles: " << combinedHists[4]->Integral() << std::endl;
     std::cout << "Percentage of unmatched gen particles: " << unmatchedPercentage << "%" << std::endl;
 
     // Cleanup
     file1->Close();
-    file2->Close();
+    // file2->Close();
     for (int i = 0; i < 5; ++i) {
         delete combinedHists[i];
     }

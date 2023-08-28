@@ -534,7 +534,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   // Book histograms
   // vector<string> histogram_tags = {"Weights_Init", "DeltaY_reco_N_muon", "DeltaY_reco_P_muon", "DeltaY_reco_N_electron", "DeltaY_reco_P_electron", "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_TopPt", "Weights_MCScale", "Weights_Prefiring", "Weights_PS", "Weights_TopTag_SF", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "1Mu1Ele_LowPt", "1Mu1Ele_HighPt", "1Mu1Ele_Tot", "IdMuon_SF", "IdEle_SF", "IsoMuon_SF", "RecoEle_SF", "MuonReco_SF", "TriggerMuon", "TriggerEle", "TriggerMuon_SF", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET", "HTlep", "BeforeBtagSF", "AfterBtagSF", "AfterCustomBtagSF", "Btags1", "NLOCorrections", "TriggerEle_SF", "TTbarCandidate", "CorrectMatchDiscriminator", "Chi2Discriminator", "NNInputsBeforeReweight", "Chi2"};
   // vector<string> histogram_tags = {"DeltaY_gen", "Muon1_LowPt", "Muon1_HighPt", "Muon1_Tot", "Ele1_LowPt", "Ele1_HighPt", "Ele1_Tot", "TriggerMuon", "TriggerEle", "TwoDCut_Muon", "TwoDCut_Ele", "Jet1", "Jet2", "MET"};
-  vector<string> histogram_tags = {"DeltaY_gen_N","GenTop", "UnMatched_900Inf_muon","DY_900Inf_recogenmatch_muon", "DY_750_900_recogenmatch_muon", "DY_500_750_recogenmatch_muon", "DY_250_500_recogenmatch_muon", "DY_0_250_recogenmatch_muon","DY_900Inf_recogenmatch_ele", "DY_750_900_recogenmatch_ele","DY_500_750_recogenmatch_ele","DY_250_500_recogenmatch_ele", "DY_0_250_recogenmatch_ele","DeltaR_jet_genparticle","DY_Mass_0_250_NOT_reco_ele","DY_Match_N_N_0_250_ele","DY_Match_N_P_0_250_ele","DY_Match_P_N_0_250_ele", "DY_Match_P_P_0_250_ele", "UnMatched_0_250_ele", "DY_Mass_250_500_NOT_reco_ele","DY_Match_N_N_250_500_ele","DY_Match_N_P_250_500_ele","DY_Match_P_N_250_500_ele", "DY_Match_P_P_250_500_ele", "UnMatched_250_500_ele", "DY_Mass_500_750_NOT_reco_ele", "DY_Match_N_N_500_750_ele","DY_Match_N_P_500_750_ele","DY_Match_P_N_500_750_ele", "DY_Match_P_P_500_750_ele", "UnMatched_500_750_ele", "DY_Mass_750_900_NOT_reco_ele",  "DY_Match_N_N_750_900_ele","DY_Match_N_P_750_900_ele","DY_Match_P_N_750_900_ele", "DY_Match_P_P_750_900_ele", "UnMatched_750_900_ele", "DY_Mass_900Inf_NOT_reco_ele", "DY_Match_N_N_900Inf_ele","DY_Match_N_P_900Inf_ele","DY_Match_P_N_900Inf_ele", "DY_Match_P_P_900Inf_ele", "UnMatched_900In_ele", "DY_Match_N_N_0_250_muon","DY_Match_N_P_0_250_muon","DY_Match_P_N_0_250_muon", "DY_Match_P_P_0_250_muon", "UnMatched_0_250_muon","DY_Match_N_N_250_500_muon","DY_Match_N_P_250_500_muon","DY_Match_P_N_250_500_muon", "DY_Match_P_P_250_500_muon", "UnMatched_250_500_muon", "DY_Match_N_N_500_750_muon","DY_Match_N_P_500_750_muon","DY_Match_P_N_500_750_muon", "DY_Match_P_P_500_750_muon", "UnMatched_500_750_muon",  "DY_Match_N_N_750_900_muon","DY_Match_N_P_750_900_muon","DY_Match_P_N_750_900_muon", "DY_Match_P_P_750_900_muon", "UnMatched_750_900_muon", "DY_Match_N_N_900Inf_muon","DY_Match_N_P_900Inf_muon","DY_Match_P_N_900Inf_muon", "DY_Match_P_P_900Inf_muon", "UnMatched_900In_muon","DY_Mass_0_250_NOT_reco_muon","DY_Mass_250_500_NOT_reco_muon","DY_Mass_500_750_NOT_reco_muon", "DY_Mass_750_900_NOT_reco_muon","DY_Mass_900Inf_NOT_reco_muon", "DeltaY_gen_P","DY_N_Mass_0_250_gen","DY_N_Mass_250_500_gen", "DY_N_Mass_500_750_gen", "DY_N_Mass_750_900_gen", "DY_N_Mass_900Inf_gen", "DeltaY_reco_N_muon","DeltaY_reco_P_muon", "DY_N_Mass_0_250_reco_muon", "DY_N_Mass_250_500_reco_muon", "DY_N_Mass_500_750_reco_muon", "DY_N_Mass_750_900_reco_muon", "DY_N_Mass_900Inf_reco_muon", "DY_P_Mass_0_250_reco_muon", "DY_P_Mass_250_500_reco_muon", "DY_P_Mass_500_750_reco_muon","DY_P_Mass_750_900_reco_muon", "DY_P_Mass_900Inf_reco_muon", "DY_P_P_muon", "DY_P_P_Mass_0_250_reco_muon", "DY_P_P_Mass_250_500_reco_muon", "DY_P_P_Mass_500_750_reco_muon", "DY_P_P_Mass_750_900_reco_muon", "DY_P_P_Mass_900Inf_reco_muon", "DY_P_N_muon", "DY_P_N_Mass_0_250_reco_muon", "DY_P_N_Mass_250_500_reco_muon", "DY_P_N_Mass_500_750_reco_muon", "DY_P_N_Mass_750_900_reco_muon", "DY_P_N_Mass_900Inf_reco_muon", "DY_N_P_muon", "DY_N_P_Mass_0_250_reco_muon", "DY_N_P_Mass_250_500_reco_muon", "DY_N_P_Mass_500_750_reco_muon", "DY_N_P_Mass_750_900_reco_muon", "DY_N_P_Mass_900Inf_reco_muon", "DY_N_N_muon", "DY_N_N_Mass_0_250_reco_muon", "DY_N_N_Mass_250_500_reco_muon", "DY_N_N_Mass_500_750_reco_muon", "DY_N_N_Mass_750_900_reco_muon", "DY_N_N_Mass_900Inf_reco_muon", "DeltaY_reco_N_ele","DeltaY_reco_P_ele", "DY_N_Mass_0_250_reco_ele", "DY_N_Mass_250_500_reco_ele", "DY_N_Mass_500_750_reco_ele", "DY_N_Mass_750_900_reco_ele", "DY_N_Mass_900Inf_reco_ele", "DY_P_Mass_0_250_reco_ele", "DY_P_Mass_250_500_reco_ele", "DY_P_Mass_500_750_reco_ele","DY_P_Mass_750_900_reco_ele", "DY_P_Mass_900Inf_reco_ele", "DY_P_P_ele", "DY_P_P_Mass_0_250_reco_ele", "DY_P_P_Mass_250_500_reco_ele", "DY_P_P_Mass_500_750_reco_ele", "DY_P_P_Mass_750_900_reco_ele", "DY_P_P_Mass_900Inf_reco_ele", "DY_P_N_ele", "DY_P_N_Mass_0_250_reco_ele", "DY_P_N_Mass_250_500_reco_ele", "DY_P_N_Mass_500_750_reco_ele", "DY_P_N_Mass_750_900_reco_ele", "DY_P_N_Mass_900Inf_reco_ele", "DY_N_P_ele", "DY_N_P_Mass_0_250_reco_ele", "DY_N_P_Mass_250_500_reco_ele", "DY_N_P_Mass_500_750_reco_ele", "DY_N_P_Mass_750_900_reco_ele", "DY_N_P_Mass_900Inf_reco_ele", "DY_N_N_ele", "DY_N_N_Mass_0_250_reco_ele", "DY_N_N_Mass_250_500_reco_ele", "DY_N_N_Mass_500_750_reco_ele", "DY_N_N_Mass_750_900_reco_ele", "DY_N_N_Mass_900Inf_reco_ele"};
+  vector<string> histogram_tags = {"DeltaY_gen_N","GenTop", "DY_NOT_reco_all_muon", "DY_NOT_reco_all_ele", "UnMatched_900Inf_muon","DY_900Inf_recogenmatch_muon", "DY_750_900_recogenmatch_muon", "DY_500_750_recogenmatch_muon", "DY_250_500_recogenmatch_muon", "DY_0_250_recogenmatch_muon","DY_900Inf_recogenmatch_ele", "DY_750_900_recogenmatch_ele","DY_500_750_recogenmatch_ele","DY_250_500_recogenmatch_ele", "DY_0_250_recogenmatch_ele","DeltaR_jet_genparticle","DY_Mass_0_250_NOT_reco_ele","DY_Match_N_N_0_250_ele","DY_Match_N_P_0_250_ele","DY_Match_P_N_0_250_ele", "DY_Match_P_P_0_250_ele", "UnMatched_0_250_ele", "DY_Mass_250_500_NOT_reco_ele","DY_Match_N_N_250_500_ele","DY_Match_N_P_250_500_ele","DY_Match_P_N_250_500_ele", "DY_Match_P_P_250_500_ele", "UnMatched_250_500_ele", "DY_Mass_500_750_NOT_reco_ele", "DY_Match_N_N_500_750_ele","DY_Match_N_P_500_750_ele","DY_Match_P_N_500_750_ele", "DY_Match_P_P_500_750_ele", "UnMatched_500_750_ele", "DY_Mass_750_900_NOT_reco_ele",  "DY_Match_N_N_750_900_ele","DY_Match_N_P_750_900_ele","DY_Match_P_N_750_900_ele", "DY_Match_P_P_750_900_ele", "UnMatched_750_900_ele", "DY_Mass_900Inf_NOT_reco_ele", "DY_Match_N_N_900Inf_ele","DY_Match_N_P_900Inf_ele","DY_Match_P_N_900Inf_ele", "DY_Match_P_P_900Inf_ele", "UnMatched_900In_ele", "DY_Match_N_N_0_250_muon","DY_Match_N_P_0_250_muon","DY_Match_P_N_0_250_muon", "DY_Match_P_P_0_250_muon", "UnMatched_0_250_muon","DY_Match_N_N_250_500_muon","DY_Match_N_P_250_500_muon","DY_Match_P_N_250_500_muon", "DY_Match_P_P_250_500_muon", "UnMatched_250_500_muon", "DY_Match_N_N_500_750_muon","DY_Match_N_P_500_750_muon","DY_Match_P_N_500_750_muon", "DY_Match_P_P_500_750_muon", "UnMatched_500_750_muon",  "DY_Match_N_N_750_900_muon","DY_Match_N_P_750_900_muon","DY_Match_P_N_750_900_muon", "DY_Match_P_P_750_900_muon", "UnMatched_750_900_muon", "DY_Match_N_N_900Inf_muon","DY_Match_N_P_900Inf_muon","DY_Match_P_N_900Inf_muon", "DY_Match_P_P_900Inf_muon", "UnMatched_900In_muon","DY_Mass_0_250_NOT_reco_muon","DY_Mass_250_500_NOT_reco_muon","DY_Mass_500_750_NOT_reco_muon", "DY_Mass_750_900_NOT_reco_muon","DY_Mass_900Inf_NOT_reco_muon", "DeltaY_gen_P","DY_N_Mass_0_250_gen","DY_N_Mass_250_500_gen", "DY_N_Mass_500_750_gen", "DY_N_Mass_750_900_gen", "DY_N_Mass_900Inf_gen", "DeltaY_reco_N_muon","DeltaY_reco_P_muon", "DY_N_Mass_0_250_reco_muon", "DY_N_Mass_250_500_reco_muon", "DY_N_Mass_500_750_reco_muon", "DY_N_Mass_750_900_reco_muon", "DY_N_Mass_900Inf_reco_muon", "DY_P_Mass_0_250_reco_muon", "DY_P_Mass_250_500_reco_muon", "DY_P_Mass_500_750_reco_muon","DY_P_Mass_750_900_reco_muon", "DY_P_Mass_900Inf_reco_muon", "DY_P_P_muon", "DY_P_P_Mass_0_250_reco_muon", "DY_P_P_Mass_250_500_reco_muon", "DY_P_P_Mass_500_750_reco_muon", "DY_P_P_Mass_750_900_reco_muon", "DY_P_P_Mass_900Inf_reco_muon", "DY_P_N_muon", "DY_P_N_Mass_0_250_reco_muon", "DY_P_N_Mass_250_500_reco_muon", "DY_P_N_Mass_500_750_reco_muon", "DY_P_N_Mass_750_900_reco_muon", "DY_P_N_Mass_900Inf_reco_muon", "DY_N_P_muon", "DY_N_P_Mass_0_250_reco_muon", "DY_N_P_Mass_250_500_reco_muon", "DY_N_P_Mass_500_750_reco_muon", "DY_N_P_Mass_750_900_reco_muon", "DY_N_P_Mass_900Inf_reco_muon", "DY_N_N_muon", "DY_N_N_Mass_0_250_reco_muon", "DY_N_N_Mass_250_500_reco_muon", "DY_N_N_Mass_500_750_reco_muon", "DY_N_N_Mass_750_900_reco_muon", "DY_N_N_Mass_900Inf_reco_muon", "DeltaY_reco_N_ele","DeltaY_reco_P_ele", "DY_N_Mass_0_250_reco_ele", "DY_N_Mass_250_500_reco_ele", "DY_N_Mass_500_750_reco_ele", "DY_N_Mass_750_900_reco_ele", "DY_N_Mass_900Inf_reco_ele", "DY_P_Mass_0_250_reco_ele", "DY_P_Mass_250_500_reco_ele", "DY_P_Mass_500_750_reco_ele","DY_P_Mass_750_900_reco_ele", "DY_P_Mass_900Inf_reco_ele", "DY_P_P_ele", "DY_P_P_Mass_0_250_reco_ele", "DY_P_P_Mass_250_500_reco_ele", "DY_P_P_Mass_500_750_reco_ele", "DY_P_P_Mass_750_900_reco_ele", "DY_P_P_Mass_900Inf_reco_ele", "DY_P_N_ele", "DY_P_N_Mass_0_250_reco_ele", "DY_P_N_Mass_250_500_reco_ele", "DY_P_N_Mass_500_750_reco_ele", "DY_P_N_Mass_750_900_reco_ele", "DY_P_N_Mass_900Inf_reco_ele", "DY_N_P_ele", "DY_N_P_Mass_0_250_reco_ele", "DY_N_P_Mass_250_500_reco_ele", "DY_N_P_Mass_500_750_reco_ele", "DY_N_P_Mass_750_900_reco_ele", "DY_N_P_Mass_900Inf_reco_ele", "DY_N_N_ele", "DY_N_N_Mass_0_250_reco_ele", "DY_N_N_Mass_250_500_reco_ele", "DY_N_N_Mass_500_750_reco_ele", "DY_N_N_Mass_750_900_reco_ele", "DY_N_N_Mass_900Inf_reco_ele"};
 
   book_histograms(ctx, histogram_tags);
 
@@ -1191,37 +1191,31 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
 
     double_t DeltaY_gen= TMath::Abs(0.5*TMath::Log((top.energy() + top.pt()*TMath::SinH(top.eta()))/(top.energy() - top.pt()*TMath::SinH(top.eta())))) - TMath::Abs(0.5*TMath::Log((antitop.energy() + antitop.pt()*TMath::SinH(antitop.eta()))/(antitop.energy() - antitop.pt()*TMath::SinH(antitop.eta()))));
    
-    if (DeltaY_gen<0){
           fill_histograms(event, "DeltaY_gen_N");
-        }
+        
 
-        //Number of POSITIVE deltaY events without mass cut
-        if(DeltaY_gen>0){
-          fill_histograms(event, "DeltaY_gen_P");
-        } 
-
-        //Number of events with DeltaY NEGATIVE and 0<M_tt<250
-        if(DeltaY_gen<0 && m_ttbar>0 && m_ttbar<250){
+        //Number of events and 0<M_tt<250
+        if(m_ttbar>0 && m_ttbar<250){
             fill_histograms(event, "DY_N_Mass_0_250_gen");
         }
         
-        //Number of events with DeltaY NEGATIVE and 250<M_tt<500
-        if(DeltaY_gen<0 && m_ttbar>250 && m_ttbar<500){
+        //Number of events 250<M_tt<500
+        if(m_ttbar>250 && m_ttbar<500){
             fill_histograms(event, "DY_N_Mass_250_500_gen");
         }
 
-        //Number of events with DeltaY NEGATIVE and 500<M_tt<750
-        if(DeltaY_gen<0 && m_ttbar>500 && m_ttbar<750){
+        //Number of events with 500<M_tt<750
+        if( m_ttbar>500 && m_ttbar<750){
             fill_histograms(event, "DY_N_Mass_500_750_gen");
         }
 
-        //Number of events with DeltaY NEGATIVE and 750<M_tt<900
-        if(DeltaY_gen<0 && m_ttbar>750 && m_ttbar<900){
+        //Number of events with 750<M_tt<900
+        if( m_ttbar>750 && m_ttbar<900){
             fill_histograms(event, "DY_N_Mass_750_900_gen");
         }
 
-        //Number of events with DeltaY NEGATIVE and 900<M_tt
-        if(DeltaY_gen<0 && m_ttbar>900){
+        //Number of events with 900<M_tt
+        if(m_ttbar>900){
             fill_histograms(event, "DY_N_Mass_900Inf_gen");
         }
 
@@ -1307,172 +1301,7 @@ if(debug) cout << "4" << endl;
           antitop = gp;
         }
       }
-      std::vector<GenParticle> tops = {top, antitop};
-if(debug) cout << "6" << endl;
-      // LorentzVector lep_top = BestZprimeCandidate->top_leptonic_v4();
-      // LorentzVector had_top = BestZprimeCandidate->top_hadronic_v4();
-
-      // //// vectors to store the deltaR values for the leptonic and hadronic tops with each gen particle
-      // std::vector<double> deltaR_leptonic_values(genparticles->size(), 99.0);
-      // std::vector<double> deltaR_hadronic_values(genparticles->size(), 99.0);
-
-      
-
-      //Here, I am defining matrix, so I will store the deltaR values between all paris of leptonic/hadronic tops and gen tops
-      // std::vector<std::vector<double>> deltaR_leptonic_matrix(lep_top.size(), std::vector<double>(genparticles->size(), 99.0));
-      // std::vector<std::vector<double>> deltaR_hadronic_matrix(had_top.size(), std::vector<double>(genparticles->size(), 99.0));
-
-      // //deltaR for all leptonic top - gen pairs
-      // for(unsigned int i=0; i<lep_top->size(); ++i) {
-      //   for(unsigned int j=0; j<tops.size(); ++j) {
-      //       if (abs(genparticles->at(j).pdgId()) == 6){
-      //       double deltaR_leptonic = deltaR(lep_top.at(i), genparticles->at(j));
-      //       deltaR_leptonic_matrix[i][j] = deltaR_leptonic;
-      //       }
-      //   }
-      // }
-
-      // //deltaR for all hadronic top - gen pairs
-      // for(unsigned int i=0; i<had_top.size(); ++i) {
-      //     for(unsigned int j=0; j<genparticles->size(); ++j) {
-      //         if (abs(genparticles->at(j).pdgId()) == 6){
-      //             double deltaR_hadronic = deltaR(had_top.at(i), genparticles->at(j));
-      //             deltaR_hadronic_matrix[i][j] = deltaR_hadronic;
-      //         }
-      //     }
-      // }
-      
-
-      // std::vector<int> best_gen_for_leptop(lep_top->size(), -1);
-      // std::vector<int> best_leptop_for_gen(tops.size(), -1);
-
-      // std::vector<int> best_gen_for_hadtop(had_top->size(), -1);
-      // std::vector<int> best_hadtop_for_gen(tops.size(), -1);
-
-
-      // //Instead of matching the best gen particle to each jet (which leads to the same gen particle being assigned to multiple jets if it's the closest),
-      // //I make the matching symmetric: 
-      // //for each jet, it find the closest gen particle, and for each gen particle, it finds the closest jet. 
-      // //If a jet and a gen particle are closest to each other, it matches them!!
-
-      // // 1) jet to closest gen
-      // //for each jet, it finds to closest gen particle
-      // // and store the index in best_gen_for_jet
-      // for(unsigned int i=0; i<lep_top.size(); ++i) {
-      //   double deltaR_min = 99.0;
-      //   for(unsigned int j=0; j<genparticles->size(); ++j) {
-      //       if (deltaR_leptonic_matrix[i][j] < deltaR_min) {
-      //           deltaR_min = deltaR_leptonic_matrix[i][j];
-      //           best_gen_for_leptop[i] = j;
-      //       }
-      //   }
-      // }
-
-      // for(unsigned int i=0; i<had_top.size(); ++i) {
-      //     double deltaR_min = 99.0;
-      //     for(unsigned int j=0; j<genparticles->size(); ++j) {
-      //         if (deltaR_hadronic_matrix[i][j] < deltaR_min) {
-      //             deltaR_min = deltaR_hadronic_matrix[i][j];
-      //             best_gen_for_hadtop[i] = j;
-      //         }
-      //     }
-      // }
-
-        // 2) gen to closest jet
-        //for each gen ,it finds the closest jet particle
-        // and store the index in best_gen_for_jet
-
-        // //closest leptonic top for each gen particle
-        // for(unsigned int j=0; j<genparticles->size(); ++j) {
-        //     double deltaR_min = 99.0;
-        //     for(unsigned int i=0; i<lep_top.size(); ++i) {
-        //         if (deltaR_leptonic_matrix[i][j] < deltaR_min) {
-        //             deltaR_min = deltaR_leptonic_matrix[i][j];
-        //             best_leptop_for_gen[j] = i;
-        //         }
-        //     }
-        // }
-
-        // // closest hadronic top for each gen particle
-        // for(unsigned int j=0; j<genparticles->size(); ++j) {
-        //     double deltaR_min = 99.0;
-        //     for(unsigned int i=0; i<had_top.size(); ++i) {
-        //         if (deltaR_hadronic_matrix[i][j] < deltaR_min) {
-        //             deltaR_min = deltaR_hadronic_matrix[i][j];
-        //             best_hadtop_for_gen[j] = i;
-        //         }
-        //     }
-        //}
-
-
-
-        // GenParticle matched_top, matched_antitop;
-        // Jet matched_jet_top, matched_jet_antitop; 
-
-        // //Now after these two for loops,
-        // //there is another loop over the jets again. 
-        // //For each jet i, it gets the best gen j from best_gen_for_jet[i]. If best_jet_for_gen[j] equals i, then jet i and gen j are closest to each other, it matches them :))
-
-        // // Match leptonic tops and gen particles
-        // for(unsigned int i=0; i<lep_top.size(); ++i) {
-        //     int j = best_gen_for_leptop[i];
-        //     if (j != -1 && best_leptop_for_gen[j] == static_cast<int>(i)) {
-        //         double deltaR_min = deltaR_leptonic_matrix[i][j];
-        //         if(deltaR_min < 0.4) {
-        //             cout << "Leptonic Top Match" << endl;
-        //             cout << "Event number: " << event.event << endl;
-        //             cout << "Index i (leptonic top):" << i << endl;
-        //             cout << "Index j (gen):" << j << endl;
-        //             cout << "deltaR: " << deltaR_min << endl;
-
-        //             const auto & best_matched_gen = genparticles->at(j); 
-        //             const auto & best_matched_leptonic = lep_top.at(i);
-
-        //             if (best_matched_gen.pdgId() == 6){
-        //             matched_top = best_matched_gen;
-        //             }
-        //             else if (best_matched_gen.pdgId() == -6){
-        //             matched_antitop = best_matched_gen;
-        //             }
-
-        //             // Prevent from matching again
-        //             best_gen_for_leptop[i] = -1;
-        //             best_leptop_for_gen[j] = -1;
-        //         }
-        //     }
-        // }
-
-        // // Match hadronic tops and gen particles
-        // for(unsigned int i=0; i<had_top.size(); ++i) {
-        //     int j = best_gen_for_hadtop[i];
-        //     if (j != -1 && best_hadtop_for_gen[j] == static_cast<int>(i)) {
-        //         double deltaR_min = deltaR_hadronic_matrix[i][j];
-        //         if(deltaR_min < 0.4) {
-        //             cout << "Hadronic Top Match" << endl;
-        //             cout << "Event number: " << event.event << endl;
-        //             cout << "Index i (hadronic top):" << i << endl;
-        //             cout << "Index j (gen):" << j << endl;
-        //             cout << "deltaR: " << deltaR_min << endl;
-
-        //             const auto & best_matched_gen = genparticles->at(j); 
-        //             const auto & best_matched_hadronic = had_top.at(i);
-
-        //             if (best_matched_gen.pdgId() == 6){
-        //             matched_top = best_matched_gen;
-        //             }
-        //             else if (best_matched_gen.pdgId() == -6){
-        //             matched_antitop = best_matched_gen;
-        //             }
-
-        //             // Prevent from matching again
-        //             best_gen_for_hadtop[i] = -1;
-        //             best_hadtop_for_gen[j] = -1;
-        //         }
-        //     }
-        // }
-
-      
-
+      std::vector<GenParticle> tops = {top, antitop};      
 
         LorentzVector lep_top = BestZprimeCandidate->top_leptonic_v4();
         LorentzVector had_top = BestZprimeCandidate->top_hadronic_v4();
@@ -1783,6 +1612,21 @@ int topQuarkCount = 0;
         //gen particles are top quarks
       
         if(abs(genparticles->at(j).pdgId()) == 6){
+
+          vector<GenParticle>* genparticles = event.genparticles;
+          GenParticle top, antitop;
+          for(const GenParticle & gp : *event.genparticles){
+
+            if(gp.pdgId() == 6){
+              top = gp;
+            }
+            else if(gp.pdgId() == -6){
+            antitop = gp;
+              }
+          }
+
+          float m_ttbar = inv_mass(top.v4() + antitop.v4());
+
           topQuarkCount++;
 
             int genBin = (DeltaY_gen_best < 0) ? 0 : 1;
@@ -1922,20 +1766,21 @@ int topQuarkCount = 0;
               }
             } 
             else {
-              if(Mass_tt<250 && Mass_tt>=0){
+              fill_histograms(event, "DY_NOT_reco_all_muon");
+              if(m_ttbar<250 && m_ttbar>=0){
                 // The top gen particle wasn't reconstructed. Please ignore P_P part, there is no meaning behind it.
                 fill_histograms(event, "DY_Mass_0_250_NOT_reco_muon");
               }
-              if( Mass_tt>=250 && Mass_tt<500){
+              if( m_ttbar>=250 && m_ttbar<500){
                 fill_histograms(event, "DY_Mass_250_500_NOT_reco_muon");
               }
-              if( Mass_tt>=500 && Mass_tt<750){
+              if( m_ttbar>=500 && m_ttbar<750){
                 fill_histograms(event, "DY_Mass_500_750_NOT_reco_muon");
               }
-              if(  Mass_tt>=750 && Mass_tt<900){
+              if(  m_ttbar>=750 && m_ttbar<900){
                 fill_histograms(event, "DY_Mass_750_900_NOT_reco_muon");
               }
-              if( Mass_tt>=900){
+              if( m_ttbar>=900){
                 fill_histograms(event, "DY_Mass_900Inf_NOT_reco_muon");
               }
             }
@@ -2164,6 +2009,20 @@ fill_histograms(event, "GenTop");
             int genBin = (DeltaY_gen_best < 0) ? 0 : 1;
             int recoBin;
 
+            vector<GenParticle>* genparticles = event.genparticles;
+            GenParticle top, antitop;
+            for(const GenParticle & gp : *event.genparticles){
+
+              if(gp.pdgId() == 6){
+                top = gp;
+              }
+              else if(gp.pdgId() == -6){
+              antitop = gp;
+                }
+            }
+
+          float m_ttbar = inv_mass(top.v4() + antitop.v4());
+
             // Checking if the gen particle is associated with a top (leptonic or hadronic)
             if (best_leptop_for_gen[j] != -1 || best_hadtop_for_gen[j] != -1) {
                 recoBin = (DeltaY_reco_best < 0) ? 0 : 1;
@@ -2298,20 +2157,22 @@ fill_histograms(event, "GenTop");
               }
             } 
             else {
-                 if(Mass_tt<250 && Mass_tt>=0){
-                // The top gen particle wasn't reconstructed. Please ignore P_P part, there is no meaning behind it.
-                fill_histograms(event, "DY_Mass_0_250_NOT_reco_ele");
+              fill_histograms(event, "DY_NOT_reco_all_ele");
+
+              if(m_ttbar<250 && m_ttbar>=0){
+              // The top gen particle wasn't reconstructed. Please ignore P_P part, there is no meaning behind it.
+              fill_histograms(event, "DY_Mass_0_250_NOT_reco_ele");
               }
-              if( Mass_tt>=250 && Mass_tt<500){
+              if( m_ttbar>=250 && m_ttbar<500){
                 fill_histograms(event, "DY_Mass_250_500_NOT_reco_ele");
               }
-              if( Mass_tt>=500 && Mass_tt<750){
+              if( m_ttbar>=500 && m_ttbar<750){
                 fill_histograms(event, "DY_Mass_500_750_NOT_reco_ele");
               }
-              if(  Mass_tt>=750 && Mass_tt<900){
+              if(  m_ttbar>=750 && m_ttbar<900){
                 fill_histograms(event, "DY_Mass_750_900_NOT_reco_ele");
               }
-              if( Mass_tt>=900){
+              if( m_ttbar>=900){
                 fill_histograms(event, "DY_Mass_900Inf_NOT_reco_ele");
               }
             }

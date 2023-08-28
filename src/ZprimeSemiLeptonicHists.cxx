@@ -43,6 +43,7 @@ void ZprimeSemiLeptonicHists::init(){
   //-beren -generator
   DeltaY            = book<TH1F>("DeltaY", "#Delta y",2,-2.,2.);
   DeltaY_reco       = book<TH1F>("DeltaY_reco", "#Delta y_reco",2,-2.5,2.5);
+  DeltaY_gen        = book<TH1F>("DeltaY_gen", "#Delta y_gen",2,-2.5,2.5);
   DeltaY_ele        = book<TH1F>("DeltaY_ele", "#Delta y e",2,-2.5,2.5); 
   DeltaY_muon       = book<TH1F>("DeltaY_muon", "#Delta y muon",2,-2.,2.); 
   DeltaY_N          = book<TH1F>("DeltaY_N", "#Delta y",1,-2.,0); 
@@ -698,6 +699,20 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
             antimuon = gp;
         }
     }
+
+    GenParticle top, antitop;
+    for(const GenParticle & gp : *event.genparticles){
+
+      if(gp.pdgId() == 6){
+        top = gp;
+      }
+      else if(gp.pdgId() == -6){
+      antitop = gp;
+        }
+    }
+
+   DeltaY_gen->Fill(TMath::Abs(0.5*TMath::Log((top.energy() + top.pt()*TMath::SinH(top.eta()))/(top.energy() - top.pt()*TMath::SinH(top.eta())))) - TMath::Abs(0.5*TMath::Log((antitop.energy() + antitop.pt()*TMath::SinH(antitop.eta()))/(antitop.energy() - antitop.pt()*TMath::SinH(antitop.eta())))));
+
 
     ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);        
     DeltaY_reco->Fill((TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_leptonic_v4().energy() + BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta()))/(BestZprimeCandidate->top_leptonic_v4().energy() - BestZprimeCandidate->top_leptonic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_leptonic_v4().eta())))) - TMath::Abs(0.5*TMath::Log((BestZprimeCandidate->top_hadronic_v4().energy() + BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))/(BestZprimeCandidate->top_hadronic_v4().energy() - BestZprimeCandidate->top_hadronic_v4().pt()*TMath::SinH(BestZprimeCandidate->top_hadronic_v4().eta()))))), weight);
