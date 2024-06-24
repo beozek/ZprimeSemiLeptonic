@@ -38,6 +38,7 @@ else:
 if (channel=="electron" or channel=="muon"):
 	# fileDir ="/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{}/{}/workdir_AnalysisDNN_{}_{}_kinematics/nominal".format(year,channel,year,channel)
 	fileDir ="/nfs/dust/cms/group/zprime-uhh/Analysis_UL17/muon"
+	# fileDir = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/UL17/muon/workdir_AnalysisDNN_UL17_muon_chargecheck_v2/nominal/"
 else:
 	fileDir ="/nfs/dust/cms/user/titasroy/Ac_UL_ntuples/%s/lepton/"%(year)
 
@@ -107,6 +108,7 @@ L = 0.12*W
 R = 0.1*W
 
 stackList = { "TTbar":[kRed],"WJets":[kGreen], "ST":[kBlue]}
+# stackList = { "TTbar":[kRed],"WJets":[kGreen], "ST_tchannel":[kBlue], "ST_schannel":[kBlue-3], "ST_tWchannel":[kBlue-10] }
 
 # SetOwnership(canvas, False)
 # SetOwnership(canvasRatio, False)
@@ -504,7 +506,7 @@ for hist in histograms:
 					legendR.AddEntry(histo[sample],"t#bar{t}",'f')
 				elif sample=="WJets":
 					legendR.AddEntry(histo[sample],"W+jets",'f')
-				elif sample=="ST":
+				elif sample=="ST_tchannel":
 					legendR.AddEntry(histo[sample],"ST",'f')
 				if "DeltaY" in hist:
 					if ("output1" in cat or  "output2" in cat):

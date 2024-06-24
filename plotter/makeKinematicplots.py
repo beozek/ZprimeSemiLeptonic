@@ -36,7 +36,9 @@ if not os.path.exists(path):
 # Set the file directory based on the run type
 if channel in ["electron", "muon"]:
     if run_type == "analysis":
-        fileDir = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{year}/{channel}/workdir_AnalysisDNN_{year}_{channel}_chargecheck/nominal".format(year=year, channel=channel)
+        # fileDir = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{year}/{channel}/workdir_AnalysisDNN_{year}_{channel}_chargecheck/nominal".format(year=year, channel=channel)
+        fileDir = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/UL17/muon/workdir_AnalysisDNN_UL17_muon_chargecheck_v2/nominal/"
+
     elif run_type == "preselection":
         fileDir = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{year}/Preselection/workdir_Preselection_{year}_chargecheck/nominal".format(year=year)
 else:
@@ -81,8 +83,10 @@ B = 0.12 * H
 L = 0.12 * W
 R = 0.1 * W
 
-stackList = {"TTbar": [kRed], "WJets": [kGreen], "ST": [kBlue]}
-stackList_orig = {"TTbar": [kRed], "WJets": [kGreen], "DY": [kGreen], "Diboson": [kGreen], "QCD": [kGreen], "ST": [kBlue]}
+# stackList = {"TTbar": [kRed], "WJets": [kGreen], "ST": [kBlue]}
+stackList = { "TTbar":[kRed],"WJets":[kGreen], "ST_tchannel":[kBlue], "ST_schannel":[kBlue-3], "ST_tWchannel":[kBlue-10] }
+# stackList_orig = {"TTbar": [kRed], "WJets": [kGreen], "DY": [kGreen], "Diboson": [kGreen], "QCD": [kGreen], "ST_tchannel":[kBlue], "ST_schannel":[kBlue-3], "ST_tWchannel":[kBlue-10]}
+stackList_orig = {"TTbar": [kRed], "WJets": [kGreen], "ST_tchannel":[kBlue], "ST_schannel":[kBlue-3], "ST_tWchannel":[kBlue-10]}
 
 legendHeightPer = 0.04
 legendStart = 0.69
@@ -117,6 +121,10 @@ canvasRatio.cd()
 
 pad1 = TPad("zxc_p1", "zxc_p1", 0, padRatio - padOverlap, 1, 1)
 pad2 = TPad("qwe_p2", "qwe_p2", 0, 0, 1, padRatio + padOverlap)
+if not pad1 or not pad2:
+    print("Error: TPad objects were not created successfully.")
+    exit(1)
+    
 pad1.SetLeftMargin(L / W)
 pad1.SetRightMargin(R / W)
 pad1.SetTopMargin(T / H / (1 - padRatio + padOverlap))
@@ -134,7 +142,7 @@ pad2.SetFillStyle(4000)
 pad2.SetTickx(1)
 pad2.SetTicky(1)
 
-canvasRatio.cd()
+# canvasRatio.cd()
 pad1.Draw()
 pad2.Draw()
 # ========================= CMS Style =====================
@@ -148,12 +156,12 @@ histograms={
 			# "pt_jet1" :["p_{T}^{jet 1} [GeV]","Events", 45, [0, 900],bins_jetpt,30],
 			# "deepjetbscore_jet1":["DeepJet b-tag score AK4 jet 1","Events", 20, [0, 1]],
 			# "deepjetbscore_jet":["DeepJet b-tag score AK4 jets","Events", 20, [0, 1]],
-			"N_lep_charge":["Lepton charge ", "Events", 2, [-2.0,2.0]],
+			# "N_lep_charge":["Lepton charge ", "Events", 2, [-2.0,2.0]],
 }
 
 if channel == "muon":
     histograms.update({
-        "N_mu_charge": ["Muon charge ", "Events", 2, [-1.0, 1.0]],
+        "N_mu_charge": ["Muon charge ", "Events", 2, [-2.0, 2.0]],
     })
 
 elif channel == "electron":
@@ -169,8 +177,9 @@ elif channel == "lepton":
         "pt_mu": ["Muon p_{T} [GeV]", "Events", 90, [0, 900]],
     })
 
-categories = ["Input", "MET"] if run_type == "preselection" else ["Weights_Init", "AfterBaseline", "AfterChi2", "DNN_output0", "DNN_output1", "DNN_output2"]
-test_sample = ['TTbar', 'ST', 'WJets', 'DY', 'Diboson', 'QCD']
+categories = ["Input", "MET"] if run_type == "preselection" else ["Weights_Init", "DeltaEtaCut", "AfterChi2", "DNN_output0", "DNN_output1", "DNN_output2"]
+# test_sample = ['TTbar', 'ST_tchannel', "ST_schannel", "ST_tWchannel", 'WJets', 'DY', 'Diboson', 'QCD']
+test_sample = ['TTbar', 'ST_tchannel', "ST_schannel", "ST_tWchannel", 'WJets']
 
 file = {}
 histo = {}
@@ -188,7 +197,7 @@ for hist in histograms:
 
         for sample in test_sample:
             print("sample is: ", sample, cat, hist)
-            file[sample] = TFile("%s/uhh2.AnalysisModuleRunner.MC.%s.root" % (fileDir, sample), "read")
+            file[sample] = TFile("%s/%s.root" % (fileDir, sample), "read")
             temp_hist = "%s_General/%s" % (cat, hist)
             histo[sample] = file[sample].Get(temp_hist)
 
@@ -204,23 +213,30 @@ for hist in histograms:
                 legendR.AddEntry(histo[sample], "t#bar{t}", 'f')
             elif sample == "WJets":
                 legendR.AddEntry(histo[sample], "W+jets", 'f')
-            elif sample == "ST":
-                legendR.AddEntry(histo[sample], "ST", 'f')
+            # elif sample == "ST":
+            #     legendR.AddEntry(histo[sample], "ST", 'f')
+            elif sample == "ST_tchannel":
+                legendR.AddEntry(histo[sample], "ST t-channel", 'f')
+            elif sample == "ST_schannel":
+                legendR.AddEntry(histo[sample], "ST s-channel", 'f')
+            elif sample == "ST_tWchannel":
+                legendR.AddEntry(histo[sample], "ST tW-channel", 'f')
 
             stack.Add(histo[sample])
             stack.SetMinimum(0.0)
 
-        file_data = TFile("%s/uhh2.AnalysisModuleRunner.DATA.DATA.root" % fileDir, "read")
-        dataHist = file_data.Get(temp_hist)
+        # Commenting out the lines related to DATA.root
+        # file_data = TFile("%s/DATA.root" % fileDir, "read")
+        # dataHist = file_data.Get(temp_hist)
 
-        if not dataHist or not dataHist.InheritsFrom("TH1"):
-            print("Warning: Histogram %s for data does not exist or is not a TH1 object" % temp_hist)
-            continue
+        # if not dataHist or not dataHist.InheritsFrom("TH1"):
+        #     print("Warning: Histogram %s for data does not exist or is not a TH1 object" % temp_hist)
+        #     continue
 
-        dataHist.SetMarkerColor(kBlack)
-        dataHist.SetLineColor(kBlack)
-        dataHist.SetYTitle(histograms[hist][1])
-        dataHist.Draw("pe,x0")
+        # dataHist.SetMarkerColor(kBlack)
+        # dataHist.SetLineColor(kBlack)
+        # dataHist.SetYTitle(histograms[hist][1])
+        # dataHist.Draw("pe,x0")
         stack.SetMinimum(0.0)
         stack.Draw("HIST,SAME")
 
@@ -256,10 +272,9 @@ for hist in histograms:
         errorband.SetLineColor(0)
 
         canvas.Clear()
-        canvasRatio.cd()
-        canvasRatio.ResetDrawn()
-        canvasRatio.Draw()
-        canvasRatio.cd()
+        # canvasRatio.cd()
+        # canvasRatio.ResetDrawn()
+        # canvasRatio.Draw()
 
         pad1.Draw()
         pad2.Draw()
@@ -269,7 +284,7 @@ for hist in histograms:
 
         stack.Draw("HIST")
         stack.GetXaxis().SetTitle('')
-        stack.GetYaxis().SetTitle(dataHist.GetYaxis().GetTitle())
+        # stack.GetYaxis().SetTitle(dataHist.GetYaxis().GetTitle())
         stack.SetTitle('')
         stack.GetXaxis().SetLabelSize(0)
         stack.GetYaxis().SetLabelSize(gStyle.GetLabelSize() / (1. - padRatio + padOverlap))
@@ -278,35 +293,35 @@ for hist in histograms:
         stack.GetYaxis().SetMaxDigits(4)
         stack.GetYaxis().SetTitle("Events")
         stack.SetMinimum(0.0)
-        dataHist.Draw("E,X0,SAME")
+        # dataHist.Draw("E,X0,SAME")
 
         errorban.Draw("E2,SAME")
-        legendR.AddEntry(dataHist, "Data", 'pe')
+        # legendR.AddEntry(dataHist, "Data", 'pe')
 
-        ratio = dataHist.Clone("temp")
+        # ratio = dataHist.Clone("temp")
         temp = stack.GetStack().Last().Clone("temp")
         for i_bin in range(1, temp.GetNbinsX() + 1):
             temp.SetBinError(i_bin, 0.)
-        ratio.Divide(temp)
-        ratio.GetXaxis().SetLabelSize(gStyle.GetLabelSize() / (padRatio + padOverlap))
-        ratio.GetYaxis().SetLabelSize(gStyle.GetLabelSize() / (padRatio + padOverlap))
-        ratio.GetXaxis().SetTitleSize(gStyle.GetTitleSize() / (padRatio + padOverlap))
-        ratio.GetYaxis().SetTitleSize(gStyle.GetTitleSize() / (padRatio + padOverlap))
-        ratio.GetYaxis().SetTitleOffset(gStyle.GetTitleYOffset() * (padRatio + padOverlap - padGap))
-        ratio.GetYaxis().SetRangeUser(0.3, 1.7)
-        ratio.GetYaxis().SetNdivisions(504)
-        ratio.GetXaxis().SetTitle(histograms[hist][0])
-        ratio.GetYaxis().SetTitle("Data/MC")
+        # ratio.Divide(temp)
+        # ratio.GetXaxis().SetLabelSize(gStyle.GetLabelSize() / (padRatio + padOverlap))
+        # ratio.GetYaxis().SetLabelSize(gStyle.GetLabelSize() / (padRatio + padOverlap))
+        # ratio.GetXaxis().SetTitleSize(gStyle.GetTitleSize() / (padRatio + padOverlap))
+        # ratio.GetYaxis().SetTitleSize(gStyle.GetTitleSize() / (padRatio + padOverlap))
+        # ratio.GetYaxis().SetTitleOffset(gStyle.GetTitleYOffset() * (padRatio + padOverlap - padGap))
+        # ratio.GetYaxis().SetRangeUser(0.3, 1.7)
+        # ratio.GetYaxis().SetNdivisions(504)
+        # ratio.GetXaxis().SetTitle(histograms[hist][0])
+        # ratio.GetYaxis().SetTitle("Data/MC")
         CMS_lumi.CMS_lumi(pad1, period, 11)
         legendR.SetTextSize(0.05)
         legendR.Draw()
         pad2.cd()
-        ratio.SetMarkerStyle(dataHist.GetMarkerStyle())
-        ratio.SetMarkerSize(dataHist.GetMarkerSize())
-        ratio.SetLineColor(kBlack)
-        ratio.SetMarkerColor(kBlack)
-        ratio.SetLineWidth(dataHist.GetLineWidth())
-        ratio.Draw('e,x0')
+        # ratio.SetMarkerStyle(dataHist.GetMarkerStyle())
+        # ratio.SetMarkerSize(dataHist.GetMarkerSize())
+        # ratio.SetLineColor(kBlack)
+        # ratio.SetMarkerColor(kBlack)
+        # ratio.SetLineWidth(dataHist.GetLineWidth())
+        # ratio.Draw('e,x0')
         errorband.Divide(temp)
 
         for i in range(1, errorband.GetNbinsX() + 1):
