@@ -53,9 +53,9 @@ pu                      shape        1.0                        1.0             
 tmistag                 shape        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                      
 ttagCorr                shape        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                      
 ttagUncorr              shape        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                        1.0                      
-# ch1_muon_UL16_500_750_CR2 autoMCStats 1e+06 1 1
-# ch1_muon_UL16_500_750_CR1 autoMCStats 1e+06 1 1
-# ch1_muon_UL16_500_750_SR autoMCStats 1e+06 1 1
-# ch2_ele_UL16_500_750_SR autoMCStats 1e+06 1 1
-# ch2_ele_UL16_500_750_CR2 autoMCStats 1e+06 1 1
-# ch2_ele_UL16_500_750_CR1 autoMCStats 1e+06 1 1
+ch1_muon_UL16_500_750_CR2 autoMCStats 1e+06 1 1
+ch1_muon_UL16_500_750_CR1 autoMCStats 0 1 1
+ch1_muon_UL16_500_750_SR autoMCStats 1e+06 1 1
+ch2_ele_UL16_500_750_SR autoMCStats 1e+06 1 1
+ch2_ele_UL16_500_750_CR2 autoMCStats 1e+06 1 1
+ch2_ele_UL16_500_750_CR1 autoMCStats 0 1 1

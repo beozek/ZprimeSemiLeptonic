@@ -23,11 +23,11 @@ json_files = {
 }
 
 sm_ac_values = {
-    "[0,500]": {"sm_ac": 0.56, "sm_ac_err_up": 0.06, "sm_ac_err_down": 0.06},
-    "[500,750]": {"sm_ac": 0.72, "sm_ac_err_up": 0.06, "sm_ac_err_down": 0.06},
-    "[750,1000]": {"sm_ac": 0.79, "sm_ac_err_up": 0.04, "sm_ac_err_down": 0.06},
-    "[1000,1500]": {"sm_ac": 0.96, "sm_ac_err_up": 0.09, "sm_ac_err_down": 0.09},
-    "[1500,Inf]": {"sm_ac": 0.94, "sm_ac_err_up": 0.11, "sm_ac_err_down": 0.15}
+    "[0,500]": {"sm_ac": 0.0056, "sm_ac_err_up": 0.0006, "sm_ac_err_down": 0.0006},
+    "[500,750]": {"sm_ac": 0.0072, "sm_ac_err_up": 0.0006, "sm_ac_err_down": 0.0006},
+    "[750,1000]": {"sm_ac": 0.0079, "sm_ac_err_up": 0.0004, "sm_ac_err_down": 0.0006},
+    "[1000,1500]": {"sm_ac": 0.0096, "sm_ac_err_up": 0.0009, "sm_ac_err_down": 0.0009},
+    "[1500,Inf]": {"sm_ac": 0.0094, "sm_ac_err_up": 0.0011, "sm_ac_err_down": 0.0015}
 }
 
 table = ''
