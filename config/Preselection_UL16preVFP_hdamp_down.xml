@@ -13,8 +13,8 @@
 ]>
 
 <!--
-<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="50" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="ozekberen@gmail.com" Notification="as" Workdir="workdir_Preselection_UL16preVFP_hdamp_down"/>
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="20" AutoResubmit="0"/>
+<ConfigSGE RAM="2" DISK="2" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Preselection_UL16preVFP_hdamp_down"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">
@@ -22,20 +22,20 @@
 	<Package Name="SUHH2ZprimeSemiLeptonic.par"/>
 
 	<Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&PRESELdir;/" PostFix="" TargetLumi="&TargetLumi;">
-		<InputData Lumi="107178313.917" NEventsMax="&NEVT;" Type="MC" Version="TTToSemiLeptonic_UL16preVFP" Cacheable="&b_Cacheable;">
+		<InputData Lumi="38324119.10316820" NEventsMax="&NEVT;" Type="MC" Version="TTToSemiLeptonic_UL16preVFP" Cacheable="&b_Cacheable;">
 			&TTToSemiLeptonic_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
-			<!-- <OutputTree Name="AnalysisTree" /> -->
+			<OutputTree Name="AnalysisTree" />
 		</InputData>
-		<InputData Lumi="79684571.3184" NEventsMax="&NEVT;" Type="MC" Version="TTToHadronic_UL16preVFP" Cacheable="&b_Cacheable;">
+		<InputData Lumi="30112435.30788320" NEventsMax="&NEVT;" Type="MC" Version="TTToHadronic_UL16preVFP" Cacheable="&b_Cacheable;">
 			&TTToHadronic_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
-			<!-- <OutputTree Name="AnalysisTree" /> -->
+			<OutputTree Name="AnalysisTree" />
 		</InputData>
-		<InputData Lumi="30689876.8706" NEventsMax="&NEVT;" Type="MC" Version="TTTo2L2Nu_UL16preVFP" Cacheable="&b_Cacheable;">
+		<InputData Lumi="13715751.68558230" NEventsMax="&NEVT;" Type="MC" Version="TTTo2L2Nu_UL16preVFP" Cacheable="&b_Cacheable;">
 			&TTTo2L2Nu_UL16preVFP;
 			<InputTree Name="AnalysisTree" />
-			<!-- <OutputTree Name="AnalysisTree" /> -->
+			<OutputTree Name="AnalysisTree" />
 		</InputData>
 
 		<UserConfig>

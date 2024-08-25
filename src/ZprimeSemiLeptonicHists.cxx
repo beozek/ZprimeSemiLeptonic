@@ -34,7 +34,7 @@ Hists(ctx, dirname) {
   isUL17        = (ctx.get("dataset_version").find("UL17")        != std::string::npos);
   isUL18        = (ctx.get("dataset_version").find("UL18")        != std::string::npos);
 
-  // debug = true;
+  debug = false;
   NN = false;
   isMuon = false; isElectron = false;
   if(ctx.get("channel") == "muon") isMuon = true;
@@ -1644,11 +1644,11 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
     vector <TopJet> TopTaggedJets = event.get(h_AK8TopTags);                     // AK8Puppi jets TopTagged by DeepAK8TopTagger
     vector <float> jets_hadronic_bscores;                                            // bScores vector for resolved hadronic jets
     float pt_hadTop_thresh = 150;                                                    // Define cut-variable as pt of hadTop for low/high regions
-    float btag_WP=0.2783;                                                                   // see https://btv-wiki.docs.cern.ch/ScaleFactors/ for btag WPs
-    if (isUL16preVFP) btag_WP = 0.2598;                                              // medium WP for UL16preVFP DeepJet
-    if (isUL16postVFP) btag_WP = 0.3657;                                             // medium WP for UL16postVFP DeepJet
-    if (isUL17) btag_WP = 0.3040;                                                    // medium WP for UL17 DeepJet
-    if (isUL18) btag_WP = 0.2783;                                                    // medium WP for UL18 DeepJet
+    // float btag_WP=0.2783;                                                                   // see https://btv-wiki.docs.cern.ch/ScaleFactors/ for btag WPs
+    // if (isUL16preVFP) btag_WP = 0.2598;                                              // medium WP for UL16preVFP DeepJet
+    // if (isUL16postVFP) btag_WP = 0.3657;                                             // medium WP for UL16postVFP DeepJet
+    // if (isUL17) btag_WP = 0.3040;                                                    // medium WP for UL17 DeepJet
+    // if (isUL18) btag_WP = 0.2783;                                                    // medium WP for UL18 DeepJet
 
     // Plot pt of hadronic Top jet
     float pt_hadTop = BestZprimeCandidate->top_hadronic_v4().pt();
@@ -1879,11 +1879,11 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
   vector <TopJet> TopTaggedJets = event.get(h_AK8TopTags);                     // AK8Puppi jets TopTagged by DeepAK8TopTagger
   vector <float> jets_hadronic_bscores;                                            // bScores vector for resolved hadronic jets
   float pt_hadTop_thresh = 150;                                                    // Define cut-variable as pt of hadTop for low/high regions                                                   // medium WP for UL18 DeepJet
-  float btag_WP=0.2783;  
-  if (isUL16preVFP) btag_WP = 0.2598;                                              // medium WP for UL16preVFP DeepJet
-  if (isUL16postVFP) btag_WP = 0.3657;                                             // medium WP for UL16postVFP DeepJet
-  if (isUL17) btag_WP = 0.3040;                                                    // medium WP for UL17 DeepJet
-  if (isUL18) btag_WP = 0.2783;                                                    // medium WP for UL18 DeepJet
+  // float btag_WP=0.2783;  
+  // if (isUL16preVFP) btag_WP = 0.2598;                                              // medium WP for UL16preVFP DeepJet
+  // if (isUL16postVFP) btag_WP = 0.3657;                                             // medium WP for UL16postVFP DeepJet
+  // if (isUL17) btag_WP = 0.3040;                                                    // medium WP for UL17 DeepJet
+  // if (isUL18) btag_WP = 0.2783;                                                    // medium WP for UL18 DeepJet
    
                                                                 // see https://btv-wiki.docs.cern.ch/ScaleFactors/ for btag WPs
                                                 // medium WP for UL18 DeepJet
