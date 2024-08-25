@@ -154,7 +154,17 @@ for sample in stackList:
                 if sys_hist:
                     output_hist_name = "{}_{}{}".format(sample, new_sys_name, variation.capitalize())
                     sys_hist.Clone(output_hist_name).Write()
-            
+    
+                # if sys_hist:
+                #     output_hist_name = "{}_{}{}".format(sample, new_sys_name, variation.capitalize())
+                #     cloned_hist = sys_hist.Clone(output_hist_name)
+                #     print("Cloning for {}.".format(output_hist_name))
+                #     if cloned_hist:
+                #         cloned_hist.Write()
+                #     else:
+                #         print("Cloning failed for {}.".format(output_hist_name))
+                # else:
+                #     print("Systematic histogram not found for {} {}.".format(sys, variation))
          
     inFile.Close()
 

@@ -408,7 +408,7 @@ def processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations):
     for sys_variation in sys_variations: 
         if (debug): print(" --- passed to another JER/JEC variation ---")
         for sample in v_samples_ttbar:
-            sys_file = TFile.Open("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{}/{}/workdir_AnalysisDNN_{}_{}_{}_dY/{}.root".format(year, lepton_flavor, year, lepton_flavor, sys_variation, sample), "READ")
+            sys_file = TFile.Open("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{}/{}/workdir_AnalysisDNN_{}_{}_{}/{}.root".format(year, lepton_flavor, year, lepton_flavor, sys_variation, sample), "READ")
             if not sys_file:
                 if (debug): print("Input file for {} variation {} not found.".format(sample, sys_variation))
                 continue
