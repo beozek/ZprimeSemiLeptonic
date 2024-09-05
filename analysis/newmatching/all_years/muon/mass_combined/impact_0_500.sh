@@ -54,28 +54,29 @@ echo "STAT ONLY UNCERTAINTY (ALL NUISANCES FROZEN) - performs another MultiDimFi
 echo
 echo
 combine -M MultiDimFit --algo singles -d $WORKSPACE -v $VERBOSITY --redefineSignalPOIs $redefineSignalPOIs --setParameterRanges $SetParameterRanges --setParameters $SetParameters --robustFit 1 --cminDefaultMinimizerStrategy 0 -m 125 --saveWorkspace -n _paramFit_Test_allConstrainedNuisancesFrozen --freezeParameters allConstrainedNuisances $ASIMOV
+combine -M MultiDimFit --algo singles -d $WORKSPACE -v $VERBOSITY --redefineSignalPOIs $redefineSignalPOIs --setParameterRanges $SetParameterRanges --setParameters $SetParameters --robustFit 1 --cminDefaultMinimizerStrategy 0 -m 125 --saveWorkspace -n _paramFit_Test_statOnlyFrozen --freezeParameters CMS_stat* $ASIMOV
 
 
 
-echo
-echo
-echo "CREATE IMPACTS JSON"
-echo
-echo
-combineTool.py -M Impacts -d $WORKSPACE -o impacts.json -m 125 --redefineSignalPOIs $redefineSignalPOIs
+# echo
+# echo
+# echo "CREATE IMPACTS JSON"
+# echo
+# echo
+# combineTool.py -M Impacts -d $WORKSPACE -o impacts.json -m 125 --redefineSignalPOIs $redefineSignalPOIs
 
 
 
-echo
-echo
-echo "CREATE PLOTS"
-echo
-echo
-for POI in ${POIS[@]}; do
-  plotImpacts.py -i impacts.json -o $POI --POI $POI
-done
-echo
-echo
+# echo
+# echo
+# echo "CREATE PLOTS"
+# echo
+# echo
+# for POI in ${POIS[@]}; do
+#   plotImpacts.py -i impacts.json -o $POI --POI $POI
+# done
+# echo
+# echo
 
-mkdir output_combine
-mv higgs* impacts.json Ac_muon.root combine_logger.out output_combine
+# mkdir output_combine
+# mv higgs* impacts.json Ac_muon.root combine_logger.out output_combine

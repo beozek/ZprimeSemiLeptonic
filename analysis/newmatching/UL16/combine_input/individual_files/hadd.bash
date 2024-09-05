@@ -14,12 +14,12 @@ categories=(
 )
 
 regions=(
-  "CR1"
-  "CR2"
+  # "CR1"
+  # "CR2"
   "SR"
 )
 
-input_dir="./prepost"
+input_dir="./"
 
 for category in "${categories[@]}"; do
   for region in "${regions[@]}"; do
