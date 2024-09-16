@@ -17,7 +17,7 @@ channel = options.channel
 year = options.year
 
 # Define analysis and preselection runs
-analysis_runs = ["UL16", "UL17", "UL18"]
+analysis_runs = ["UL16", "UL17", "UL18","all"]
 preselection_runs = ["Preselection_UL16", "Preselection_UL17", "Preselection_UL18"]
 
 # Determine run type based on the year
@@ -42,7 +42,7 @@ if channel in ["electron", "muon"]:
     elif run_type == "preselection":
         fileDir = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{year}/Preselection/workdir_Preselection_{year}_chargecheck/nominal".format(year=year)
 else:
-    fileDir = "/nfs/dust/cms/user/titasroy/Ac_{year}/lepton/".format(year=year)
+    fileDir = "/nfs/dust/cms/user/titasroy/Ac_UL_ntuples/%s/lepton/"%(year)
 
 print(fileDir)
 
@@ -83,10 +83,15 @@ B = 0.12 * H
 L = 0.12 * W
 R = 0.1 * W
 
+<<<<<<< HEAD
 # stackList = {"TTbar": [kRed], "WJets": [kGreen], "ST": [kBlue]}
 stackList = { "TTbar":[kRed],"WJets":[kGreen], "ST_tchannel":[kBlue], "ST_schannel":[kBlue-3], "ST_tWchannel":[kBlue-10] }
 # stackList_orig = {"TTbar": [kRed], "WJets": [kGreen], "DY": [kGreen], "Diboson": [kGreen], "QCD": [kGreen], "ST_tchannel":[kBlue], "ST_schannel":[kBlue-3], "ST_tWchannel":[kBlue-10]}
 stackList_orig = {"TTbar": [kRed], "WJets": [kGreen], "ST_tchannel":[kBlue], "ST_schannel":[kBlue-3], "ST_tWchannel":[kBlue-10]}
+=======
+stackList = {"TTbar": [kRed], "WJets": [kGreen], "ST": [kBlue]}
+stackList_orig = {"TTbar": [kRed], "WJets": [kGreen], "DYJets": [kGreen], "Diboson": [kGreen], "QCD": [kGreen], "ST": [kBlue]}
+>>>>>>> 8e15d68fc497ce1ec0ec06479786159f5e482f10
 
 legendHeightPer = 0.04
 legendStart = 0.69
@@ -177,9 +182,14 @@ elif channel == "lepton":
         "pt_mu": ["Muon p_{T} [GeV]", "Events", 90, [0, 900]],
     })
 
+<<<<<<< HEAD
 categories = ["Input", "MET"] if run_type == "preselection" else ["Weights_Init", "DeltaEtaCut", "AfterChi2", "DNN_output0", "DNN_output1", "DNN_output2"]
 # test_sample = ['TTbar', 'ST_tchannel', "ST_schannel", "ST_tWchannel", 'WJets', 'DY', 'Diboson', 'QCD']
 test_sample = ['TTbar', 'ST_tchannel', "ST_schannel", "ST_tWchannel", 'WJets']
+=======
+categories = ["Input", "MET"] if run_type == "preselection" else ["Weights_Init", "AfterBaseline", "AfterChi2", "DNN_output0", "DNN_output1", "DNN_output2"]
+test_sample = ['TTbar', 'ST', 'WJets', 'DYJets', 'Diboson', 'QCD']
+>>>>>>> 8e15d68fc497ce1ec0ec06479786159f5e482f10
 
 file = {}
 histo = {}

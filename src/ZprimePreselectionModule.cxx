@@ -195,9 +195,9 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx){
 
 bool ZprimePreselectionModule::process(uhh2::Event& event){
 
-  if(debug) cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
-  if(debug) cout << " run.event: " << event.run << ". " << event.event << endl;
-  
+  cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
+  cout << " run.event: " << event.run << ". " << event.event << endl;
+
   if(!event.isRealData){
     if(!SignSplit->passes(event)) return false;
   }
