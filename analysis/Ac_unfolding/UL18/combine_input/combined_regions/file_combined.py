@@ -22,9 +22,9 @@ def copy_histograms(input_files, output_file_path):
     output_file = ROOT.TFile(output_file_path, 'RECREATE')
 
     directories = {
-        '../individual_files/dY_UL18_{}_{}_CR1.root'.format(lepton_flavor, mass_range) : 'CR1',
-        '../individual_files/dY_UL18_{}_{}_CR2.root'.format(lepton_flavor, mass_range): 'CR2',
-        '../individual_files/dY_UL18_{}_{}_SR.root'.format(lepton_flavor, mass_range) : 'SR'
+        '../individual_files/dY_{}_{}_{}_CR1.root'.format(year, lepton_flavor, mass_range) : 'CR1',
+        '../individual_files/dY_{}_{}_{}_CR2.root'.format(year, lepton_flavor, mass_range): 'CR2',
+        '../individual_files/dY_{}_{}_{}_SR.root'.format(year, lepton_flavor, mass_range) : 'SR'
     }
 
     for input_file_name, dir_name in directories.items():
@@ -49,10 +49,10 @@ def copy_histograms(input_files, output_file_path):
     output_file.Close()
 
 input_files = {
-    '../individual_files/dY_UL18_{}_{}_CR1.root'.format(lepton_flavor, mass_range) : 'CR1',
-    '../individual_files/dY_UL18_{}_{}_CR2.root'.format(lepton_flavor, mass_range): 'CR2',
-    '../individual_files/dY_UL18_{}_{}_SR.root'.format(lepton_flavor, mass_range) : 'SR'
+    '../individual_files/dY_{}_{}_{}_CR1.root'.format(year, lepton_flavor, mass_range) : 'CR1',
+    '../individual_files/dY_{}_{}_{}_CR2.root'.format(year, lepton_flavor, mass_range): 'CR2',
+    '../individual_files/dY_{}_{}_{}_SR.root'.format(year, lepton_flavor, mass_range) : 'SR'
 }
-output_file_path = 'dY_UL18_{}_{}.root'.format(lepton_flavor, mass_range)
+output_file_path = 'dY_{}_{}_{}.root'.format(year, lepton_flavor, mass_range)
 
 copy_histograms(input_files, output_file_path)

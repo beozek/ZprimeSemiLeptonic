@@ -34,7 +34,7 @@ inputDir = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/Zprime
 combine_file_name = 'dY_{}_{}_{}_{}.root'.format(year, lepton_flavor, mass_range, region)
 combine_file = TFile(combine_file_name, 'RECREATE')
 # stackList = {"TTbar", "WJets", "DY", "ST", "Diboson", "QCD", "DATA"}
-stackList = ["TTbar", "ST", "Others", "DATA"]
+stackList = ["TTbar", "Others", "DATA"]
 
 
 ############ 
@@ -47,9 +47,15 @@ systematic_name_mapping = {
     "mu_reco": "muonReco",
     "pu": "pu",
     "prefiring": "prefiringWeight",
-    "mu_id": "muonID",
-    "mu_iso": "muonIso",
-    "mu_trigger": "muonTrigger",
+    # "mu_id": "muonID",
+    "mu_id_stat" : "muonIDStat",
+    "mu_id_syst" : "muonIDSyst",
+    # "mu_iso": "muonIso",
+    "mu_iso_stat" : "muonIsoStat",
+    "mu_iso_syst" : "muonIsoSyst",
+    # "mu_trigger": "muonTrigger",
+    "mu_trigger_stat" : "muonTriggerStat",
+    "mu_trigger_syst" : "muonTriggerSyst",
     "ele_id" : "eleID", 
     "ele_trigger": "eleTrigger",
     "ele_reco": "eleReco",
@@ -402,11 +408,11 @@ def processPDF(inputDir, v_samples_ttbar, combine_file):
 ############ 
 
 
-def processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations):
-    if (debug): print(" ----------------- JER/JEC processing ----------------")
+def processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations, year):
+    if (debug): print(" ----------------- JER/JEC processing for year {} ----------------".format(year))
 
     for sys_variation in sys_variations: 
-        if (debug): print(" --- passed to another JER/JEC variation ---")
+        if (debug): print(" --- processing {} variation for year {} ---".format(sys_variation, year))
         for sample in v_samples_ttbar:
             sys_file = TFile.Open("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{}/{}/workdir_AnalysisDNN_{}_{}_{}/{}.root".format(year, lepton_flavor, year, lepton_flavor, sys_variation, sample), "READ")
             if not sys_file:
@@ -416,30 +422,38 @@ def processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations):
             combine_file.cd()
 
             if sample == "TTbar":
-                if (debug): print("Processing TTbar for {} ".format(sys_variation))
+                if (debug): print("Processing TTbar for {} in year {}".format(sys_variation, year))
                 
                 matrix_path_jerjec = "DeltaY_reco_{}_{}_General/response_matrix".format(mass_range, region)
                 Matrix = sys_file.Get(matrix_path_jerjec)
                 if not Matrix:
-                    print("Nominal matrix not found for TTbar.")
+                    print("Matrix not found for TTbar for year {}.".format(year))
                 else:
-                    
-                    output_name_1 = "TTbar_1_{}".format(sys_variation.split('_')[0].lower() + sys_variation.split('_')[1].capitalize())
-                    output_name_2 = "TTbar_2_{}".format(sys_variation.split('_')[0].lower() + sys_variation.split('_')[1].capitalize())
+                    if "JER_up" in sys_variation or "JER_down" in sys_variation:
+                        output_name_1 = "TTbar_1_{}_{}".format(sys_variation.split('_')[0].lower(), year + sys_variation.split('_')[1].capitalize())
+                        output_name_2 = "TTbar_2_{}_{}".format(sys_variation.split('_')[0].lower(), year + sys_variation.split('_')[1].capitalize())
 
+                    elif "JEC_up" in sys_variation or "JEC_down" in sys_variation:
+                        output_name_1 = "TTbar_1_{}".format(sys_variation.split('_')[0].lower() + sys_variation.split('_')[1].capitalize())
+                        output_name_2 = "TTbar_2_{}".format(sys_variation.split('_')[0].lower() + sys_variation.split('_')[1].capitalize())
+                    
+                    
+                    # Create unique output names for each year
+                    
+                    # Generate the JER/JEC projections for each year
                     ProjX_1_jerjec = Matrix.ProjectionX(output_name_1, 1, 1)
                     ProjX_2_jerjec = Matrix.ProjectionX(output_name_2, 2, 2)
                     
+                    # Write the year-specific JER projections to the combine file
                     ProjX_1_jerjec.Write(output_name_1)
                     ProjX_2_jerjec.Write(output_name_2)
-
 
 
 
 sys_variations = ["JEC_up", "JEC_down", "JER_up", "JER_down"]
 
 # v_samples = ["TTbar", "WJets", "ST", "QCD", "DY", "Diboson"]
-v_samples = ["TTbar", "ST", "Others"]
+v_samples = ["TTbar", "Others"]
 v_samples_ttbar = ["TTbar"]
 
 v_variations = ["upup", "upnone", "noneup", "nonedown", "downnone", "downdown"]
@@ -448,7 +462,8 @@ getEnvelope(inputDir, v_samples_ttbar, v_variations, combine_file)
 
 processPDF(inputDir, v_samples_ttbar, combine_file)
 
-processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations)
+# Call the JER/JEC processing for each year
+processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations, year)
 
 combine_file.Close()
 
