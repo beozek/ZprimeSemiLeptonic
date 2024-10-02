@@ -7,9 +7,12 @@ ROOT.gROOT.SetBatch(True)
 systematic_name_mapping_muon = {
     "pu",
     "prefiringWeight",
-    "muonID", 
-    "muonTrigger",
-    "muonIso", 
+    "muonIDStat", 
+    "muonIDSyst",
+    "muonIsoStat",
+    "muonIsoSyst",
+    "muonTriggerStat",
+    "muonTriggerSyst",
     "btagCferr1", 
     "btagCferr2", 
     "btagHf",  
@@ -22,6 +25,7 @@ systematic_name_mapping_muon = {
     "ttagUncorr", 
     "tmistag"
 }
+
 
 systematic_name_mapping_electron = {
     "pu",
@@ -48,9 +52,12 @@ systematic_name_mapping_tt_muon = {
     "muonReco",
     "pu",
     "prefiringWeight",
-    "muonID", 
-    "muonTrigger",
-    "muonIso",
+    "muonIDStat", 
+    "muonIDSyst",
+    "muonIsoStat",
+    "muonIsoSyst",
+    "muonTriggerStat",
+    "muonTriggerSyst",
     "isr", 
     "fsr", 
     "btagCferr1", 
@@ -65,9 +72,10 @@ systematic_name_mapping_tt_muon = {
     "ttagUncorr", 
     "tmistag",
     "jec",
-    "jer",
+    "jer_UL18",
     "murmuf",
-    "pdf"
+    "pdf",
+    "hdamp"
 }
 
 # Systematics for TT samples (electron)
@@ -91,9 +99,11 @@ systematic_name_mapping_tt_electron = {
     "ttagUncorr", 
     "tmistag",
     "jec",
-    "jer",
+    "jer_UL18",
     "murmuf",
-    "pdf"
+    "pdf",
+    "hdamp"
+
 }
 
 samples_tt = {"TTbar_1", "TTbar_2"}
@@ -122,7 +132,7 @@ def systematics_plot(file, output_dir, sample, systematics):
     
     # Check for empty histograms
     if hist1.GetEntries() == 0 or hist2.GetEntries() == 0 or hist3.GetEntries() == 0:
-        print("Warning: Empty histogram found for {sample}, {systematics}".format(sample, systematics))
+        print("Warning: Empty histogram found for {}, {}".format(sample, systematics))
         return
     
     hist1.SetLineColor(ROOT.kBlue)
