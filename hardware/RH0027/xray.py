@@ -26,10 +26,10 @@ import argparse
 
 # Arguments --------------------
 parser = argparse.ArgumentParser(description='Do the XRay analysis')
-parser.add_argument('-scurve','--scurve', help = 'The name of the SCurve.root (and txt) file', default = 'Run000014', type = str)
+parser.add_argument('-scurve','--scurve', help = 'The name of the SCurve.root (and txt) file', default = 'Run000021', type = str)
 parser.add_argument('-noise','--noise', help = 'The name of the Noise.root file', default = 'Run000088', type = str)
-parser.add_argument('-outpath','--outpath', help = 'The name of the folder to be created in results', default = 'RH0027_Tunedto2000_Chip13', type = str)
-parser.add_argument('-sensor','--sensor', help = 'The name of the sensor', default = 'RH0027_Tunedto2000_Chip13', type = str)
+parser.add_argument('-outpath','--outpath', help = 'The name of the folder to be created in results', default = 'RH0027_Tunedto2000_Chip12', type = str)
+parser.add_argument('-sensor','--sensor', help = 'The name of the sensor', default = 'RH0027_Tunedto2000_Chip12', type = str)
 parser.add_argument('-thr_missing','--thr_missing', help = 'The threshold to classify the missing bumps [Hits]', default = 100, type = int)
 parser.add_argument('-thr_strange','--thr_strange', help = 'The threshold to classify the problematic bumps [Hits]', default = 1000, type = int)
 parser.add_argument('-bias','--bias', help = 'The bias of the sensor [V]', default = '80', type = str)
@@ -44,18 +44,18 @@ args = parser.parse_args()
 # Path to the SCurve root file (contains threshold data)
 Sensor=args.sensor; thr_data_file='Run000021_SCurve.root'
 # Path where the results will be stored
-Path='results_xray_new/'
+Path='results_xray/'
 # Path to the NoiseScan root file (PixelAlive for us)
 analyzed_data_file='Run000000_NoiseScan.root'; 
 # Path to the .txt file that contains sensor information
-analyzed_txt_file ='Run000000_CMSIT_RD53_RH0027_0_13_OUT.txt'
+analyzed_txt_file ='CMSIT_RD53_RH0027_0_12.txt'
 
 # Thresholds and other parameters
 Thr=args.thr_missing; Thr_strange=args.thr_strange; Voltage_1=args.bias; 
 V_adc=args.vref; nTrg=args.ntrg; nBX=args.nbx
 
 ####### PARAMETERS TO BE CHANGED MANUALLY: ###################################  
-H_ID='0'; C_ID='13'; num_rows = 336; num_cols = 432; FIT=True
+H_ID='0'; C_ID='12'; num_rows = 336; num_cols = 432; FIT=True
 el_conv=V_adc/162; Noise_MAX=65*el_conv; Thr_MAX=600*el_conv 
 step_noise=0.1*el_conv; step_thr=2*el_conv; YMAX=100000; step=10; VMAX=7000; 
 ##############################################################################
