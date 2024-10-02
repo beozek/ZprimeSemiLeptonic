@@ -40,7 +40,7 @@ Hists(ctx, dirname) {
   if(ctx.get("channel") == "muon") isMuon = true;
   if(ctx.get("channel") == "electron") isElectron = true;
   is_tt = ctx.get("dataset_version").find("TTTo") == 0;
-  gen_match=false;
+  // gen_match=false;
   if(isdeepAK8){
     h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
   }else if(ishotvr){
@@ -1453,7 +1453,8 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
   
   // ================== DY new check gen matching for ttbar =========================================================
   
-  if(is_zprime_reconstructed_chi2 && is_tt && gen_match){
+  if(is_zprime_reconstructed_chi2 && is_tt){
+    // cout << "inside dY lines" << endl;
     if(debug)cout << "should not be matching " << endl;
     const auto& genparticles = event.genparticles;
     ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
@@ -1661,9 +1662,9 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
   
   
   
-  //begin spin correlation with matching---------------->
+    //begin spin correlation with matching---------------->
 
-  // ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
+    // ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidateChi2);
     if (debug) cout << "starting spin corr" << endl;
     bool is_toptag_reconstruction = BestZprimeCandidate->is_toptag_reconstruction(); // Reconstruction process id
     vector <Jet> AK4CHSjets_matched = event.get(h_CHSjets_matched);                  // AK4Puppijets that have been matched to CHSjets
