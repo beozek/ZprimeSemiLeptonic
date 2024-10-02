@@ -86,6 +86,8 @@
         "plotLikelihoodScan.C": "cpp",
         "envelope.C": "cpp",
         "extractValues.C": "cpp",
-        "all_unfolding_data.C": "cpp"
+        "all_unfolding_data.C": "cpp",
+        "memory": "cpp",
+        "optional": "cpp"
     }
 }
