@@ -352,6 +352,31 @@ def Plots(ToTMap, NoiseMap, Noise_L, ThrMap, Thr_L, Data, Data_L, Missing_mat, M
 
     return
 
+def ToTHistogram(ToTMap):
+    # Flatten the 2D ToT map to a 1D array
+    ToT_flattened = ToTMap.flatten()
+    
+    # Plot the histogram
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111)
+    ax.spines["bottom"].set_linewidth(1)
+    ax.spines["left"].set_linewidth(1)
+    ax.spines["top"].set_linewidth(1)
+    ax.spines["right"].set_linewidth(1)
+
+    # Create a histogram of the ToT values
+    plt.hist(ToT_flattened, bins=50, color='blue', alpha=0.7, label='ToT values')
+    ax.set_xlabel('ToT')
+    ax.set_ylabel('Entries')
+    ax.set_yscale('log')
+    ax.legend(loc='upper right')
+    plt.title('1D Histogram of Time-over-Threshold (ToT)')
+    plt.grid(True)
+
+    # Save the histogram
+    fig.savefig(Path + Sensor + '/' + Voltage_1 + 'V_ToT_Histogram.png', format='png', dpi=300)
+
+    plt.close(fig)
 
 # def TerminalInfos(FitErrors,ReadoutErrors,Disabled,ReadoutErrorsXRay,Missing,Missing_strange,Perc_missing,Perc_missing_strange,Missing_mat):
 def TerminalInfos(FitErrors,ReadoutErrors,Disabled,ReadoutErrorsXRay,Missing,Perc_missing,Missing_mat):
@@ -398,6 +423,6 @@ def main():
     Plots(ToTMap, NoiseMap, Noise_L, ThrMap, Thr_L, Data, Data_L, Missing_mat, Missing, Perc_missing, Disabled, ToTMapX, FitErrors)
 
     TerminalInfos(FitErrors,ReadoutErrors,Disabled,ReadoutErrorsXRay,Missing,Perc_missing, Missing_mat)
-
+`
 if __name__ == "__main__":
 	main()
