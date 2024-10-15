@@ -339,7 +339,7 @@ protected:
   // Chi2 discriminator
   unique_ptr<ZprimeChi2Discriminator> Chi2DiscriminatorZprime;
   unique_ptr<ZprimeCorrectMatchDiscriminator> CorrectMatchDiscriminatorZprime;
-
+  std::unique_ptr<Hists> h_CHSMatchHists;
   // Selections
   unique_ptr<Selection> Chi2_selection, TTbarMatchable_selection, Chi2CandidateMatched_selection, ZprimeTopTag_selection;
   std::unique_ptr<uhh2::Selection> met_sel;
@@ -736,7 +736,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   h_weight = ctx.declare_event_output<float> ("weight");
 
   
-  
+  h_CHSMatchHists.reset(new ZprimeSemiLeptonicCHSMatchHists(ctx, "CHSMatch"));
 
   sel_1btag.reset(new NJetSelection(1, -1, id_btag));
   sel_2btag.reset(new NJetSelection(2,-1, id_btag));
@@ -1381,6 +1381,7 @@ if(debug)  cout<<"test4"<<endl;
     if(debug) cout << "signal DNN output0" << endl;
     if(Chi2_selection->passes(event)){  // cut on chi2<30 - only in SR == out0)
       if(debug) cout << "signal DNN output0 chi2" << endl;
+      h_CHSMatchHists->fill(event);
       fill_histograms(event, "DNN_output0");
       if(Mass_tt>=0 && Mass_tt < 500){
         fill_histograms(event, "DeltaY_reco_0_500_SR");
