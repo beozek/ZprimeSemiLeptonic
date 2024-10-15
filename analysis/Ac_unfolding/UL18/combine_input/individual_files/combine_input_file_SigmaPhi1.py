@@ -24,12 +24,10 @@ region = options.region if options.region else "CR2"
 region_score = options.region_score if options.region_score else "0"
 
 inputDir = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{}/{}/nominal/".format(year, lepton_flavor)
-combine_file_name = 'dY_{}_{}_{}_{}.root'.format(year, lepton_flavor, mass_range, region)
+combine_file_name = 'Sigma_phi_1_{}_{}_{}_{}.root'.format(year, lepton_flavor, mass_range, region)
 combine_file = TFile(combine_file_name, 'RECREATE')
 # stackList = {"TTbar", "WJets", "DY", "ST", "Diboson", "QCD", "DATA"}
-# stackList = ["TTbar", "ST", "Others", "DATA"]
-stackList = ["TTbar", "Others", "DATA"]
-
+stackList = ["TTbar", "ST", "Others", "DATA"]
 
 debug = False
 
@@ -88,13 +86,14 @@ for sample in stackList:
 
     if sample == "DATA":
         if (debug): print("Processing sample for other sys: ", sample)
-        data_obs = inFile.Get("DeltaY_reco_{}_{}_General/DeltaY_reco".format(mass_range, region)).Clone("data_obs")
+        data_obs = inFile.Get("DeltaY_reco_{}_{}_General/Sigma_phi_1_reco".format(mass_range, region)).Clone("data_obs")
         data_obs.Write("data_obs")
         
     elif sample == "TTbar":
         if (debug): print("Processing sample for other sys: ", sample)
-        path_nom = "DeltaY_reco_SystVariations_{}_{}/DeltaY_tt".format(mass_range, region)
-        # Retrieving the response matrix directly
+        
+        # For Sigma_phi_1, the nominal is in 'DeltaY_reco_{mass_range}_{region}_General'
+        path_nom = "DeltaY_reco_{}_{}_General/Sigma_phi_1_tt".format(mass_range, region)
         Matrix = inFile.Get(path_nom)
         if not Matrix:
             print("Response matrix not found for TTbar.")
@@ -104,8 +103,8 @@ for sample in stackList:
         ProjX_1 = Matrix.ProjectionX("TTbar_1", 1, 1)
         ProjX_2 = Matrix.ProjectionX("TTbar_2", 2, 2)
 
-        ProjX_1.GetXaxis().SetTitle("#Delta_Y_{reco}")
-        ProjX_2.GetXaxis().SetTitle("#Delta_Y_{reco}")
+        ProjX_1.GetXaxis().SetTitle("#Sigma#phi_{1}^{reco}")
+        ProjX_2.GetXaxis().SetTitle("#Sigma#phi_{1}^{reco}")
 
         # Save projections as nominal histograms
         nominal_projections = [ProjX_1, ProjX_2]
@@ -118,7 +117,7 @@ for sample in stackList:
             if (debug): print(sys)
             for variation in ["up", "down"]:
                 # Retrieve matrices for systematic variations
-                matrix_path = "DeltaY_reco_SystVariations_{}_{}/DeltaY_{}_{}_tt".format(mass_range, region, sys, variation)
+                matrix_path = "DeltaY_reco_SystVariations_{}_{}/Sigma_phi_1_{}_{}_tt".format(mass_range, region, sys, variation)
                 Matrix_var = inFile.Get(matrix_path)
                 if not Matrix_var:
                     print("Response matrix for systematic {} variation {} not found.".format(sys, variation))
@@ -130,24 +129,21 @@ for sample in stackList:
                 ProjX_1_sys = Matrix_var.ProjectionX(output_hist_1, 1, 1)
                 ProjX_2_sys = Matrix_var.ProjectionX(output_hist_2, 2, 2)
 
-                ProjX_1_sys.GetXaxis().SetTitle("#Delta_Y_{reco}")
-                ProjX_2_sys.GetXaxis().SetTitle("#Delta_Y_{reco}")
+                ProjX_1_sys.GetXaxis().SetTitle("#Sigma#phi_{1}^{reco}")
+                ProjX_2_sys.GetXaxis().SetTitle("#Sigma#phi_{1}^{reco}")
 
                 ProjX_1_sys.Write(output_hist_1)
                 ProjX_2_sys.Write(output_hist_2)
-                
-                # print("Nominal Projection mean:", ProjX_1.GetBinContent(1))
-                # print("Systematic Projection mean:", ProjX_1_sys.GetBinContent(1))
 
     else:
         if (debug): print("Processing sample for other sys: ", sample)
-        h_nominal = inFile.Get("DeltaY_reco_SystVariations_{}_{}/DeltaY".format(mass_range, region)).Clone(sample)
+        h_nominal = inFile.Get("DeltaY_reco_SystVariations_{}_{}/Sigma_phi_1".format(mass_range, region)).Clone(sample)
         h_nominal.Write(sample)
         
         for sys, new_sys_name in systematic_name_mapping.items():
             if (debug): print(sys)
             for variation in ["up", "down"]:
-                sys_hist_name = "DeltaY_{}_{}".format(sys, variation)
+                sys_hist_name = "Sigma_phi_1_{}_{}".format(sys, variation)
                 sys_hist = inFile.Get("DeltaY_reco_SystVariations_{}_{}/".format(mass_range, region) + sys_hist_name)
                 if sys_hist:
                     output_hist_name = "{}_{}{}".format(sample, new_sys_name, variation.capitalize())
@@ -169,19 +165,6 @@ for sample in stackList:
 # 4) For each set of variation histograms, find the maximum and minimum values in each bin among all variations, create two new histograms: hist_scaleUp and hist_scaleDown.
 # 5) Name these histograms depending on the specific convention
 ############ 
-
-def calculate_envelope(projection, nominal_projection, norm, up_name, down_name):
-    hist_scale_up = nominal_projection.Clone(up_name)
-    hist_scale_down = nominal_projection.Clone(down_name)
-    
-    for bin_idx in range(1, nominal_projection.GetNbinsX() + 1):
-        scaled_val = projection.GetBinContent(bin_idx) / norm
-        max_val = max(nominal_projection.GetBinContent(bin_idx), scaled_val)
-        min_val = min(nominal_projection.GetBinContent(bin_idx), scaled_val)
-        hist_scale_up.SetBinContent(bin_idx, max_val)
-        hist_scale_down.SetBinContent(bin_idx, min_val)
-
-    return hist_scale_up, hist_scale_down
 
 def getEnvelope(inputDir, v_samples_ttbar, v_variations, combine_file):
     if (debug): print(" ----------------- murmuf processing ----------------")
@@ -207,7 +190,7 @@ def getEnvelope(inputDir, v_samples_ttbar, v_variations, combine_file):
             hist_scaleDown_2 = ProjX_2.Clone("TTbar_2_murmufDown")
         
             for variation in v_variations:
-                path_var = "DeltaY_reco_SystVariations_{}_{}/DeltaY_murmuf_{}_tt".format(mass_range, region,variation)
+                path_var = "DeltaY_reco_SystVariations_{}_{}/Sigma_phi_1_murmuf_{}_tt".format(mass_range, region, variation)
                 matrix_var = inFile.Get(path_var)
                
                 if not matrix_var:
@@ -229,9 +212,6 @@ def getEnvelope(inputDir, v_samples_ttbar, v_variations, combine_file):
                 scaled_histograms_down_1[variation].Scale(1 / norm_1)
                 scaled_histograms_up_2[variation].Scale(1 / norm_2)
                 scaled_histograms_down_2[variation].Scale(1 / norm_2)
-                
-                # print("Nominal Projection mean:", ProjX_1.GetMean())
-                # print("Systematic Projection mean:", projection_1.GetMean())
 
             # Calculate envelope
             for bin_idx in range(1, ProjX_1.GetNbinsX() + 1):
@@ -265,28 +245,6 @@ def getEnvelope(inputDir, v_samples_ttbar, v_variations, combine_file):
 # ----------------- PDFs (100) ----------------
 ############ 
 
-# Function to calculate and write RMS based histograms
-def calculate_and_write_rms_histograms(projections, nominal_projection, hist_name):
-    
-    pdf_up_name = "{}_pdfUp".format(hist_name)
-    pdf_down_name = "{}_pdfDown".format(hist_name)
-    
-    hist_pdf_up = TH1D(pdf_up_name, "", nominal_projection.GetNbinsX(), nominal_projection.GetXaxis().GetXmin(), nominal_projection.GetXaxis().GetXmax())
-    hist_pdf_down = TH1D(pdf_down_name, "", nominal_projection.GetNbinsX(), nominal_projection.GetXaxis().GetXmin(), nominal_projection.GetXaxis().GetXmax())
-
-    for bin_idx in range(1, nominal_projection.GetNbinsX() + 1):
-        nominal_val = nominal_projection.GetBinContent(bin_idx)
-        values = projections.GetBinContent(bin_idx)
-        rms = math.sqrt(sum((x - nominal_val) ** 2 for x in values) / len(values))
-        
-        hist_pdf_up.SetBinContent(bin_idx, nominal_val + rms)
-        hist_pdf_down.SetBinContent(bin_idx, nominal_val - rms)
-
-    combine_file.cd()
-    hist_pdf_up.Write()
-    hist_pdf_down.Write()
-
-
 def processPDF(inputDir, v_samples_ttbar, combine_file):
     if (debug): print(" ----------------- PDFs processing ----------------")
     
@@ -307,7 +265,7 @@ def processPDF(inputDir, v_samples_ttbar, combine_file):
             pdf_projections_2 = []
             
             for i in range(1, 101):  
-                weight_matrix_path = "DeltaY_reco_PDFVariations_{}_{}/DeltaY_PDF_RM_{}".format(mass_range,region, i)
+                weight_matrix_path = "DeltaY_reco_PDFVariations_{}_{}/Sigma_phi_1_PDF_RM_{}".format(mass_range,region, i)
                 weight_matrix = inFile.Get(weight_matrix_path)
                 if not weight_matrix:
                     print("PDF weight matrix {} not found.".format(i))
@@ -315,7 +273,7 @@ def processPDF(inputDir, v_samples_ttbar, combine_file):
                 
                 pdf_projections_1.append(weight_matrix.ProjectionX("TTbar_1_pdf_{}".format(i), 1, 1))
                 pdf_projections_2.append(weight_matrix.ProjectionX("TTbar_2_pdf_{}".format(i), 2, 2))
- 
+
             # Calculate RMS and write histograms for both projections
             # Step 2: normalization & rms calculation
             norm_scales_1 = []
@@ -371,17 +329,6 @@ def processPDF(inputDir, v_samples_ttbar, combine_file):
 
                 
         inFile.Close()
-            
-            
-# Diboson Sample:
-# For Diboson, I am cloning the nominal histogram for each of the 100 PDF variations and naming them Up or Down variation. So, this sample is without specific PDF variations.
-
-# TTbar Sample:
-# I am creating a matrix from four quadrants, calculating the projection for each, and then applying each of the 100 PDF variations.
-# For each PDF variation, I create a matrix, calculate its projections, and then calculate the deviation from the nominal projection for both projections (TTbar_1 and TTbar_2).
-
-# Other Samples:
-# For samples other than Diboson and TTbar, I am looping through each of the 100 PDF variations and calculate the Up and Down variations based on the deviation from the nominal histogram.
 
 ############ 
 # ----------------- JER/JEC ----------------
@@ -394,7 +341,8 @@ def processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations, year)
     for sys_variation in sys_variations: 
         if (debug): print(" --- processing {} variation for year {} ---".format(sys_variation, year))
         for sample in v_samples_ttbar:
-            sys_file = TFile.Open("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{}/{}/workdir_AnalysisDNN_{}_{}_{}/{}.root".format(year, lepton_flavor, year, lepton_flavor, sys_variation, sample), "READ")
+            sys_file_path = "/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{}/{}/workdir_AnalysisDNN_{}_{}_{}/{}.root".format(year, lepton_flavor, year, lepton_flavor, sys_variation, sample)
+            sys_file = TFile.Open(sys_file_path, "READ")
             if not sys_file:
                 if (debug): print("Input file for {} variation {} not found.".format(sample, sys_variation))
                 continue
@@ -404,7 +352,7 @@ def processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations, year)
             if sample == "TTbar":
                 if (debug): print("Processing TTbar for {} in year {}".format(sys_variation, year))
                 
-                matrix_path_jerjec = "DeltaY_reco_{}_{}_General/response_matrix".format(mass_range, region)
+                matrix_path_jerjec = "DeltaY_reco_{}_{}_General/Sigma_phi_1_tt".format(mass_range, region)
                 Matrix = sys_file.Get(matrix_path_jerjec)
                 if not Matrix:
                     print("Matrix not found for TTbar for year {}.".format(year))
@@ -424,73 +372,23 @@ def processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations, year)
                     ProjX_1_jerjec = Matrix.ProjectionX(output_name_1, 1, 1)
                     ProjX_2_jerjec = Matrix.ProjectionX(output_name_2, 2, 2)
                     
-                    # Write the year-specific JER projections to the combine file
+                    ProjX_1_jerjec.GetXaxis().SetTitle("#Sigma#phi_{1}^{reco}")
+                    ProjX_2_jerjec.GetXaxis().SetTitle("#Sigma#phi_{1}^{reco}")
+                    
                     ProjX_1_jerjec.Write(output_name_1)
                     ProjX_2_jerjec.Write(output_name_2)
 
-############ 
-# ----------------- hdamp ----------------
-############ 
-
-# def processhdamp(inputDir, v_samples_ttbar, combine_file, sys_variations_hdamp, year):
-#     if (debug): print(" ----------------- hdamp processing for year {} ----------------".format(year))
-
-#     for sys_variation in sys_variations_hdamp: 
-#         if (debug): print(" --- processing {} variation for year {} ---".format(sys_variation, year))
-#         for sample in v_samples_ttbar:
-#             sys_file = TFile.Open("/nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_DNN/{}/{}/workdir_AnalysisDNN_{}_{}_{}/{}.root".format(year, lepton_flavor, year, lepton_flavor, sys_variation, sample), "READ")
-#             # print("file path: ", sys_file)
-#             if not sys_file:
-#                 if (debug): print("Input file for {} variation {} not found.".format(sample, sys_variation))
-#                 continue
-            
-#             combine_file.cd()
-
-#             if sample == "TTbar":
-#                 if (debug): print("Processing TTbar for {} in year {}".format(sys_variation, year))
-                
-#                 matrix_path_hdamp = "DeltaY_reco_{}_{}_General/response_matrix".format(mass_range, region)
-#                 Matrix = sys_file.Get(matrix_path_hdamp)
-#                 if not Matrix:
-#                     print("Matrix not found for TTbar for year {}.".format(year))
-#                 else:
-#                     output_name_1 = "TTbar_1_{}".format(sys_variation.split('_')[0].lower() + sys_variation.split('_')[1].capitalize())
-#                     output_name_2 = "TTbar_2_{}".format(sys_variation.split('_')[0].lower() + sys_variation.split('_')[1].capitalize())
-                    
-                    
-#                     # Create unique output names for each year
-                    
-#                     # Generate the hdamp projections for each year
-#                     ProjX_1_hdamp = Matrix.ProjectionX(output_name_1, 1, 1)
-#                     ProjX_2_hdamp = Matrix.ProjectionX(output_name_2, 2, 2)
-                    
-#                     # Write the year-specific hdamp projections to the combine file
-#                     ProjX_1_hdamp.Write(output_name_1)
-#                     ProjX_2_hdamp.Write(output_name_2)
-
-
+            sys_file.Close()
 
 sys_variations = ["JEC_up", "JEC_down", "JER_up", "JER_down"]
-sys_variations_hdamp = ["hdamp_up", "hdamp_down"]
-
-# v_samples = ["TTbar", "WJets", "ST", "QCD", "DY", "Diboson"]
-# v_samples = ["TTbar", "ST", "Others"]
-v_samples = ["TTbar", "Others"]
+v_samples = ["TTbar", "ST", "Others"]
 v_samples_ttbar = ["TTbar"]
-
 v_variations = ["upup", "upnone", "noneup", "nonedown", "downnone", "downdown"]
 
+# Call functions with updated histogram names
 getEnvelope(inputDir, v_samples_ttbar, v_variations, combine_file)
 processPDF(inputDir, v_samples_ttbar, combine_file)
-# Call the JER/JEC processing for each year
-processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations, year)
-
-# Call the hdamp processing 
-# processhdamp(inputDir, v_samples_ttbar, combine_file, sys_variations_hdamp, year)
-
+# processJERJEC(inputDir, v_samples_ttbar, combine_file, sys_variations, year)
 
 combine_file.Close()
 
-
-
-#  For TTbar samples, the nominal histograms are not directly in the input file. The projection histograms I making in the script will be my 2 nominal histograms (TTbar_1 and TTbar_2). I want to save these histograms in the output file as nominal histograms. Additionally, I would like to apply the w

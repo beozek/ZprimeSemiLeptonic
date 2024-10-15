@@ -107,10 +107,11 @@ systematic_name_mapping_tt_electron = {
 }
 
 samples_tt = {"TTbar_1", "TTbar_2"}
-samples = {"ST", "Others"}
+# samples = {"ST", "Others"}
+samples = {"Others"}
 
 input_directory = "../combine_input/individual_files"
-output_directory = "output_plots"
+output_directory = "output_plots_backgroundAll"
 
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)

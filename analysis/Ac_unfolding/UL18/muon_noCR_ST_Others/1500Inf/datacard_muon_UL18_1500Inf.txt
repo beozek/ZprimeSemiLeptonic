@@ -2,8 +2,8 @@ imax * number of bins
 jmax 3 number of processes minus 1
 kmax * number of nuisance parameters
 ----------------------------------------------------------------------------------------------------------------------------------
-shapes data_obs     muon_UL18_1500Inf_SR      /nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/Ac_unfolding/UL18/combine_input/combined_regions/dY_UL18_muon_1500Inf.root SR/data_obs
-shapes *            muon_UL18_1500Inf_SR      /nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/Ac_unfolding/UL18/combine_input/combined_regions/dY_UL18_muon_1500Inf.root SR/$PROCESS SR/$PROCESS_$SYSTEMATIC
+shapes data_obs     muon_UL18_1500Inf_SR      /nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/Ac_unfolding/UL18/combine_input/combined_regions/dY_UL18_muon_1500.root SR/data_obs
+shapes *            muon_UL18_1500Inf_SR      /nfs/dust/cms/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/Ac_unfolding/UL18/combine_input/combined_regions/dY_UL18_muon_1500.root SR/$PROCESS SR/$PROCESS_$SYSTEMATIC
 ----------------------------------------------------------------------------------------------------------------------------------
 bin                     muon_UL18_1500Inf_SR   muon_UL18_1500Inf_SR   muon_UL18_1500Inf_SR   muon_UL18_1500Inf_SR
 process                 TTbar_1                           TTbar_2                           ST                                Others
