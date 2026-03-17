@@ -678,8 +678,9 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   string trigger_ph_A;
   isMuon = false; isElectron = false, isEFT=false;
   if(ctx.get("channel") == "muon") isMuon = true;
-  if(ctx.get("sample") == "eft") isEFT = true;
   if(ctx.get("channel") == "electron") isElectron = true;
+  // isEFT: config (sample="eft") or dataset_version contains "EFT"
+  isEFT = (ctx.get("sample") == "eft") || (ctx.get("dataset_version").find("EFT") != std::string::npos);
 
   if(isMuon){//semileptonic muon channel
     if(isUL17){
@@ -1156,13 +1157,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
       sample_name = "Diboson";
     }  
 
-    // *** CHANGED ***: set isEFT if sample_name == "TTbar_EFT"
-    // if(sample_name == "TTbar_EFT") {
-    //   isEFT = true;
-    // } else {
-    //   isEFT = false;
-    // }
-    if (debug)cout << "is it EFT? " << isEFT << endl;
+    if (debug) cout << "is it EFT? " << isEFT << endl;
   
     // 2D b-tag SF reading with the new logic (EFT or others):
     if(isMuon){

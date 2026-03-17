@@ -686,8 +686,9 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   string trigger_ph_A;
   isMuon = false; isElectron = false, isEFT=false;
   if(ctx.get("channel") == "muon") isMuon = true;
-  if(ctx.get("sample") == "eft") isEFT = true;
   if(ctx.get("channel") == "electron") isElectron = true;
+  // isEFT: config (sample="eft") or dataset_version contains "EFT"
+  isEFT = (ctx.get("sample") == "eft") || (ctx.get("dataset_version").find("EFT") != std::string::npos);
 
   if(isMuon){//semileptonic muon channel
     if(isUL17){
@@ -1018,7 +1019,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
 
   // ================ SR ==================================================================================================================================================================================================================
   
-  // h_DeltaY_reco_SystVariations_0_500_SR.reset(new ZprimeSemiLeptonicSystematicsHists(ctx, "DeltaY_reco_SystVariations_0_500_SR"));
+  h_DeltaY_reco_SystVariations_0_500_SR.reset(new ZprimeSemiLeptonicSystematicsHists(ctx, "DeltaY_reco_SystVariations_0_500_SR"));
   h_DeltaY_reco_SystVariations_0_350_SR.reset(new ZprimeSemiLeptonicSystematicsHists(ctx, "DeltaY_reco_SystVariations_0_350_SR"));
   h_DeltaY_reco_SystVariations_350_500_SR.reset(new ZprimeSemiLeptonicSystematicsHists(ctx, "DeltaY_reco_SystVariations_350_500_SR"));
   h_DeltaY_reco_SystVariations_500_750_SR.reset(new ZprimeSemiLeptonicSystematicsHists(ctx, "DeltaY_reco_SystVariations_500_750_SR"));
@@ -1031,7 +1032,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
 
   if(debug) cout << "[DEBUG] DeltaY_reco_SystVariations_0_500_SR created successfully!" << endl;
 
-  // h_DeltaY_reco_PDFVariations_0_500_SR.reset(new ZprimeSemiLeptonicPDFHists(ctx, "DeltaY_reco_PDFVariations_0_500_SR"));
+  h_DeltaY_reco_PDFVariations_0_500_SR.reset(new ZprimeSemiLeptonicPDFHists(ctx, "DeltaY_reco_PDFVariations_0_500_SR"));
   h_DeltaY_reco_PDFVariations_0_350_SR.reset(new ZprimeSemiLeptonicPDFHists(ctx, "DeltaY_reco_PDFVariations_0_350_SR"));
   h_DeltaY_reco_PDFVariations_350_500_SR.reset(new ZprimeSemiLeptonicPDFHists(ctx, "DeltaY_reco_PDFVariations_350_500_SR"));
   h_DeltaY_reco_PDFVariations_500_750_SR.reset(new ZprimeSemiLeptonicPDFHists(ctx, "DeltaY_reco_PDFVariations_500_750_SR"));
@@ -1112,7 +1113,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   "DNN_output0_nochi2",
   "DNN_output0",
   // "DNN_output1","DNN_output2","DNN_output1_chi2","DNN_output2_chi2","DNN_output0_TopTag", "DNN_output0_NoTopTag",
-  "DeltaY_reco_1500Inf_SR" ,"DeltaY_reco_1000_1500_SR" ,"DeltaY_reco_750_1000_SR" ,"DeltaY_reco_500_750_SR", "DeltaY_reco_0_350_SR", "DeltaY_reco_350_500_SR",
+  "DeltaY_reco_1500Inf_SR" ,"DeltaY_reco_1000_1500_SR" ,"DeltaY_reco_750_1000_SR" ,"DeltaY_reco_500_750_SR", "DeltaY_reco_0_350_SR", "DeltaY_reco_350_500_SR", "DeltaY_reco_0_500_SR",
   // "DeltaY_reco_0_500_SR", "DeltaY_reco_0_700_SR", "DeltaY_reco_700_900_SR", "DeltaY_reco_900Inf_SR",
   // "DeltaY_reco_1500Inf_CR1" ,"DeltaY_reco_1000_1500_CR1" ,"DeltaY_reco_750_1000_CR1" ,"DeltaY_reco_500_750_CR1","DeltaY_reco_0_350_CR1", "DeltaY_reco_350_500_CR1", "DeltaY_reco_0_500_CR1","DeltaY_reco_0_700_CR1", "DeltaY_reco_700_900_CR1", "DeltaY_reco_900Inf_CR1", 
   // "DeltaY_reco_1500Inf_CR2" ,"DeltaY_reco_1000_1500_CR2" ,"DeltaY_reco_750_1000_CR2" ,"DeltaY_reco_500_750_CR2", "DeltaY_reco_0_350_CR2", "DeltaY_reco_350_500_CR2","DeltaY_reco_0_500_CR2", "DeltaY_reco_0_700_CR2", "DeltaY_reco_700_900_CR2", "DeltaY_reco_900Inf_CR2",
@@ -1158,15 +1159,12 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
      || (ctx.get("dataset_version").find("ZZ") != std::string::npos)
      || (ctx.get("dataset_version").find("WZ") != std::string::npos) ) {
       sample_name = "Diboson";
-    }  
+    }
+    if( ctx.get("dataset_version").find("EtaT") != std::string::npos ) {
+      sample_name = "TTbar"; // toponium: use TTbar b-tag ratio (similar l+jets topology)
+    }
 
-    // *** CHANGED ***: set isEFT if sample_name == "TTbar_EFT"
-    // if(sample_name == "TTbar_EFT") {
-    //   isEFT = true;
-    // } else {
-    //   isEFT = false;
-    // }
-    if (debug)cout << "is it EFT? " << isEFT << endl;
+    if (debug) cout << "is it EFT? " << isEFT << endl;
   
     // 2D b-tag SF reading with the new logic (EFT or others):
     if(isMuon){
@@ -1176,8 +1174,9 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
       }
       else{
         ratio_hist_muon = (TH2F*)f_btag2Dsf_muon->Get("N_Jets_vs_HT_" + sample_name);
-      } 
-      ratio_hist_muon->SetDirectory(0);
+      }
+      if(!ratio_hist_muon) ratio_hist_muon = (TH2F*)f_btag2Dsf_muon->Get("N_Jets_vs_HT_TTbar"); // fallback for unknown samples
+      if(ratio_hist_muon) ratio_hist_muon->SetDirectory(0);
     }
     else if(!isMuon){
       TFile* f_btag2Dsf_ele = new TFile("/data/dust/user/deleokse/RunII_106_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/macros/src/files_BTagSF/customBtagSF_electron_"+year+".root");
@@ -1187,7 +1186,8 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
       else{
         ratio_hist_ele = (TH2F*)f_btag2Dsf_ele->Get("N_Jets_vs_HT_" + sample_name);
       }
-      ratio_hist_ele->SetDirectory(0);
+      if(!ratio_hist_ele) ratio_hist_ele = (TH2F*)f_btag2Dsf_ele->Get("N_Jets_vs_HT_TTbar"); // fallback for unknown samples
+      if(ratio_hist_ele) ratio_hist_ele->SetDirectory(0);
     }
   }
 
@@ -1524,8 +1524,8 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
 
   if(debug) cout << " set NNoutput " << endl;
 
-  // Only access gen branches for ttbar/EFT samples
-  if(isMC && is_ttbar_or_eft && event.is_valid(h_xi_gen)) {
+  // Only access gen branches for ttbar/EFT samples when GEN branches were declared
+  if(isMC && is_ttbar_or_eft && gen_branches_declared && event.is_valid(h_xi_gen)) {
     float xi = event.get(h_xi_gen);
     if(!std::isfinite(xi)) {
       // leave it unset; Hists guard will skip
@@ -1946,8 +1946,8 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
   // VariablesEFTCR2_module->process(event);
   // if(debug) cout << "done EFT CR2" << endl;
 
-  // Only access gen branches for ttbar/EFT samples
-  if(isMC && is_ttbar_or_eft && event.is_valid(h_xi_gen)) {
+  // Only access gen branches for ttbar/EFT samples when GEN branches were declared
+  if(isMC && is_ttbar_or_eft && gen_branches_declared && event.is_valid(h_xi_gen)) {
     event.set(h_xi_gen_out,     event.get(h_xi_gen));
     event.set(h_DeltaY_gen_out, event.get(h_DeltaY_gen));
     event.set(h_mtt_gen_out,    event.get(h_mtt_gen));
@@ -1988,24 +1988,14 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
         h_DeltaY_reco_SystVariations_350_500_SR->fill(event);
         h_DeltaY_reco_PDFVariations_350_500_SR->fill(event);
       }
-      // if (Mass_tt>=0 && Mass_tt < 700){
-      //   if(debug) cout << "signal DNN output0 chi2 0_700" << endl;
-      //   fill_histograms(event, "DeltaY_reco_0_700_SR");
-      //   //h_DeltaY_reco_SystVariations_0_700_SR->fill(event);
-      //   // h_DeltaY_reco_PDFVariations_0_700_SR->fill(event);
-      // }
-      // if(Mass_tt>=700 && Mass_tt < 900){
-      //   if(debug) cout << "signal DNN output0 chi2 700_900" << endl;
-      //   fill_histograms(event, "DeltaY_reco_700_900_SR");
-      //   //h_DeltaY_reco_SystVariations_700_900_SR->fill(event);
-      //   // h_DeltaY_reco_PDFVariations_700_900_SR->fill(event);
-      // }
-      // if(Mass_tt>=900 ){
-      //   if(debug) cout << "signal DNN output0 chi2 900_1500" << endl;
-      //   fill_histograms(event, "DeltaY_reco_900Inf_SR");
-      //   //h_DeltaY_reco_SystVariations_900Inf_SR->fill(event);
-      //   // h_DeltaY_reco_PDFVariations_900Inf_SR->fill(event);
-      // }
+      if(Mass_tt>=0 && Mass_tt < 500){
+        // cout << "In RECO Mttbar bin 350_500" << endl;
+        if(debug) cout << "signal DNN output0 chi2 0_500" << endl;
+        fill_histograms(event, "DeltaY_reco_0_500_SR");
+        h_DeltaY_reco_SystVariations_0_500_SR->fill(event);
+        h_DeltaY_reco_PDFVariations_0_500_SR->fill(event);
+      }
+  
       if(Mass_tt>=500 && Mass_tt < 750){
         // cout << "In RECO Mttbar bin 500_750" << endl;
         if(debug) cout << "signal DNN output0 chi2 500_750" << endl;

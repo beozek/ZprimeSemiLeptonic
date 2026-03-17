@@ -3,6 +3,7 @@
 #include <UHH2/common/include/TTbarGen.h>
 #include <UHH2/core/include/LorentzVector.h>
 #include <UHH2/core/include/Utils.h>
+#include <UHH2/core/include/GenParticle.h>
 #include <UHH2/common/include/Utils.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeCandidate.h>
 #include "UHH2/core/include/Event.h"
@@ -16,8 +17,49 @@
 #include "TFile.h"
 #include "TH1F.h"
 
+#include <set>
+
 using namespace std;
 using namespace uhh2;
+
+namespace {
+  // True if tau has e or mu in its decay chain (W->tau->e/mu).
+  bool tau_decays_to_emumu(const std::vector<GenParticle>* gps, int tau_index, std::set<int>& visited) {
+    if (!gps || gps->empty() || tau_index < 0) return false;
+    if (visited.count(tau_index)) return false;
+    visited.insert(tau_index);
+    const unsigned short uinv = (unsigned short)(-1);
+    for (const auto& gp : *gps) {
+      const bool from_m1 = (gp.mother1() != uinv && (int)gp.mother1() == tau_index);
+      const bool from_m2 = (gp.mother2() != uinv && (int)gp.mother2() == tau_index);
+      if (!from_m1 && !from_m2) continue;
+      const int id = std::abs(gp.pdgId());
+      if (id == 11 || id == 13) return true;
+      if (id == 15 && tau_decays_to_emumu(gps, gp.index(), visited)) return true;
+    }
+    return false;
+  }
+  // Return 4-vector of first e or mu in tau decay chain; if none, return zero vector (match will fail).
+  LorentzVector get_tau_decay_lep_v4(const std::vector<GenParticle>* gps, int tau_index, std::set<int>& visited) {
+    LorentzVector out(0,0,0,0);
+    if (!gps || gps->empty() || tau_index < 0) return out;
+    if (visited.count(tau_index)) return out;
+    visited.insert(tau_index);
+    const unsigned short uinv = (unsigned short)(-1);
+    for (const auto& gp : *gps) {
+      const bool from_m1 = (gp.mother1() != uinv && (int)gp.mother1() == tau_index);
+      const bool from_m2 = (gp.mother2() != uinv && (int)gp.mother2() == tau_index);
+      if (!from_m1 && !from_m2) continue;
+      const int id = std::abs(gp.pdgId());
+      if (id == 11 || id == 13) return gp.v4();
+      if (id == 15) {
+        LorentzVector sub = get_tau_decay_lep_v4(gps, gp.index(), visited);
+        if (sub.pt() > 0) return sub;
+      }
+    }
+    return out;
+  }
+}
 
 
 
@@ -395,10 +437,15 @@ bool ZprimeCorrectMatchDiscriminator::process(uhh2::Event& event){
 
     bool is_toptag_reconstruction = candidates.at(i).is_toptag_reconstruction();
 
-    // Gen-Lvl ttbar has to decay semileptonically
-    if(ttbargen.DecayChannel() != TTbarGen::e_muhad && ttbargen.DecayChannel() != TTbarGen::e_ehad){
+    // Gen-level: allow semilep e/μ and semilep tau->e/μ (same as Preselection xi_gen filling)
+    const auto dc = ttbargen.DecayChannel();
+    bool gen_semilep_ok = (dc == TTbarGen::e_muhad || dc == TTbarGen::e_ehad);
+    if (!gen_semilep_ok && dc == TTbarGen::e_tauhad && event.genparticles) {
+      std::set<int> vis;
+      gen_semilep_ok = tau_decays_to_emumu(event.genparticles, ttbargen.ChargedLepton().index(), vis);
+    }
+    if (!gen_semilep_ok) {
       candidates.at(i).set_discriminators("correct_match", 9999999);
-      // cout << "Not semileptonic decay" << endl;
       continue;
     }
 
@@ -511,8 +558,13 @@ bool ZprimeCorrectMatchDiscriminator::process(uhh2::Event& event){
     }
     correct_dr += dr;
 
-    // Lepton
-    dr = deltaR(ttbargen.ChargedLepton(), candidates.at(i).lepton());
+    // Lepton: for e/μ use ChargedLepton(); for tau->e/μ use decay product 4-vector
+    LorentzVector gen_lep_v4 = ttbargen.ChargedLepton().v4();
+    if (dc == TTbarGen::e_tauhad && event.genparticles) {
+      std::set<int> vis2;
+      gen_lep_v4 = get_tau_decay_lep_v4(event.genparticles, ttbargen.ChargedLepton().index(), vis2);
+    }
+    dr = deltaR(gen_lep_v4, candidates.at(i).lepton().v4());
     if(dr > 0.1){
       candidates.at(i).set_discriminators("correct_match", 9999999);
       continue;
@@ -2991,8 +3043,8 @@ TopPtReweighting::TopPtReweighting(uhh2::Context& ctx,
       wgt_b_down = sqrt(exp(a_+(0.5*b_)*tpt1)*exp(a_+(0.5*b_)*tpt2));
     }
 
-    event.weight *= wgt;
-
+    // one-sided: nominal has no toppt; use only weight_toppt_nominal for systematic. (Keep a/b up/down for later checks.)
+    // event.weight *= wgt;
     event.set(h_weight_toppt_nominal, wgt);
     event.set(h_weight_toppt_a_up, wgt_a_up);
     event.set(h_weight_toppt_b_up, wgt_b_up);

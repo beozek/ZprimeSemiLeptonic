@@ -110,6 +110,7 @@ protected:
   uhh2::Event::Handle<float> h_tmistag;
   uhh2::Event::Handle<float> h_tmistag_up;
   uhh2::Event::Handle<float> h_tmistag_down;
+  uhh2::Event::Handle<float> h_toppt_nominal;
   uhh2::Event::Handle<float> h_toppt_a_up;
   uhh2::Event::Handle<float> h_toppt_a_down;
   uhh2::Event::Handle<float> h_toppt_b_up;
@@ -613,6 +614,8 @@ protected:
   TH2F *DeltaY_tt;
   TH2F *DeltaY_reco_vs_gen;
   TH2F *Mtt_reco_vs_gen;
+  // NoAC GEN matching diagnostic: bin1 = no_gen_xi, bin2 = has_gen_xi
+  TH1F *NoAC_GenMatch;
 
   // New: GEN-level templates
   std::map<std::string, TH1F*> h_deltaY_xi_gen_map;
@@ -709,7 +712,7 @@ protected:
   static bool noac_weights_initialized;  // Flag to track if weights have been initialized
   // mttbar-binned weights: f -> vector over mttbar bins, each entry is a 1D weight hist in xi
   static std::map<float, std::vector<std::unique_ptr<TH1D>>> noac_weights_mtt_map;
-  static std::vector<double> noac_mtt_edges;  // mttbar bin edges
+  static std::vector<double> noac_mtt_edges;  // mttbar bin edges: [0,500), [500,750), [750,1000), [1000,1500), [1500,13000)
   static bool noac_weights_mtt_initialized;
   
   // Helper function to find mttbar bin index

@@ -20,6 +20,8 @@
 #include <UHH2/common/include/TopJetIds.h>
 #include <UHH2/common/include/TTbarGen.h>
 #include <UHH2/common/include/Utils.h>
+#include <UHH2/core/include/GenParticle.h>
+#include <set>
 #include <UHH2/common/include/AdditionalSelections.h>
 #include "UHH2/common/include/LuminosityHists.h"
 #include <UHH2/common/include/MuonHists.h>
@@ -41,6 +43,53 @@
 using namespace std;
 using namespace uhh2;
 
+namespace {
+  // True if tau has e or mu in its decay chain (W->tau->e/mu). False if tau->hadronic or unknown.
+  bool tau_decays_to_emumu(const std::vector<GenParticle>* gps, int tau_index, std::set<int>& visited) {
+    if (!gps || gps->empty() || tau_index < 0) return false;
+    if (visited.count(tau_index)) return false;
+    visited.insert(tau_index);
+    const unsigned short uinv = (unsigned short)(-1);
+    for (const auto& gp : *gps) {
+      const bool from_m1 = (gp.mother1() != uinv && (int)gp.mother1() == tau_index);
+      const bool from_m2 = (gp.mother2() != uinv && (int)gp.mother2() == tau_index);
+      if (!from_m1 && !from_m2) continue;
+      const int id = std::abs(gp.pdgId());
+      if (id == 11 || id == 13) return true;
+      if (id == 15 && tau_decays_to_emumu(gps, gp.index(), visited)) return true;
+    }
+    return false;
+  }
+  // True if any tau in the ttbar decay goes tau->hadronic. Exclude such events.
+  bool has_any_hadronic_tau_decay(const std::vector<GenParticle>* gps, const TTbarGen& ttbargen) {
+    if (!gps || gps->empty()) return true;  // conservative: exclude when uncertain
+    const auto dc = ttbargen.DecayChannel();
+    if (dc != TTbarGen::e_tauhad && dc != TTbarGen::e_tautau && dc != TTbarGen::e_etau && dc != TTbarGen::e_mutau)
+      return false;
+    std::set<int> visited;
+    if (dc == TTbarGen::e_tauhad) {
+      const auto& tau = ttbargen.ChargedLepton();
+      if (!tau_decays_to_emumu(gps, tau.index(), visited)) return true;
+      return false;
+    }
+    if (dc == TTbarGen::e_tautau) {
+      for (const auto& wd : {ttbargen.Wdecay1(), ttbargen.Wdecay2(), ttbargen.WMinusdecay1(), ttbargen.WMinusdecay2()}) {
+        if (std::abs(wd.pdgId()) == 15 && !tau_decays_to_emumu(gps, wd.index(), visited)) return true;
+      }
+      return false;
+    }
+    if (dc == TTbarGen::e_etau || dc == TTbarGen::e_mutau) {
+      for (const auto& wd : {ttbargen.Wdecay1(), ttbargen.Wdecay2(), ttbargen.WMinusdecay1(), ttbargen.WMinusdecay2()}) {
+        if (std::abs(wd.pdgId()) == 15) {
+          if (!tau_decays_to_emumu(gps, wd.index(), visited)) return true;
+          return false;
+        }
+      }
+    }
+    return false;
+  }
+}
+
 class ZprimePreselectionModule : public ModuleBASE {
 
 public:
@@ -52,9 +101,9 @@ public:
 protected:
   bool debug;
   
-  // mttbar mass bin edges
-  const std::vector<double> mttbar_bin_edges = {0., 350., 500., 750., 1000., 1500., 20000.};
-  // Bins: [0-350), [350-500), [500-750), [750-1000), [1000-1500), [1500-20000)
+  // mttbar mass bin edges (must match noac_mtt_edges in SystematicsHists for NoAC gen histograms)
+  const std::vector<double> mttbar_bin_edges = {0., 500., 750., 1000., 1500., 20000.};
+  // Bins: [0-500), [500-750), [750-1000), [1000-1500), [1500-20000)
   
   // Helper function to find mttbar bin
   inline int find_mtt_bin(double mtt) {
@@ -192,8 +241,11 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx) {
   CHSjetCorr.reset(new CHSJetCorrections());
   CHSjetCorr->init(ctx);
 
-  // TTbarGen producer
-  if(isMC) ttgenprod.reset(new TTbarGenProducer(ctx, "ttbargen", true));
+  // // TTbarGen producer
+  // if(isMC) ttgenprod.reset(new TTbarGenProducer(ctx, "ttbargen", true));
+  // TTbarGen producer (do not throw on non-ttbar MC, e.g. toponium EtaT)
+  const bool is_toponium = (ctx.get("dataset_version").find("EtaT") != std::string::npos);
+  if(isMC) ttgenprod.reset(new TTbarGenProducer(ctx, "ttbargen", !is_toponium));
 
   //// EVENT SELECTION
   jet1_sel.reset(new NJetSelection(1, -1, JetId(PtEtaCut(jet1_pt, 2.5))));
@@ -249,31 +301,28 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
   fill_histograms(event, "Input");
   if(debug) cout << "first plots input: ok" << endl;
 
-  // Calculate mttbar and fill appropriate bin histograms
+  // Calculate mttbar and xi_gen: all channels; exclude only W->tau->hadronic (include W->tau->e/mu)
   if (isMC && event.is_valid(h_ttbargen)) {
-    // set defaults first, every event
     event.set(h_xi_gen,     std::numeric_limits<float>::quiet_NaN());
     event.set(h_mtt_gen,    std::numeric_limits<float>::quiet_NaN());
     event.set(h_DeltaY_gen, std::numeric_limits<float>::quiet_NaN());
     const auto& ttbargen = event.get(h_ttbargen);
-    if (ttbargen.IsSemiLeptonicDecay()) {
-      int lepId = std::abs(ttbargen.ChargedLepton().pdgId());
-      if (lepId == 11 || lepId == 13) { 
-        const auto& top  = ttbargen.Top();
-        const auto& atop = ttbargen.Antitop();
-        double mtt = (top.v4() + atop.v4()).M();
-        double dy  = std::abs(top.v4().Rapidity()) - std::abs(atop.v4().Rapidity());
-        event.set(h_xi_gen,     std::tanh(dy));
-        event.set(h_mtt_gen,    static_cast<float>(mtt));
-        event.set(h_DeltaY_gen, static_cast<float>(dy));
+    const auto dc = ttbargen.DecayChannel();
+    const bool fill_gen = (dc != TTbarGen::e_notfound && !has_any_hadronic_tau_decay(event.genparticles, ttbargen));
+    if (fill_gen) {
+      const auto& top  = ttbargen.Top();
+      const auto& atop = ttbargen.Antitop();
+      double mtt = (top.v4() + atop.v4()).M();
+      double dy  = std::abs(top.v4().Rapidity()) - std::abs(atop.v4().Rapidity());
+      event.set(h_xi_gen,     std::tanh(dy));
+      event.set(h_mtt_gen,    static_cast<float>(mtt));
+      event.set(h_DeltaY_gen, static_cast<float>(dy));
 
-        // Only fill histograms if e/muon semileptonic
-        fill_histograms(event, "mtt_gen_inclusive");
-        const int ibin = find_mtt_bin(mtt);
-        if (ibin >= 0) {
-          const string bin_tag = "mtt_gen_" + to_string((int)mttbar_bin_edges[ibin]) + "_" + to_string((int)mttbar_bin_edges[ibin+1]);
-          fill_histograms(event, bin_tag);
-        }
+      fill_histograms(event, "mtt_gen_inclusive");
+      const int ibin = find_mtt_bin(mtt);
+      if (ibin >= 0) {
+        const string bin_tag = "mtt_gen_" + to_string((int)mttbar_bin_edges[ibin]) + "_" + to_string((int)mttbar_bin_edges[ibin+1]);
+        fill_histograms(event, bin_tag);
       }
     }
   }

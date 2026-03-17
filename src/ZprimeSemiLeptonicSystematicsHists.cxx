@@ -172,7 +172,7 @@ static inline std::string get_noac_suffix_from_f(float fv){
 std::map<float, std::unique_ptr<TH1D>> ZprimeSemiLeptonicSystematicsHists::noac_weights_map;
 bool ZprimeSemiLeptonicSystematicsHists::noac_weights_initialized = false;
 std::map<float, std::vector<std::unique_ptr<TH1D>>> ZprimeSemiLeptonicSystematicsHists::noac_weights_mtt_map;
-std::vector<double> ZprimeSemiLeptonicSystematicsHists::noac_mtt_edges = {0.0, 350.0, 500.0, 750.0, 1000.0, 1500.0, 10000.0};
+std::vector<double> ZprimeSemiLeptonicSystematicsHists::noac_mtt_edges = {0.0, 500.0, 750.0, 1000.0, 1500.0, 13000.0};
 bool ZprimeSemiLeptonicSystematicsHists::noac_weights_mtt_initialized = false;
 
 // Helper function to find mttbar bin index
@@ -329,6 +329,7 @@ Hists(ctx, dirname) {
   h_tmistag            = ctx.get_handle<float>("weight_topmistagsf");
   h_tmistag_up         = ctx.get_handle<float>("weight_topmistagsf_up");
   h_tmistag_down       = ctx.get_handle<float>("weight_topmistagsf_down");
+  h_toppt_nominal      = ctx.get_handle<float>("weight_toppt_nominal");
   h_toppt_a_up         = ctx.get_handle<float>("weight_toppt_a_up");
   h_toppt_a_down       = ctx.get_handle<float>("weight_toppt_a_down");
   h_toppt_b_up         = ctx.get_handle<float>("weight_toppt_b_up");
@@ -369,11 +370,12 @@ Hists(ctx, dirname) {
           sumH_mtt.push_back(nullptr);
         }
 
+        // For differential: load noac_gen_hist + "_mtt0".."_mtt4" (xi distribution per GEN mtt bin).
+        // Support old 6-bin preselection (0-350, 350-500, 500-750, ...): merge _mtt0+_mtt1 -> first bin [0,500).
         glob_t gl; memset(&gl, 0, sizeof(gl));
         int r = glob(noac_gen_file_.c_str(), 0, nullptr, &gl);
 
-        // STEP 1: Sum all of the histograms from ttree which was carried from preselection
-        // Reads gen-level tanh(delta|y|) histograms from all TTbar files
+        // STEP 1: Load gen-level xi histograms from noac_gen_file (typically preselection output)
         if(r == 0 && gl.gl_pathc > 0){
           if(debug) cout << "INFO: Initializing NoAC weights from " << gl.gl_pathc << " preselection files (histograms only)..." << endl;
 
@@ -382,16 +384,13 @@ Hists(ctx, dirname) {
             if(!f) return nullptr;
             TH1 *h_any = dynamic_cast<TH1*>(f->Get(name.c_str()));
             if(!h_any) return nullptr;
-            // Clone into TH1* first to avoid leaking if Clone() returns TH1F
             TH1 *h_tmp = static_cast<TH1*>(h_any->Clone("tmp"));
             if(!h_tmp) return nullptr;
-            // Try to cast to TH1D
             TH1D *h_clone = dynamic_cast<TH1D*>(h_tmp);
             if(h_clone){
               h_clone->SetDirectory(0);
               return std::unique_ptr<TH1D>(h_clone);
             }
-            // If Clone() returned TH1F, promote by copying into TH1D
             TH1D *h_new = new TH1D((std::string(h_any->GetName())+"_asTH1D").c_str(),
                                     h_any->GetTitle(),
                                     h_any->GetNbinsX(),
@@ -403,11 +402,11 @@ Hists(ctx, dirname) {
               h_new->SetBinContent(ib, h_any->GetBinContent(ib));
               h_new->SetBinError(ib,   h_any->GetBinError(ib));
             }
-            // Clean up the temporary clone
             delete h_tmp;
             return std::unique_ptr<TH1D>(h_new);
           };
 
+          bool use_6bin_merge = false;  // true if gen file has _mtt0.._mtt5 (old 6-bin): merge mtt0+mtt1 -> bin 0
           for(size_t i=0; i<gl.gl_pathc; ++i){
             const char *fp = gl.gl_pathv[i];
             std::unique_ptr<TFile> f(TFile::Open(fp));
@@ -432,20 +431,59 @@ Hists(ctx, dirname) {
               sumH_inclusive->Add(h_stored_ptr.get());
             }
 
-            // mtt-binned stored histograms
-            for(int ib = 0; ib < nmtt; ++ib){
-              TString mttName = TString::Format("%s_mtt%d", noac_gen_hist_.c_str(), ib);
-              auto h_stored_mtt_ptr = load_as_TH1D(f.get(), mttName.Data());
-              if(!h_stored_mtt_ptr){
-                cout << "WARNING: Expected stored mtt histogram '" << mttName << "' not found in " << fp << "." << endl;
-                continue;
+            // Detect 6-bin vs 5-bin on first successful file: if _mtt5 exists, old preselection (merge mtt0+mtt1)
+            if(i == 0){
+              TString mtt5Name = TString::Format("%s_mtt5", noac_gen_hist_.c_str());
+              use_6bin_merge = (f->Get(mtt5Name.Data()) != nullptr);
+              if(debug && use_6bin_merge) cout << "INFO: Gen file has 6 mtt bins; merging _mtt0+_mtt1 -> first bin [0,500)." << endl;
+            }
+
+            if(use_6bin_merge){
+              // Old preselection: _mtt0 [0-350], _mtt1 [350-500], _mtt2 [500-750], _mtt3 [750-1000], _mtt4 [1000-1500], _mtt5 [1500-...]
+              // Map to 5 bins: [0,500)=mtt0+mtt1, [500,750)=mtt2, [750,1000)=mtt3, [1000,1500)=mtt4, [1500,13000)=mtt5
+              std::vector<std::unique_ptr<TH1D>> h6(6);
+              for(int ib = 0; ib < 6; ++ib){
+                TString mttName = TString::Format("%s_mtt%d", noac_gen_hist_.c_str(), ib);
+                h6[ib] = load_as_TH1D(f.get(), mttName.Data());
+                if(!h6[ib]){
+                  cout << "WARNING: Expected stored mtt histogram '" << mttName << "' not found in " << fp << "." << endl;
+                  break;
+                }
               }
-              if(!sumH_mtt[ib]){
-                sumH_mtt[ib] = static_cast<TH1D*>(h_stored_mtt_ptr->Clone(TString::Format("Hgen_sum_mtt%d_from_hist", ib)));
-                sumH_mtt[ib]->SetDirectory(0);
-                sumH_mtt[ib]->Sumw2();
-              } else {
-                sumH_mtt[ib]->Add(h_stored_mtt_ptr.get());
+              if(h6[0] && h6[1]){
+                std::unique_ptr<TH1D> combined0(static_cast<TH1D*>(h6[0]->Clone("mtt0_500_combined")));
+                combined0->SetDirectory(0);
+                combined0->Add(h6[1].get());
+                if(!sumH_mtt[0]){
+                  sumH_mtt[0] = static_cast<TH1D*>(combined0->Clone("Hgen_sum_mtt0_from_hist"));
+                  sumH_mtt[0]->SetDirectory(0);
+                  sumH_mtt[0]->Sumw2();
+                } else sumH_mtt[0]->Add(combined0.get());
+              }
+              for(int ib = 1; ib < nmtt && ib < 6; ++ib){
+                if(!h6[ib+1]) break;
+                if(!sumH_mtt[ib]){
+                  sumH_mtt[ib] = static_cast<TH1D*>(h6[ib+1]->Clone(TString::Format("Hgen_sum_mtt%d_from_hist", ib)));
+                  sumH_mtt[ib]->SetDirectory(0);
+                  sumH_mtt[ib]->Sumw2();
+                } else sumH_mtt[ib]->Add(h6[ib+1].get());
+              }
+            } else {
+              // New 5-bin preselection: _mtt0.._mtt4 for [0,500), [500,750), [750,1000), [1000,1500), [1500,13000)
+              for(int ib = 0; ib < nmtt; ++ib){
+                TString mttName = TString::Format("%s_mtt%d", noac_gen_hist_.c_str(), ib);
+                auto h_stored_mtt_ptr = load_as_TH1D(f.get(), mttName.Data());
+                if(!h_stored_mtt_ptr){
+                  cout << "WARNING: Expected stored mtt histogram '" << mttName << "' not found in " << fp << "." << endl;
+                  continue;
+                }
+                if(!sumH_mtt[ib]){
+                  sumH_mtt[ib] = static_cast<TH1D*>(h_stored_mtt_ptr->Clone(TString::Format("Hgen_sum_mtt%d_from_hist", ib)));
+                  sumH_mtt[ib]->SetDirectory(0);
+                  sumH_mtt[ib]->Sumw2();
+                } else {
+                  sumH_mtt[ib]->Add(h_stored_mtt_ptr.get());
+                }
               }
             }
             f->Close();
@@ -858,6 +896,10 @@ void ZprimeSemiLeptonicSystematicsHists::init(){
   DeltaY_tt                    = book<TH2F>("DeltaY_tt", "#DeltaY_{t#bar{t}} ",                                       2, -2.5, 2.5, 2, -2.5, 2.5);
   DeltaY_reco_vs_gen           = book<TH2F>("DeltaY_reco_vs_gen", "RECO vs GEN #xi; #xi_{reco}; #xi_{gen}", 100, -1.0, 1.0, 100, -1.0, 1.0);
   Mtt_reco_vs_gen              = book<TH2F>("Mtt_reco_vs_gen", "RECO vs GEN M_{t#bar{t}}; M_{t#bar{t}}^{reco} [GeV]; M_{t#bar{t}}^{gen} [GeV]", 100, 0, 3000, 100, 0, 3000);
+  // NoAC GEN matching diagnostic: bin1 = no_gen_xi, bin2 = has_gen_xi
+  NoAC_GenMatch                = book<TH1F>("NoAC_GenMatch", "NoAC GEN matching;category;events", 2, 0.5, 2.5);
+  NoAC_GenMatch->GetXaxis()->SetBinLabel(1, "no_gen_xi");
+  NoAC_GenMatch->GetXaxis()->SetBinLabel(2, "has_gen_xi");
   
   {
       auto book_gen_by_name = [&](const std::string &hname, int nb){
@@ -1240,6 +1282,7 @@ void ZprimeSemiLeptonicSystematicsHists::fill(const Event & event){
   float tmistag_nominal    = event.get(h_tmistag);
   float tmistag_up         = event.get(h_tmistag_up);
   float tmistag_down       = event.get(h_tmistag_down);
+  float toppt_nominal      = event.get(h_toppt_nominal);
   float toppt_a_up         = event.get(h_toppt_a_up);
   float toppt_a_down       = event.get(h_toppt_a_down);
   float toppt_b_up         = event.get(h_toppt_b_up);
@@ -1313,8 +1356,8 @@ void ZprimeSemiLeptonicSystematicsHists::fill(const Event & event){
 
   vector<TH2F*> hists_tmistag_tt = {DeltaY_tmistag_up_tt, DeltaY_tmistag_down_tt};
 
-  //Top pt reweighting
-  vector<float> syst_toppt = {toppt_a_up, toppt_a_down, toppt_b_up, toppt_b_down};
+  // Top pt reweighting (one-sided: nominal = no weight; systematic = apply weight_toppt_nominal, up and down same)
+  vector<float> syst_toppt = {toppt_nominal, toppt_nominal, toppt_nominal, toppt_nominal};
   vector<TH1F*> hists_toppt = {DeltaY_toppt_a_up, DeltaY_toppt_a_down, DeltaY_toppt_b_up, DeltaY_toppt_b_down};
   vector<TH1F*> hists_toppt_dy_d1 = {DeltaY_reco_d1_toppt_a_up, DeltaY_reco_d1_toppt_a_down, DeltaY_reco_d1_toppt_b_up, DeltaY_reco_d1_toppt_b_down};
   vector<TH1F*> hists_toppt_dy_d2 = {DeltaY_reco_d2_toppt_a_up, DeltaY_reco_d2_toppt_a_down, DeltaY_reco_d2_toppt_b_up, DeltaY_reco_d2_toppt_b_down};
@@ -1480,11 +1523,25 @@ void ZprimeSemiLeptonicSystematicsHists::fill(const Event & event){
       }
 
       const double deltay_xi = TMath::TanH(deltay_reco);
-      // Only access gen branches if they are valid (branches were declared in main module)
+      // Only access gen branches if they are valid (branches were declared in main module).
+      // Match previous (test) behavior: do NOT exclude events from NoAC based on xi value (e.g. NaN for hadronic/2l2nu);
+      // use branch validity only for do_noac; clamp_xi() gives 0.0 for non-finite so weight lookup is safe.
       double xi_gen_evt = 0.0; // Initialize to default value
-      if(event.is_valid(h_xi_gen)){
+      const bool branch_valid = event.is_valid(h_xi_gen);
+      if(branch_valid){
         xi_gen_evt = clamp_xi(static_cast<double>(event.get(h_xi_gen)));
         DeltaY_reco_vs_gen->Fill(deltay_xi, xi_gen_evt, weight);
+      }
+      // Diagnostic: count events by gen xi (has valid xi_gen from Preselection vs no/invalid)
+      // has_gen_xi = true for semilep e/μ/τ→e/μ, dilep, hadronic (Preselection sets xi_gen for all except W→τ→hadronic)
+      const float xi_raw = branch_valid ? event.get(h_xi_gen) : std::numeric_limits<float>::quiet_NaN();
+      const bool has_gen_xi = branch_valid && std::isfinite(xi_raw) && xi_raw >= -1.0f && xi_raw <= 1.0f;
+      if(is_mc && is_tt && use_noac_evtweights_ && noac_weights_initialized){
+        if(has_gen_xi){
+          NoAC_GenMatch->Fill(2.0, weight); // has_gen_xi (valid gen-level xi: semilep e/μ/τ→e/μ, dilep, hadronic)
+        } else {
+          NoAC_GenMatch->Fill(1.0, weight); // no_gen_xi (W→τ→hadronic or invalid)
+        }
       }
       
       // Fill Mtt reco vs gen
@@ -1494,50 +1551,48 @@ void ZprimeSemiLeptonicSystematicsHists::fill(const Event & event){
           Mtt_reco_vs_gen->Fill(mtt_reco, mtt_gen_val, weight);
       }
       
-      // ---------------- NoAC: compute GEN-based weight (no reco-bin condition) ----------------
-      // CRITICAL: Weight selection is based on GEN mttbar bin ONLY.
-      // RECO mttbar is ONLY used for directory organization, NOT for weight selection.
-      // This handles migration: events outside the RECO bin but inside a GEN bin still get the weight.
-      // Only enable NoAC if gen branches are valid (were declared in main module)
-      const bool do_noac = (is_mc && is_tt && use_noac_evtweights_ && noac_weights_initialized && event.is_valid(h_xi_gen));
+      // ---------------- NoAC: all events filled; weight = 1 when no gen match ----------------
+      // fill_noac: fill NoAC templates for ALL events (same set as nominal xi histograms).
+      // do_noac: event has valid gen xi for reweighting; if false, use weight 1.0 but still fill.
+      const bool fill_noac = (is_mc && is_tt && use_noac_evtweights_ && noac_weights_initialized);
+      const bool do_noac = (fill_noac && has_gen_xi);  // only for weight lookup; no-match events get weight 1
       
+      // ------ Differential NoAC: weight from event's GEN mttbar bin AND xi_gen ------
+      // (1) Event's GEN mttbar bin: from mtt_gen branch (preselection) + noac_mtt_edges.
+      //     gen_mtt_ib = 0..4 for [0,500), [500,750), [750,1000), [1000,1500), [1500,13000).
+      // (2) Per-bin weight W(xi): noac_weights_mtt_map[fv][gen_mtt_ib]. No match -> weight 1.0.
       double mtt_gen_evt = 0.0;
-      int gen_mtt_ib = -1;  // GEN mttbar bin index (used for weight lookup)
-      
-      if(do_noac){
+      int gen_mtt_ib = -1;  // event's GEN mtt bar bin index; -1 if no valid gen -> weight 1 for all templates
+
+      if(fill_noac){
         try{
-          mtt_gen_evt = static_cast<double>(event.get(h_mtt_gen));
-          gen_mtt_ib = find_mtt_bin(mtt_gen_evt);
-          // Safety: clamp to valid range
+          mtt_gen_evt = static_cast<double>(event.get(h_mtt_gen));  // from event (preselection branch)
+          gen_mtt_ib = find_mtt_bin(mtt_gen_evt);                   // bin from noac_mtt_edges
           const int nmtt = (int)noac_mtt_edges.size() - 1;
           if(gen_mtt_ib >= 0 && gen_mtt_ib >= nmtt) gen_mtt_ib = nmtt - 1;
         } catch(...){
-          // If mtt_gen not available, gen_mtt_ib stays -1 and we'll use inclusive weights
           gen_mtt_ib = -1;
         }
       }
-      
-      // Helper lambda: compute NoAC weight for a specific GEN mttbar bin template
-      // Returns the weight if the event's GEN bin matches the template bin, else 1.0
+
+      // Weight = W_f(xi_gen) when event's GEN bin matches template bin and has valid gen xi; else 1.0.
       auto noac_weight_for_gen_bin = [&](float fv, int template_gen_ib) -> double {
-        if(!do_noac) return 1.0;
-        
-        // Only apply NoAC weight if the event's GEN bin matches the template bin
-        if(gen_mtt_ib != template_gen_ib) return 1.0;
-        
-        // Event's GEN bin matches template bin -> apply NoAC weight
+        if(!do_noac) return 1.0;  // no gen match -> weight 1, still filled
+        if(gen_mtt_ib != template_gen_ib) return 1.0;  // only reweight when event is in this GEN mtt bin
+
+        // Use weight histogram for this GEN mtt bin (built from gen file _mtt0.._mtt4)
         if(use_noac_mtt_binning_ && noac_weights_mtt_initialized){
           auto it = noac_weights_mtt_map.find(fv);
           if(it != noac_weights_mtt_map.end()
              && template_gen_ib >= 0
              && template_gen_ib < (int)it->second.size()
              && it->second[template_gen_ib]){
-            
+
             return lookup_noac_weight(it->second[template_gen_ib].get(), xi_gen_evt);
           }
         }
-        
-        // Fallback: inclusive weights (if GEN-mtt-binned weights not available)
+
+        // Fallback when gen file has no per-bin histograms (_mtt0.._mtt4)
         auto it2 = noac_weights_map.find(fv);
         if(it2 != noac_weights_map.end() && it2->second){
           return lookup_noac_weight(it2->second.get(), xi_gen_evt);
@@ -1590,37 +1645,16 @@ void ZprimeSemiLeptonicSystematicsHists::fill(const Event & event){
       //
       //  (b) GEN-mtt-differential templates:
       //      DeltaY_xi_reco_N_mtt<lo>_<hi>_noacX
-      //      for a given GEN-mtt bin [lo,hi) only events in that bin are
-      //      reweighted; events outside keep nominal weight.
+      //      Weight = W_f(xi_gen) from the template for GEN mtt bin [lo,hi), only when
+      //      event's GEN mtt is in [lo,hi); otherwise weight 1. So both xi_gen and mtt_gen are used.
 
       // (a) Inclusive NoAC templates (global f)
-      // CRITICAL: No RECO mttbar condition in weighting decision.
-      // Weight selection is based on GEN mttbar bin AND GEN xi (tanh bin).
-      // RECO mttbar is only used for directory organization
-      // IMPORTANT: Even for inclusive templates, we use GEN-mtt-binned weights based on the event's GEN bin.
-      // This ensures consistency: each event uses the weight for its GEN mttbar bin and GEN xi (tanh bin).
-      if(do_noac){
+      // All events are filled; weight = W_f(xi_gen) when has gen match, else 1.0.
+      if(fill_noac){
         const int bin_schemes[] = {6, 12, 18, 24, 30, 36, 50};
 
         for(const float fv : f_values){
-          // Use GEN-mtt-binned weight for the event's own GEN bin (if available), else fallback to inclusive
-          double w_f = 1.0;
-          if(use_noac_mtt_binning_ && noac_weights_mtt_initialized && gen_mtt_ib >= 0){
-            // Use GEN-mtt-binned weight for this event's GEN bin
-            auto it = noac_weights_mtt_map.find(fv);
-            if(it != noac_weights_mtt_map.end()
-               && gen_mtt_ib >= 0
-               && gen_mtt_ib < (int)it->second.size()
-               && it->second[gen_mtt_ib]){
-              w_f = lookup_noac_weight(it->second[gen_mtt_ib].get(), xi_gen_evt);
-            } else {
-              // Fallback to inclusive weights if GEN-mtt-binned not available
-              w_f = noac_weight_inclusive(fv);
-            }
-          } else {
-            // Fallback to inclusive weights if GEN-mtt-binning disabled or not initialized
-            w_f = noac_weight_inclusive(fv);
-          }
+          double w_f = do_noac ? noac_weight_inclusive(fv) : 1.0;
           const std::string suffix = get_noac_suffix_from_f(fv);
 
           // Fill all reco xi binnings for this f (inclusive in mtt)
@@ -1656,7 +1690,7 @@ void ZprimeSemiLeptonicSystematicsHists::fill(const Event & event){
       //   - Fills DeltaY_xi_reco_18_mtt1000_1500_noac4 with weight = 1.0 (doesn't match GEN bin)
       //   - This shows migration: events from GEN [500,750) appear in RECO [750,1000) folder
       //
-      if(do_noac && use_noac_mtt_binning_ && noac_weights_mtt_initialized){
+      if(fill_noac && use_noac_mtt_binning_ && noac_weights_mtt_initialized){
         const int bin_schemes[] = {6, 12, 18, 24, 30, 36, 50};
         const int nmtt = (int)noac_mtt_edges.size() - 1;
         

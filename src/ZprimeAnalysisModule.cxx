@@ -516,7 +516,10 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
      || (ctx.get("dataset_version").find("ZZ") != std::string::npos)
      || (ctx.get("dataset_version").find("WZ") != std::string::npos) ) {
       sample_name = "Diboson";
-    }  
+    }
+    if( ctx.get("dataset_version").find("EtaT") != std::string::npos ) {
+      sample_name = "TTbar"; // toponium: use TTbar b-tag ratio (similar l+jets topology)
+    }
 
     // *** CHANGED ***: set isEFT if sample_name == "TTbar_EFT"
     if(sample_name == "TTbar_EFT") {
@@ -534,17 +537,19 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
       else {
         ratio_hist_muon = (TH2F*)f_btag2Dsf->Get("N_Jets_vs_HT_" + sample_name);
       }
-      ratio_hist_muon->SetDirectory(0);
+      if(!ratio_hist_muon) ratio_hist_muon = (TH2F*)f_btag2Dsf->Get("N_Jets_vs_HT_TTbar"); // fallback for unknown samples
+      if(ratio_hist_muon) ratio_hist_muon->SetDirectory(0);
     }
     else if(!isMuon){
       TFile* f_btag2Dsf = new TFile("/data/dust/user/deleokse/RunII_106_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/macros/src/files_BTagSF/customBtagSF_electron_"+year+".root");
       if(isEFT){
         ratio_hist_ele = (TH2F*)f_btag2Dsf->Get("N_Jets_vs_HT_TTbar");
-      } 
+      }
       else{
         ratio_hist_ele = (TH2F*)f_btag2Dsf->Get("N_Jets_vs_HT_" + sample_name);
       }
-      ratio_hist_ele->SetDirectory(0);
+      if(!ratio_hist_ele) ratio_hist_ele = (TH2F*)f_btag2Dsf->Get("N_Jets_vs_HT_TTbar"); // fallback for unknown samples
+      if(ratio_hist_ele) ratio_hist_ele->SetDirectory(0);
     }
   }
 
