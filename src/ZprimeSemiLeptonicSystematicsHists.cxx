@@ -172,7 +172,14 @@ static inline std::string get_noac_suffix_from_f(float fv){
 std::map<float, std::unique_ptr<TH1D>> ZprimeSemiLeptonicSystematicsHists::noac_weights_map;
 bool ZprimeSemiLeptonicSystematicsHists::noac_weights_initialized = false;
 std::map<float, std::vector<std::unique_ptr<TH1D>>> ZprimeSemiLeptonicSystematicsHists::noac_weights_mtt_map;
-std::vector<double> ZprimeSemiLeptonicSystematicsHists::noac_mtt_edges = {0.0, 500.0, 750.0, 1000.0, 1500.0, 13000.0};
+
+//SWITCH BETWEEN 5-BIN AND 4-BIN
+// ---- 5-bin scheme (default): [0,500), [500,750), [750,1000), [1000,1500), [1500,13000) ----
+// std::vector<double> ZprimeSemiLeptonicSystematicsHists::noac_mtt_edges = {0.0, 500.0, 750.0, 1000.0, 1500.0, 13000.0};
+// std::vector<std::string> ZprimeSemiLeptonicSystematicsHists::noac_mtt_gen_suffixes = {"_mtt0", "_mtt1", "_mtt2", "_mtt3", "_mtt4"};
+// ---- 4-bin scheme (merged 0-750): uncomment below, comment above ----
+std::vector<double> ZprimeSemiLeptonicSystematicsHists::noac_mtt_edges = {0.0, 750.0, 1000.0, 1500.0, 13000.0};
+std::vector<std::string> ZprimeSemiLeptonicSystematicsHists::noac_mtt_gen_suffixes = {"_mtt_0to750", "_mtt2", "_mtt3", "_mtt4"};
 bool ZprimeSemiLeptonicSystematicsHists::noac_weights_mtt_initialized = false;
 
 // Helper function to find mttbar bin index
@@ -469,10 +476,10 @@ Hists(ctx, dirname) {
                 } else sumH_mtt[ib]->Add(h6[ib+1].get());
               }
             } else {
-              // New 5-bin preselection: _mtt0.._mtt4 for [0,500), [500,750), [750,1000), [1000,1500), [1500,13000)
+              // Load GEN xi histograms using noac_mtt_gen_suffixes (supports 5-bin and 4-bin schemes)
               for(int ib = 0; ib < nmtt; ++ib){
-                TString mttName = TString::Format("%s_mtt%d", noac_gen_hist_.c_str(), ib);
-                auto h_stored_mtt_ptr = load_as_TH1D(f.get(), mttName.Data());
+                std::string mttName = noac_gen_hist_ + noac_mtt_gen_suffixes[ib];
+                auto h_stored_mtt_ptr = load_as_TH1D(f.get(), mttName);
                 if(!h_stored_mtt_ptr){
                   cout << "WARNING: Expected stored mtt histogram '" << mttName << "' not found in " << fp << "." << endl;
                   continue;

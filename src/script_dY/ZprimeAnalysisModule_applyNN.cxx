@@ -977,7 +977,6 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   electron_cleaner_high.reset(new ElectronCleaner(electronID_high));
 
   // Important selection values
-  double chi2_max(30.);
   string trigger_mu_A, trigger_mu_B, trigger_mu_C, trigger_mu_D, trigger_mu_E, trigger_mu_F;
   string trigger_ele_A, trigger_ele_B;
   string trigger_ph_A;

@@ -671,8 +671,9 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   muon_cleaner_high.reset(new MuonCleaner(muonID_high));
   electron_cleaner_high.reset(new ElectronCleaner(electronID_high));
 
-  // Important selection values
-  double chi2_max(30.);
+  // Important selection values — topology-dependent chi2 thresholds
+  double chi2_max_resolved = stod(ctx.get("chi2_max_resolved", "30."));
+  double chi2_max_merged   = stod(ctx.get("chi2_max_merged",   "30."));
   string trigger_mu_A, trigger_mu_B, trigger_mu_C, trigger_mu_D, trigger_mu_E, trigger_mu_F;
   string trigger_A, trigger_B;
   string trigger_ph_A;
@@ -776,8 +777,8 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   sf_ele_id_dummy.reset(new uhh2::ElectronIdScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
   sf_ele_reco_dummy.reset(new uhh2::ElectronRecoScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
 
-  // Selection modules
-  Chi2_selection.reset(new Chi2Cut(ctx, 0., chi2_max));
+  // Selection modules — separate chi2 thresholds for resolved and merged topologies
+  Chi2_selection.reset(new Chi2Cut(ctx, 0., chi2_max_resolved, chi2_max_merged));
   TwoDCut_selection_low1.reset(new TwoDCut(0.3, 10.));
   TTbarMatchable_selection.reset(new TTbarSemiLepMatchableSelection());
   Chi2CandidateMatched_selection.reset(new Chi2CandidateMatchedSelection(ctx));

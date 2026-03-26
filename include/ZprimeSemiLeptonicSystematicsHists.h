@@ -712,7 +712,8 @@ protected:
   static bool noac_weights_initialized;  // Flag to track if weights have been initialized
   // mttbar-binned weights: f -> vector over mttbar bins, each entry is a 1D weight hist in xi
   static std::map<float, std::vector<std::unique_ptr<TH1D>>> noac_weights_mtt_map;
-  static std::vector<double> noac_mtt_edges;  // mttbar bin edges: [0,500), [500,750), [750,1000), [1000,1500), [1500,13000)
+  static std::vector<double> noac_mtt_edges;  // mttbar bin edges for differential NoAC
+  static std::vector<std::string> noac_mtt_gen_suffixes;  // histogram suffix per bin (must match preselection names)
   static bool noac_weights_mtt_initialized;
   
   // Helper function to find mttbar bin index

@@ -77,11 +77,13 @@ namespace uhh2 {
 
   class Chi2Cut : public Selection{
   public:
-    explicit Chi2Cut(uhh2::Context&, float, float max=-1);
+    explicit Chi2Cut(uhh2::Context&, float min, float max=-1);
+    Chi2Cut(uhh2::Context&, float min, float max_resolved, float max_merged);
     virtual bool passes(const Event&) override;
 
   private:
-    float min_, max_;
+    float min_, max_resolved_, max_merged_;
+    bool topology_dependent_;
     uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidate;
     uhh2::Event::Handle<bool> h_is_zprime_reconstructed;
   };

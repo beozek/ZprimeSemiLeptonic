@@ -103,7 +103,8 @@ protected:
   
   // mttbar mass bin edges (must match noac_mtt_edges in SystematicsHists for NoAC gen histograms)
   const std::vector<double> mttbar_bin_edges = {0., 500., 750., 1000., 1500., 20000.};
-  // Bins: [0-500), [500-750), [750-1000), [1000-1500), [1500-20000)
+  // Fine bins: [0-500), [500-750), [750-1000), [1000-1500), [1500-20000)
+  // Additionally book/fill mtt_gen_0_750 = merged [0, 750) (overlaps first two fine bins).
   
   // Helper function to find mttbar bin
   inline int find_mtt_bin(double mtt) {
@@ -275,6 +276,8 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx) {
     const string bin_tag = "mtt_gen_" + to_string((int)low) + "_" + to_string((int)high);
     histogram_tags.push_back(bin_tag);
   }
+  // Merged GEN mtt folder (e.g. DeltaY_xi_gen_* in mtt_gen_0_750_General/); filled for mtt in [0, 750) GeV
+  histogram_tags.push_back("mtt_gen_0_750");
   
   book_histograms(ctx, histogram_tags);
 
@@ -323,6 +326,10 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
       if (ibin >= 0) {
         const string bin_tag = "mtt_gen_" + to_string((int)mttbar_bin_edges[ibin]) + "_" + to_string((int)mttbar_bin_edges[ibin+1]);
         fill_histograms(event, bin_tag);
+      }
+      // Merged [0, 750) GeV: same events as fine bins 0-500 and 500-750
+      if (mtt >= mttbar_bin_edges[0] && mtt < mttbar_bin_edges[2]) {
+        fill_histograms(event, "mtt_gen_0_750");
       }
     }
   }

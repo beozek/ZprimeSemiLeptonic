@@ -379,7 +379,12 @@ std::pair<bool,double> TTbarSemiLepMatchableSelection::check_reco(const Reconstr
 
 ////////////////////////////////////////////////////////////////
 
-uhh2::Chi2Cut::Chi2Cut(Context& ctx, float min, float max): min_(min), max_(max){
+uhh2::Chi2Cut::Chi2Cut(Context& ctx, float min, float max): min_(min), max_resolved_(max), max_merged_(max), topology_dependent_(false){
+  h_BestZprimeCandidate = ctx.get_handle<ZprimeCandidate*>("ZprimeCandidateBestChi2");
+  h_is_zprime_reconstructed = ctx.get_handle<bool>("is_zprime_reconstructed_chi2");
+}
+
+uhh2::Chi2Cut::Chi2Cut(Context& ctx, float min, float max_resolved, float max_merged): min_(min), max_resolved_(max_resolved), max_merged_(max_merged), topology_dependent_(true){
   h_BestZprimeCandidate = ctx.get_handle<ZprimeCandidate*>("ZprimeCandidateBestChi2");
   h_is_zprime_reconstructed = ctx.get_handle<bool>("is_zprime_reconstructed_chi2");
 }
@@ -387,15 +392,17 @@ uhh2::Chi2Cut::Chi2Cut(Context& ctx, float min, float max): min_(min), max_(max)
 bool uhh2::Chi2Cut::passes(const uhh2::Event& event){
 
   bool is_zprime_reconstructed = event.get(h_is_zprime_reconstructed);
-  // if(!is_zprime_reconstructed) throw runtime_error("In ZprimeSemiLeptonicSelections.cxx: Chi2Cut::passes: The Zprime was never reconstructed. Do this before trying to cut on its chi2.");
-  bool pass = false;
-  if(is_zprime_reconstructed){
-    ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidate);
-    double chi2 = BestZprimeCandidate->discriminator("chi2_total");
-    if(chi2 >= min_ && (chi2 < max_ || max_ < 0)) pass = true;
+  if(!is_zprime_reconstructed) return false;
+
+  ZprimeCandidate* BestZprimeCandidate = event.get(h_BestZprimeCandidate);
+  double chi2 = BestZprimeCandidate->discriminator("chi2_total");
+
+  float max_cut = max_resolved_;
+  if(topology_dependent_ && BestZprimeCandidate->is_toptag_reconstruction()){
+    max_cut = max_merged_;
   }
 
-  return pass;
+  return (chi2 >= min_ && (chi2 < max_cut || max_cut < 0));
 }
 
 uhh2::STlepPlusMetCut::STlepPlusMetCut(float min, float max):

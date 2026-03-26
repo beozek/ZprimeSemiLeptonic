@@ -382,6 +382,13 @@ void ZprimeSemiLeptonicPreselectionHists::init(){
   DeltaY_xi_gen_18_mtt2 = book<TH1F>("DeltaY_xi_gen_18_mtt2", "#xi = tanh(#Delta|Y|) GEN (750-1000)", 18, -1.0, 1.0);
   DeltaY_xi_gen_18_mtt3 = book<TH1F>("DeltaY_xi_gen_18_mtt3", "#xi = tanh(#Delta|Y|) GEN (1000-1500)", 18, -1.0, 1.0);
   DeltaY_xi_gen_18_mtt4 = book<TH1F>("DeltaY_xi_gen_18_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-13000)", 18, -1.0, 1.0);
+
+  // Merged [0,750) GEN mtt bin (union of mtt0+mtt1) — use alongside fine bins
+  DeltaY_xi_gen_300_mtt_0to750 = book<TH1F>("DeltaY_xi_gen_300_mtt_0to750", "#xi = tanh(#Delta|Y|) GEN (0-750)", 300, -1.0, 1.0);
+  DeltaY_xi_gen_100_mtt_0to750 = book<TH1F>("DeltaY_xi_gen_100_mtt_0to750", "#xi = tanh(#Delta|Y|) GEN (0-750)", 100, -1.0, 1.0);
+  DeltaY_xi_gen_mtt_0to750     = book<TH1F>("DeltaY_xi_gen_mtt_0to750",     "#xi = tanh(#Delta|Y|) GEN (0-750)",  50, -1.0, 1.0);
+  DeltaY_xi_gen_18_mtt_0to750  = book<TH1F>("DeltaY_xi_gen_18_mtt_0to750",  "#xi = tanh(#Delta|Y|) GEN (0-750)",  18, -1.0, 1.0);
+
   // Response matrix for template method
 
 }
@@ -850,6 +857,8 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
   if(is_tt && is_mc && event.is_valid(h_ttbargen)) {
     const auto& ttbargen = event.get(h_ttbargen);
     if(ttbargen.DecayChannel() != TTbarGen::e_notfound && !has_any_hadronic_tau_decay(event.genparticles, ttbargen)) {
+        // Gen templates: use event.weight (gen nominal from job setup). ZprimePreselectionModule fills
+        // these before CommonModules, so PU/lepton/b-tag reco weights are not in weight yet.
         const GenParticle& gen_top = ttbargen.Top();
         const GenParticle& gen_antitop = ttbargen.Antitop();
         
@@ -884,6 +893,14 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
           if(mtt_gen_val < mtt_edges[0]) mtt_bin = 0;
           else if(mtt_gen_val >= mtt_edges[5]) mtt_bin = 4;
         }
+        // Fill merged [0,750) histograms for events in mtt_bin 0 or 1
+        if(mtt_bin == 0 || mtt_bin == 1){
+          DeltaY_xi_gen_300_mtt_0to750->Fill(xi_gen_val, weight);
+          DeltaY_xi_gen_100_mtt_0to750->Fill(xi_gen_val, weight);
+          DeltaY_xi_gen_18_mtt_0to750->Fill(xi_gen_val, weight);
+          DeltaY_xi_gen_mtt_0to750->Fill(xi_gen_val, weight);
+        }
+
         switch (mtt_bin) {
           case 0:
             DeltaY_xi_gen_300_mtt0->Fill(xi_gen_val, weight);

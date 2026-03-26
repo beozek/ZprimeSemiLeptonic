@@ -56,6 +56,8 @@ void CHSJetCorrections::init(Context & ctx){
     jet_corrector_MC->setupUL18(std::make_shared<GenericJetCorrector>(ctx, JERFiles::JECFilesMC(jec_tag_UL18, jec_ver_UL18, jec_jet_coll),"jetsAk4CHS"));
 
    const Year & year = extract_year(ctx);
+    std::cout << "[CHSJetCorrections] dataset_version='" << ctx.get("dataset_version")
+              << "', extracted year='" << year_str_map.at(year) << "'" << std::endl;
     std::string jer_tag = "";
     if (year == Year::isUL16preVFP) {
       jer_tag = "Summer20UL16APV_JRV3";
