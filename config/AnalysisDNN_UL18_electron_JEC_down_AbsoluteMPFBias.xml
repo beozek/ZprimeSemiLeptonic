@@ -58,7 +58,7 @@
 			<Item Name="pileup_directory_data_up" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/common/UHH2-data/UL18/MyDataPileupHistogram_UL18_72383.root"/>
 			<Item Name="pileup_directory_data_down" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/common/UHH2-data/UL18/MyDataPileupHistogram_UL18_66017.root"/>
 
-			<Item Name="NLOCorrections" Value = "/data/dust/user/jabuschh/uhh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/"/>
+			<Item Name="NLOCorrections" Value = "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/"/>
 
 			<Item Name="is_hotvr" Value="&IS_HOTVR;"/>
 			<Item Name="is_deepAK8" Value="&IS_DEEPAK8;"/>
@@ -98,7 +98,14 @@
 				<Item Name="channel" Value="&CHANNEL;"/>
 				<Item Name="sample" Value="&SAMPLE;"/>
 
-				<Item Name="AnalysisModule" Value="ZprimeAnalysisModule_applyNN"/>
+	
+			<!-- ttbar EW (HATHOR) + NNLO QCD top-pT corrections -->
+			<Item Name="ApplyTTbarEWKCorrection" Value="true"/>
+			<Item Name="TTbarEWKCorrectionFile" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/top_pt_reweighting/HATHORMGPY_costheta.root"/>
+			<Item Name="ApplyTTbarNNLOQCDReweighting" Value="true"/>
+			<Item Name="TTbarNNLOQCDScaleFactor" Value="SF_3"/>
+
+			<Item Name="AnalysisModule" Value="ZprimeAnalysisModule_applyNN"/>
 			</UserConfig>
 
 		</Cycle>

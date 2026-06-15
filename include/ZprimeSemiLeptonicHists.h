@@ -43,6 +43,7 @@ protected:
   TH1F *NPV, *MET, *MET_rebin, *MET_rebin2, *MET_rebin3, *ST, *ST_rebin, *ST_rebin2, *ST_rebin3, *STjets, *STjets_rebin, *STjets_rebin2, *STjets_rebin3, *STlep, *STlep_rebin, *STlep_rebin2, *STlep_rebin3, *DeltaY_notMatched, *DeltaY_reco, *DeltaY_reco_best_plot, *DeltaY_gen_best_plot, *DeltaY_reco_0_500,*DeltaY_reco_500_750, *DeltaY_reco_750_1000,*DeltaY_reco_1000_1500, *DeltaY_reco_1500Inf;
   TH1F *DeltaY_gen, *DeltaY_xi_reco, *DeltaY_xi_reco_20, *DeltaY_xi_reco_10, *DeltaY_xi_reco_6, *DeltaY_xi_reco_12, *DeltaY_xi_reco_18, *DeltaY_xi_reco_24, *DeltaY_xi_reco_30, *DeltaY_xi_reco_36, *DeltaY_xi_gen, *Mtt_gen, *DeltaY_reco_unw, *DeltaY_xi_reco_unw;
   TH1F *toplep_pt, *toplep_eta, *toplep_phi, *toplep_m, *tophad_pt, *tophad_eta, *tophad_phi, *tophad_m, *ditop_mass, *ditop_absDeltaPhi, *ditop_deltaEta, *ditop_absDeltaEta, *ditop_deltaR, *M_Zprime, *M_Zprime_rebin, *M_Zprime_rebin2, *M_Zprime_rebin3, *M_Zprime_rebin4, *M_Zprime_rebin5, *M_Zprime_rebin6, *M_Zprime_rebin7, *M_Zprime_rebin8, *chi2_Zprime, *chi2_Zprime_rebin, *chi2_Zprime_rebin2, *M_tophad, *M_toplep, *M_Zprime_ak4, *M_Zprime_ak4_rebin, *M_Zprime_ak4_rebin2, *M_Zprime_ak4_rebin3, *M_Zprime_ak4_rebin4, *M_Zprime_ak4_rebin5, *M_Zprime_ak4_rebin6, *M_Zprime_ak4_rebin7, *chi2_Zprime_ak4, *chi2_Zprime_ak4_rebin, *chi2_Zprime_ak4_rebin2, *M_tophad_ak4, *M_toplep_ak4, *M_Zprime_ttag, *M_Zprime_ttag_rebin, *M_Zprime_ttag_rebin2, *M_Zprime_ttag_rebin3, *M_Zprime_ttag_rebin4, *M_Zprime_ttag_rebin5, *M_Zprime_ttag_rebin6, *M_Zprime_ttag_rebin7, *chi2_Zprime_ttag, *chi2_Zprime_ttag_rebin, *chi2_Zprime_ttag_rebin2, *M_tophad_ttag, *M_tophad_ttag_M, *M_tophad_ttag_v4, *M_toplep_ttag, *M_tophad_dr_ak4, *M_toplep_dr_ak4, *M_tophad_dr_ttag, *M_toplep_dr_ttag, *dr_discr_Zprime, *M_Zprime_dr, *M_Zprime_dr_rebin, *M_Zprime_dr_rebin2, *M_Zprime_dr_rebin3, *S11, *S12, *S13, *S22, *S23, *S33, *sum_event_weights;
+  TH1F *chi2_Zprime_ak4_matched, *chi2_Zprime_ak4_unmatched, *chi2_Zprime_ttag_matched, *chi2_Zprime_ttag_unmatched;
   TH1F *DeltaY_reco_high, *DeltaY_reco_low, *DeltaY_reco_s1, *DeltaY_reco_s2,*DeltaY_reco_d1, *DeltaY_reco_d2, *Sigma_phi_1, *Sigma_phi_2, *Sigma_phi_high, *Sigma_phi_low, *Sigma_phi, *Delta_phi,*Delta_phi_1, *Delta_phi_2, *Delta_phi_high, *Delta_phi_low;
   TH1F *DeltaY_reco_high_match, *DeltaY_reco_low_match, *DeltaY_reco_s1_match, *DeltaY_reco_s2_match, *DeltaY_reco_d1_match, *DeltaY_reco_d2_match, *Sigma_phi_1_match, *Sigma_phi_2_match, *Sigma_phi_match, *Sigma_phi_high_match, *Sigma_phi_low_match, *Delta_phi_1_match, *Delta_phi_2_match, *Delta_phi_match, *Delta_phi_high_match, *Delta_phi_low_match;
 
@@ -74,7 +75,7 @@ protected:
   TH1F *h_N_Ak4; //*h_N_Ak4_SR, *h_N_Ak4_CR1, *h_N_Ak4_CR2;
  // TH1F *h_M_tt_SR, *h_chi2_SR, *h_M_tt_CR1, *h_chi2_CR1, *h_M_tt_CR2, *h_chi2_CR2; 
 
-  TH2F *N_Jets_vs_HT, *mttbar_vs_costhetastar, *costhetastar_vs_mttbar, *response_matrix;
+  TH2F *N_Jets_vs_HT, *mttbar_vs_costhetastar, *costhetastar_vs_mttbar, *response_matrix, *Mtt_reco_vs_gen;
 
   uhh2::Event::Handle< std::vector<TopJet> > h_AK8TopTags;
   uhh2::Event::Handle< std::vector<Jet> > h_CHSjets_matched;

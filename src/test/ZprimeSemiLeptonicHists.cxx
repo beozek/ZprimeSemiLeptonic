@@ -970,6 +970,10 @@ void ZprimeSemiLeptonicHists::init(){
   M_toplep_dr_ak4          = book<TH1F>("M_toplep_dr_ak4", "M_{t}^{lep, AK4} (correctly matched) [GeV]", 700, 0, 700);
   M_tophad_dr_ttag         = book<TH1F>("M_tophad_dr_ttag", "M_{t}^{had, top-tag} (correctly matched) [GeV]", 700, 0, 700);
   M_toplep_dr_ttag         = book<TH1F>("M_toplep_dr_ttag", "M_{t}^{lep, top-tag} (correctly matched) [GeV]", 700, 0, 700);
+  chi2_Zprime_ak4_matched   = book<TH1F>("chi2_Zprime_ak4_matched", "#chi^{2} AK4 (correctly matched)", 150, 0, 30);
+  chi2_Zprime_ak4_unmatched = book<TH1F>("chi2_Zprime_ak4_unmatched", "#chi^{2} AK4 (not matched)", 150, 0, 30);
+  chi2_Zprime_ttag_matched  = book<TH1F>("chi2_Zprime_ttag_matched", "#chi^{2} t-tag (correctly matched)", 150, 0, 30);
+  chi2_Zprime_ttag_unmatched= book<TH1F>("chi2_Zprime_ttag_unmatched", "#chi^{2} t-tag (not matched)", 150, 0, 30);
   dr_discr_Zprime          = book<TH1F>("dr_discr_Zprime", "dR best hypothesis (correctly matched)", 30, 0, 3);
   M_Zprime_dr              = book<TH1F>("M_Zprime_dr", "M_{t#bar{t}} (correctly matched) [GeV]", 280, 0, 7000);
   M_Zprime_dr_rebin        = book<TH1F>("M_Zprime_dr_rebin", "M_{t#bar{t}} (correctly matched) [GeV]", 140, 0, 7000);
@@ -2522,6 +2526,10 @@ if (is_zprime_reconstructed_chi2 ){
       chi2_Zprime_ttag->Fill(chi2, weight);
       chi2_Zprime_ttag_rebin->Fill(chi2, weight);
       chi2_Zprime_ttag_rebin2->Fill(chi2, weight);
+      if(BestZprimeCandidate->has_discriminator("correct_match")){
+        if(BestZprimeCandidate->discriminator("correct_match") < 10.) chi2_Zprime_ttag_matched->Fill(chi2, weight);
+        else chi2_Zprime_ttag_unmatched->Fill(chi2, weight);
+      }
 
       LorentzVector SumSubjets(0.,0.,0.,0.);
       for(unsigned int k=0; k<BestZprimeCandidate->tophad_topjet_ptr()->subjets().size(); k++) SumSubjets = SumSubjets + BestZprimeCandidate->tophad_topjet_ptr()->subjets().at(k).v4();
@@ -2551,6 +2559,10 @@ if (is_zprime_reconstructed_chi2 ){
       chi2_Zprime_ak4->Fill(chi2, weight);
       chi2_Zprime_ak4_rebin->Fill(chi2, weight);
       chi2_Zprime_ak4_rebin2->Fill(chi2, weight);
+      if(BestZprimeCandidate->has_discriminator("correct_match")){
+        if(BestZprimeCandidate->discriminator("correct_match") < 10.) chi2_Zprime_ak4_matched->Fill(chi2, weight);
+        else chi2_Zprime_ak4_unmatched->Fill(chi2, weight);
+      }
       M_tophad_ak4->Fill(inv_mass(BestZprimeCandidate->top_hadronic_v4()), weight);
       M_toplep_ak4->Fill(inv_mass(BestZprimeCandidate->top_leptonic_v4()), weight);
     }

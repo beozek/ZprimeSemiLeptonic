@@ -51,15 +51,17 @@ public:
 protected:
   bool debug;
 
-  // mttbar mass bin edges
-  const std::vector<double> mttbar_bin_edges = {0., 350., 500., 750., 1000., 1500., 20000.};
-  // Bins: [0-350), [350-500), [500-750), [750-1000), [1000-1500), [1500-20000)
+  // mttbar mass bin lower edges
+  const std::vector<double> mttbar_bin_edges = {0., 350., 500., 750., 1000., 1500.};
+  const std::vector<std::string> mttbar_bin_tags = {"0_350", "350_500", "500_750", "750_1000", "1000_1500", "1500Inf"};
+  // Bins: [0-350), [350-500), [500-750), [750-1000), [1000-1500), [1500, Inf)
   
   // Helper function to find mttbar bin
   inline int find_mtt_bin(double mtt) {
     for (size_t i = 0; i+1 < mttbar_bin_edges.size(); ++i) {
       if (mtt >= mttbar_bin_edges[i] && mtt < mttbar_bin_edges[i+1]) return static_cast<int>(i);
     }
+    if (mtt >= mttbar_bin_edges.back()) return static_cast<int>(mttbar_bin_edges.size() - 1);
     return -1;
   }
 
@@ -303,11 +305,8 @@ ZprimePreselectionModule_EFT::ZprimePreselectionModule_EFT(uhh2::Context& ctx){
   vector<string> histogram_tags = {"Input", "mtt_gen_inclusive", "CommonModules", "HOTVRCorrections", "PUPPICorrections", "Lepton1", "JetID", "JetCleaner1", "JetCleaner2", "TopjetCleaner", "Jet1", "Jet2", "MET"};
   
   // Add mttbar bin tags
-  for (size_t i = 0; i+1 < mttbar_bin_edges.size(); ++i) {
-    const double low = mttbar_bin_edges[i];
-    const double high = mttbar_bin_edges[i+1];
-    const string bin_tag = "mtt_gen_" + to_string((int)low) + "_" + to_string((int)high);
-    histogram_tags.push_back(bin_tag);
+  for (const auto & tag : mttbar_bin_tags) {
+    histogram_tags.push_back("mtt_gen_" + tag);
   }
 
   book_histograms(ctx, histogram_tags);
@@ -413,8 +412,7 @@ bool ZprimePreselectionModule_EFT::process(uhh2::Event& event){
           fill_histograms(event, "mtt_gen_inclusive");
           const int ibin = find_mtt_bin(mtt);
           if (ibin >= 0) {
-            const string bin_tag = "mtt_gen_" + to_string((int)mttbar_bin_edges[ibin]) + "_" + to_string((int)mttbar_bin_edges[ibin+1]);
-            fill_histograms(event, bin_tag);
+            fill_histograms(event, "mtt_gen_" + mttbar_bin_tags.at(ibin));
           }
         }
       }

@@ -970,6 +970,10 @@ void ZprimeSemiLeptonicHists::init(){
   M_toplep_dr_ak4          = book<TH1F>("M_toplep_dr_ak4", "M_{t}^{lep, AK4} (correctly matched) [GeV]", 700, 0, 700);
   M_tophad_dr_ttag         = book<TH1F>("M_tophad_dr_ttag", "M_{t}^{had, top-tag} (correctly matched) [GeV]", 700, 0, 700);
   M_toplep_dr_ttag         = book<TH1F>("M_toplep_dr_ttag", "M_{t}^{lep, top-tag} (correctly matched) [GeV]", 700, 0, 700);
+  chi2_Zprime_ak4_matched   = book<TH1F>("chi2_Zprime_ak4_matched", "#chi^{2} AK4 (correctly matched)", 150, 0, 30);
+  chi2_Zprime_ak4_unmatched = book<TH1F>("chi2_Zprime_ak4_unmatched", "#chi^{2} AK4 (not matched)", 150, 0, 30);
+  chi2_Zprime_ttag_matched  = book<TH1F>("chi2_Zprime_ttag_matched", "#chi^{2} t-tag (correctly matched)", 150, 0, 30);
+  chi2_Zprime_ttag_unmatched= book<TH1F>("chi2_Zprime_ttag_unmatched", "#chi^{2} t-tag (not matched)", 150, 0, 30);
   dr_discr_Zprime          = book<TH1F>("dr_discr_Zprime", "dR best hypothesis (correctly matched)", 30, 0, 3);
   M_Zprime_dr              = book<TH1F>("M_Zprime_dr", "M_{t#bar{t}} (correctly matched) [GeV]", 280, 0, 7000);
   M_Zprime_dr_rebin        = book<TH1F>("M_Zprime_dr_rebin", "M_{t#bar{t}} (correctly matched) [GeV]", 140, 0, 7000);
@@ -980,7 +984,8 @@ void ZprimeSemiLeptonicHists::init(){
   mttbar_vs_costhetastar = book<TH2F>("mttbar_vs_costhetastar", "m_{t#bar{t}} vs cos(#theta*)", 20, -1, 1, 1000, 0, 10000);
   costhetastar_vs_mttbar = book<TH2F>("costhetastar_vs_mttbar", "cos(#theta*) vs m_{t#bar{t}}", 1000, 0, 10000, 20, -1, 1);
 
-  response_matrix = book<TH2F>("response_matrix", "#Delta Y_{(t,#bar{t})}_reco ;#Delta Y_{(t,#bar{t})}_gen",  2, -2.5, 2.5, 2, -2.5, 2.5);
+  response_matrix = book<TH2F>("response_matrix", ";#xi_{reco};#xi_{gen}",  2, -1.0, 1.0, 2, -1.0, 1.0);
+  Mtt_reco_vs_gen = book<TH2F>("Mtt_reco_vs_gen", ";M_{t#bar{t}}^{reco} [GeV];M_{t#bar{t}}^{gen} [GeV]", 100, 0, 3000, 100, 0, 3000);
   // response_matrix->GetXaxis()->SetBinLabel(1, "Negative");
   // response_matrix->GetXaxis()->SetBinLabel(2, "Positive");
   // response_matrix->GetYaxis()->SetBinLabel(1, "Negative");
@@ -2053,7 +2058,6 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
     //   DeltaY_notMatched->Fill(1., weight);
     // }
 
-    response_matrix->Fill(DeltaY_reco_best, DeltaY_gen_best, weight);
     DeltaY_reco_best_plot->Fill(DeltaY_reco_best, weight);
     DeltaY_gen_best_plot->Fill(DeltaY_gen_best, weight);
   
@@ -2102,6 +2106,17 @@ if (is_zprime_reconstructed_chi2 ){
     DeltaY_reco_unw->Fill(dyreco, w_nom);
     float xi_reco = std::tanh(dyreco);
     DeltaY_xi_reco_unw->Fill(xi_reco, w_nom);
+
+    // response_matrix and Mtt migration: use event-level GEN handles (no gen matching)
+    if(event.is_valid(h_xi_gen)){
+      float xi_gen_val = event.get(h_xi_gen);
+      response_matrix->Fill(xi_reco, xi_gen_val, w_nom);
+    }
+    if(event.is_valid(h_mtt_gen)){
+      float mtt_reco_val = BestZprimeCandidate->Zprime_v4().M();
+      float mtt_gen_val  = event.get(h_mtt_gen);
+      Mtt_reco_vs_gen->Fill(mtt_reco_val, mtt_gen_val, w_nom);
+    }
 
     // single configured f-value: fill base set weighted, else fill base unweighted
     if(use_noac_evtweights_ && noac_weights_ && event.is_valid(h_xi_gen)){
@@ -2522,6 +2537,10 @@ if (is_zprime_reconstructed_chi2 ){
       chi2_Zprime_ttag->Fill(chi2, weight);
       chi2_Zprime_ttag_rebin->Fill(chi2, weight);
       chi2_Zprime_ttag_rebin2->Fill(chi2, weight);
+      if(BestZprimeCandidate->has_discriminator("correct_match")){
+        if(BestZprimeCandidate->discriminator("correct_match") < 10.) chi2_Zprime_ttag_matched->Fill(chi2, weight);
+        else chi2_Zprime_ttag_unmatched->Fill(chi2, weight);
+      }
 
       LorentzVector SumSubjets(0.,0.,0.,0.);
       for(unsigned int k=0; k<BestZprimeCandidate->tophad_topjet_ptr()->subjets().size(); k++) SumSubjets = SumSubjets + BestZprimeCandidate->tophad_topjet_ptr()->subjets().at(k).v4();
@@ -2551,6 +2570,10 @@ if (is_zprime_reconstructed_chi2 ){
       chi2_Zprime_ak4->Fill(chi2, weight);
       chi2_Zprime_ak4_rebin->Fill(chi2, weight);
       chi2_Zprime_ak4_rebin2->Fill(chi2, weight);
+      if(BestZprimeCandidate->has_discriminator("correct_match")){
+        if(BestZprimeCandidate->discriminator("correct_match") < 10.) chi2_Zprime_ak4_matched->Fill(chi2, weight);
+        else chi2_Zprime_ak4_unmatched->Fill(chi2, weight);
+      }
       M_tophad_ak4->Fill(inv_mass(BestZprimeCandidate->top_hadronic_v4()), weight);
       M_toplep_ak4->Fill(inv_mass(BestZprimeCandidate->top_leptonic_v4()), weight);
     }
@@ -2616,7 +2639,7 @@ if (is_zprime_reconstructed_chi2 ){
   ██   ████ ██   ████
   */
 
-  if(debug) cout << "before NN in hists" << endl;
+  // if(debug) cout << "before NN in hists" << endl;
   if(NN){
     if(debug) cout << "is it going inside NN" << endl;
     for(int i=0; i<Nmuons; i++){

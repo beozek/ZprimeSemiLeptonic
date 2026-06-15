@@ -17,7 +17,10 @@
 
 #include <Eigen/Dense>
 #include "TH1.h"
+#include "TH2.h"
 #include <TLorentzVector.h>
+
+#include <vector>
 
 float inv_mass(const LorentzVector&);
 
@@ -337,6 +340,67 @@ class TopPtReweighting : public uhh2::AnalysisModule {
   uhh2::Event::Handle< float > h_weight_toppt_b_down;
 };
 
+// electroweak correction - Differential electroweak correction for ttbar, using HATHOR/Rochester lookup tables.
+// TTbarEWKCorrection
+// Reads HATHORMGPY_costheta.root
+// Uses EWYt_10 / EWno_0
+// Evaluates vs gen m_ttbar and gen top scattering angle in the ttbar rest frame
+// Stores weight_ttbar_ewk_nominal
+// Applies nominal weight to event.weight by default
+class TTbarEWKCorrection : public uhh2::AnalysisModule {
+ public:
+  explicit TTbarEWKCorrection(uhh2::Context& ctx,
+			      const std::string& ttgen_name ="");
+  virtual bool process(uhh2::Event& event) override;
+
+ private:
+  double evaluate_ratio(double mttbar, double costheta) const;
+  double evaluate_uncertainty(double mttbar, double costheta, double kappa) const;
+  double evaluate_histo(const TH2D* hist, double x, double y) const;
+  bool applies_to_event(const uhh2::Event& event) const;
+
+  uhh2::Event::Handle<TTbarGen> h_ttbargen_;
+  uhh2::Event::Handle< float > h_weight_ttbar_ewk_nominal;
+  uhh2::Event::Handle< float > h_weight_ttbar_ewk_unc;
+  uhh2::Event::Handle< float > h_weight_ttbar_ewk_up;
+  uhh2::Event::Handle< float > h_weight_ttbar_ewk_down;
+  std::unique_ptr<TH2D> h_lo_qcd_;
+  std::unique_ptr<TH2D> h_nlo_ewk_;
+  std::unique_ptr<TH2D> h_powheg_prediction_;
+  std::string version_;
+  std::string ttgen_name_;
+  std::string uncertainty_mode_;
+  bool apply_weight_;
+};
+
+// NNLO QCD top-pT reweighting for ttbar using the provided SF parameterisations.
+// TTbarNNLOQCDReweighting
+// Implements the notebook’s SF_1, SF_2, SF_3
+// Defaults to recommended SF_3
+// Uses extracted parameters from nnlo_qcd_NNPDF31_nnlo_as_0118_SF_3.npy
+// Stores weight_ttbar_nnlo_qcd
+// Applies nominal weight to event.weight by default
+class TTbarNNLOQCDReweighting : public uhh2::AnalysisModule {
+ public:
+  explicit TTbarNNLOQCDReweighting(uhh2::Context& ctx,
+				   const std::string& ttgen_name ="");
+  virtual bool process(uhh2::Event& event) override;
+
+ private:
+  double scale_factor(double pt) const;
+  bool applies_to_event(const uhh2::Event& event) const;
+
+  uhh2::Event::Handle<TTbarGen> h_ttbargen_;
+  uhh2::Event::Handle< float > h_weight_ttbar_nnlo_qcd;
+  uhh2::Event::Handle< float > h_weight_ttbar_nnlo_qcd_up;
+  uhh2::Event::Handle< float > h_weight_ttbar_nnlo_qcd_down;
+  std::string version_;
+  std::string ttgen_name_;
+  std::string sf_function_name_;
+  std::vector<double> params_;
+  bool apply_weight_;
+};
+// electroweak correction
 
 class PuppiCHS_matching : public uhh2::AnalysisModule {
 

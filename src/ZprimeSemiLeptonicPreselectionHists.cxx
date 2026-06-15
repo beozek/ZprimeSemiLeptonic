@@ -15,6 +15,7 @@
 #include "TH1F.h"
 #include "TH2D.h"
 #include <iostream>
+#include <limits>
 
 using namespace std;
 using namespace uhh2;
@@ -357,31 +358,31 @@ void ZprimeSemiLeptonicPreselectionHists::init(){
   DeltaY_xi_gen_10      = book<TH1F>("DeltaY_xi_gen_10", "#xi = tanh(#Delta|Y|) GEN ", 10, -1.0, 1.0);
   DeltaY_xi_gen_6       = book<TH1F>("DeltaY_xi_gen_6", "#xi = tanh(#Delta|Y|) GEN ", 6, -1.0, 1.0);
   
-  // mtt-binned xi (300 bins) to feed NoAC template weights: bin edges match Systematics (0,350,500,750,1000,1500,13000)
-  // 5 mtt bins [0-500), [500-750), [750-1000), [1000-1500), [1500-13000) to match noac_mtt_edges in SystematicsHists
+  // mtt-binned xi histograms to feed NoAC template weights.
+  // 5 mtt bins [0-500), [500-750), [750-1000), [1000-1500), [1500, Inf).
   DeltaY_xi_gen_300_mtt0 = book<TH1F>("DeltaY_xi_gen_300_mtt0", "#xi = tanh(#Delta|Y|) GEN (0-500)", 300, -1.0, 1.0);
   DeltaY_xi_gen_300_mtt1 = book<TH1F>("DeltaY_xi_gen_300_mtt1", "#xi = tanh(#Delta|Y|) GEN (500-750)", 300, -1.0, 1.0);
   DeltaY_xi_gen_300_mtt2 = book<TH1F>("DeltaY_xi_gen_300_mtt2", "#xi = tanh(#Delta|Y|) GEN (750-1000)", 300, -1.0, 1.0);
   DeltaY_xi_gen_300_mtt3 = book<TH1F>("DeltaY_xi_gen_300_mtt3", "#xi = tanh(#Delta|Y|) GEN (1000-1500)", 300, -1.0, 1.0);
-  DeltaY_xi_gen_300_mtt4 = book<TH1F>("DeltaY_xi_gen_300_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-13000)", 300, -1.0, 1.0);
+  DeltaY_xi_gen_300_mtt4 = book<TH1F>("DeltaY_xi_gen_300_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-Inf)", 300, -1.0, 1.0);
 
   DeltaY_xi_gen_100_mtt0 = book<TH1F>("DeltaY_xi_gen_100_mtt0", "#xi = tanh(#Delta|Y|) GEN (0-500)", 100, -1.0, 1.0);
   DeltaY_xi_gen_100_mtt1 = book<TH1F>("DeltaY_xi_gen_100_mtt1", "#xi = tanh(#Delta|Y|) GEN (500-750)", 100, -1.0, 1.0);
   DeltaY_xi_gen_100_mtt2 = book<TH1F>("DeltaY_xi_gen_100_mtt2", "#xi = tanh(#Delta|Y|) GEN (750-1000)", 100, -1.0, 1.0);
   DeltaY_xi_gen_100_mtt3 = book<TH1F>("DeltaY_xi_gen_100_mtt3", "#xi = tanh(#Delta|Y|) GEN (1000-1500)", 100, -1.0, 1.0);
-  DeltaY_xi_gen_100_mtt4 = book<TH1F>("DeltaY_xi_gen_100_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-13000)", 100, -1.0, 1.0);
+  DeltaY_xi_gen_100_mtt4 = book<TH1F>("DeltaY_xi_gen_100_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-Inf)", 100, -1.0, 1.0);
 
   DeltaY_xi_gen_mtt0 = book<TH1F>("DeltaY_xi_gen_mtt0", "#xi = tanh(#Delta|Y|) GEN (0-500)", 50, -1.0, 1.0);
   DeltaY_xi_gen_mtt1 = book<TH1F>("DeltaY_xi_gen_mtt1", "#xi = tanh(#Delta|Y|) GEN (500-750)", 50, -1.0, 1.0);
   DeltaY_xi_gen_mtt2 = book<TH1F>("DeltaY_xi_gen_mtt2", "#xi = tanh(#Delta|Y|) GEN (750-1000)", 50, -1.0, 1.0);
   DeltaY_xi_gen_mtt3 = book<TH1F>("DeltaY_xi_gen_mtt3", "#xi = tanh(#Delta|Y|) GEN (1000-1500)", 50, -1.0, 1.0);
-  DeltaY_xi_gen_mtt4 = book<TH1F>("DeltaY_xi_gen_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-13000)", 50, -1.0, 1.0);
+  DeltaY_xi_gen_mtt4 = book<TH1F>("DeltaY_xi_gen_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-Inf)", 50, -1.0, 1.0);
 
   DeltaY_xi_gen_18_mtt0 = book<TH1F>("DeltaY_xi_gen_18_mtt0", "#xi = tanh(#Delta|Y|) GEN (0-500)", 18, -1.0, 1.0);
   DeltaY_xi_gen_18_mtt1 = book<TH1F>("DeltaY_xi_gen_18_mtt1", "#xi = tanh(#Delta|Y|) GEN (500-750)", 18, -1.0, 1.0);
   DeltaY_xi_gen_18_mtt2 = book<TH1F>("DeltaY_xi_gen_18_mtt2", "#xi = tanh(#Delta|Y|) GEN (750-1000)", 18, -1.0, 1.0);
   DeltaY_xi_gen_18_mtt3 = book<TH1F>("DeltaY_xi_gen_18_mtt3", "#xi = tanh(#Delta|Y|) GEN (1000-1500)", 18, -1.0, 1.0);
-  DeltaY_xi_gen_18_mtt4 = book<TH1F>("DeltaY_xi_gen_18_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-13000)", 18, -1.0, 1.0);
+  DeltaY_xi_gen_18_mtt4 = book<TH1F>("DeltaY_xi_gen_18_mtt4", "#xi = tanh(#Delta|Y|) GEN (1500-Inf)", 18, -1.0, 1.0);
 
   // Merged [0,750) GEN mtt bin (union of mtt0+mtt1) — use alongside fine bins
   DeltaY_xi_gen_300_mtt_0to750 = book<TH1F>("DeltaY_xi_gen_300_mtt_0to750", "#xi = tanh(#Delta|Y|) GEN (0-750)", 300, -1.0, 1.0);
@@ -879,11 +880,32 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
         DeltaY_xi_gen_18->Fill(xi_gen_val, weight);
         DeltaY_xi_gen_10->Fill(xi_gen_val, weight);
         DeltaY_xi_gen_6->Fill(xi_gen_val, weight);
+        // // Debug: event.weight = gen nominal (weights()[0] at job start) × anything later modules
+        // // multiplied (e.g. pileup after CommonModules). Fills run multiple times per event
+        // // (Input / mtt_gen_* before PU, MET after PU) — same line repeats with different weight.
+        // {
+        //   static const int kMaxGenWeightDebug = 300;
+        //   static int genweight_debug_n = 0;
+        //   if (genweight_debug_n < kMaxGenWeightDebug) {
+        //     ++genweight_debug_n;
+        //     const float w0 = (event.genInfo && !event.genInfo->weights().empty())
+        //                          ? event.genInfo->weights().at(0)
+        //                          : std::numeric_limits<float>::quiet_NaN();
+        //     const float xwg = (event.genInfo) ? event.genInfo->originalXWGTUP()
+        //                                       : std::numeric_limits<float>::quiet_NaN();
+        //     cout << "[genweight debug " << genweight_debug_n << "/" << kMaxGenWeightDebug << "]"
+        //          << " run=" << event.run << " lumi=" << event.luminosityBlock << " evt=" << event.event
+        //          << " mtt_gen=" << mtt_gen_val << " xi_gen=" << xi_gen_val
+        //          << " event.weight=" << weight << " genInfo->weights()[0]=" << w0
+        //         //  << " originalXWGTUP=" << xwg 
+        //          << endl;
+        //   }
+        // }
 
-        // mtt-binned xi histograms: 5 bins [0-500), [500-750), [750-1000), [1000-1500), [1500-13000) (match noac_mtt_edges)
-        const double mtt_edges[] = {0.0, 500.0, 750.0, 1000.0, 1500.0, 13000.0};
+        // mtt-binned xi histograms: 5 bins [0-500), [500-750), [750-1000), [1000-1500), [1500, Inf).
+        const double mtt_edges[] = {0.0, 500.0, 750.0, 1000.0, 1500.0};
         int mtt_bin = -1;
-        for(int ib = 0; ib < 5; ++ib){
+        for(int ib = 0; ib < 4; ++ib){
           if(mtt_gen_val >= mtt_edges[ib] && mtt_gen_val < mtt_edges[ib+1]){
             mtt_bin = ib;
             break;
@@ -891,7 +913,7 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
         }
         if(mtt_bin == -1){
           if(mtt_gen_val < mtt_edges[0]) mtt_bin = 0;
-          else if(mtt_gen_val >= mtt_edges[5]) mtt_bin = 4;
+          else if(mtt_gen_val >= mtt_edges[4]) mtt_bin = 4;
         }
         // Fill merged [0,750) histograms for events in mtt_bin 0 or 1
         if(mtt_bin == 0 || mtt_bin == 1){

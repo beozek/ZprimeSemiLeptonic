@@ -16,8 +16,8 @@
 ]>
 
 <!--
-<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="50" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Preselection_UL18_JEC_down_AbsoluteMPFBias"/>
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="20" AutoResubmit="0"/>
+<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Preselection_UL18_JEC_down_AbsoluteMPFBias"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">
@@ -40,7 +40,7 @@
 		<InputData Lumi="118155756.09035574" NEventsMax="&NEVT;" Type="MC" Version="TTTo2L2Nu_UL18" Cacheable="&b_Cacheable;">
 			&TTTo2L2Nu_UL18;
 			<InputTree Name="AnalysisTree" />
-			<OutputTree Name="AnalysisTree" /> 
+			<OutputTree Name="AnalysisTree" />
 		</InputData>
 
 		<UserConfig>
@@ -66,9 +66,8 @@
 			<Item Name="pileup_directory_data_down" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/common/UHH2-data/UL18/MyDataPileupHistogram_UL18_66017.root" />
 
 			<Item Name="is_HOTVR" Value="&IS_HOTVR;"/>
-			<Item Name="Sys_PU"   Value="central"/>
-
-			<Item Name="use_sframe_weight"  Value="false"/>
+			<Item Name="Sys_PU" Value="central"/>
+			<Item Name="use_sframe_weight" Value="false"/>
 			<Item Name="jecsmear_source" Value="AbsoluteMPFBias"/>
 			<Item Name="jersmear_direction" Value="nominal"/>
 			<Item Name="jecsmear_direction" Value="down"/>

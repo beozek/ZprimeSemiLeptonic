@@ -132,17 +132,20 @@ protected:
   // GEN-level variables from preselection (for template method)
   uhh2::Event::Handle<float> h_xi_gen;
   uhh2::Event::Handle<float> h_mtt_gen;
+  uhh2::Event::Handle<float> h_costheta_gen;
   uhh2::Event::Handle<float> h_DeltaY_gen;
 
   // read from input file
   uhh2::Event::Handle<float> h_xi_gen_in;
   uhh2::Event::Handle<float> h_DeltaY_gen_in;
   uhh2::Event::Handle<float> h_mtt_gen_in;
+  uhh2::Event::Handle<float> h_costheta_gen_in;
 
   // write-through to your output file so the next job can read again
   uhh2::Event::Handle<float> h_xi_gen_out;
   uhh2::Event::Handle<float> h_DeltaY_gen_out;
   uhh2::Event::Handle<float> h_mtt_gen_out;
+  uhh2::Event::Handle<float> h_costheta_gen_out;
   
   uhh2::Event::Handle<ZprimeCandidate*> h_BestZprimeCandidateChi2;
 
@@ -171,6 +174,7 @@ protected:
   bool isMuon, isElectron;
   bool isPhoton;
   bool isEleTriggerMeasurement;
+  bool gen_branches_declared;
   TString year, channel;
 
   TH2F *ratio_hist_muon;
@@ -203,6 +207,7 @@ void ZprimeAnalysisModule::fill_histograms(uhh2::Event& event, string tag){
 ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
 
   debug =false; // false/true
+  gen_branches_declared = false;
 
   for(auto & kv : ctx.get_all()){
     cout << " " << kv.first << " = " << kv.second << endl;
@@ -529,7 +534,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
     }
 
     if(isMuon){
-      TFile* f_btag2Dsf = new TFile("/data/dust/user/deleokse/RunII_106_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/macros/src/files_BTagSF/customBtagSF_muon_"+year+".root");
+      TFile* f_btag2Dsf = new TFile("/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/macros/src/files_BTagSF/customBtagSF_muon_"+year+".root");
       if(isEFT){
         // *** CHANGED *** For EFT muon: always use TTbar
         ratio_hist_muon = (TH2F*)f_btag2Dsf->Get("N_Jets_vs_HT_TTbar");
@@ -541,7 +546,7 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
       if(ratio_hist_muon) ratio_hist_muon->SetDirectory(0);
     }
     else if(!isMuon){
-      TFile* f_btag2Dsf = new TFile("/data/dust/user/deleokse/RunII_106_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/macros/src/files_BTagSF/customBtagSF_electron_"+year+".root");
+      TFile* f_btag2Dsf = new TFile("/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/macros/src/files_BTagSF/customBtagSF_electron_"+year+".root");
       if(isEFT){
         ratio_hist_ele = (TH2F*)f_btag2Dsf->Get("N_Jets_vs_HT_TTbar");
       }
@@ -553,16 +558,21 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
     }
   }
 
-  // GEN-level variables from preselection - read and write to carry forward
-  if(isMC) {
+  // GEN-level variables from preselection - only needed for NoAC/template weights.
+  // Declaring them as inputs makes SFrame require the branches to exist.
+  const bool use_noac = (ctx.get("noac_apply_event_weight", "false") == "true");
+  if(isMC && use_noac) {
+    gen_branches_declared = true;
     h_xi_gen_in     = ctx.declare_event_input<float>("xi_gen");
     h_DeltaY_gen_in = ctx.declare_event_input<float>("DeltaY_gen");
     h_mtt_gen_in    = ctx.declare_event_input<float>("mtt_gen");
+    h_costheta_gen_in = ctx.declare_event_input<float>("costheta_gen");
     
     // outputs so AnalysisDNN can read them
     h_xi_gen_out     = ctx.declare_event_output<float>("xi_gen");
     h_DeltaY_gen_out = ctx.declare_event_output<float>("DeltaY_gen");
     h_mtt_gen_out    = ctx.declare_event_output<float>("mtt_gen");
+    h_costheta_gen_out = ctx.declare_event_output<float>("costheta_gen");
   }
 }
 
@@ -592,15 +602,16 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   //   }
   // }
 
-  if(isMC && event.is_valid(h_xi_gen_in)) {
-  float xi = event.get(h_xi_gen_in);
-  if(!std::isfinite(xi)) {
-    // leave it unset; Hists guard will skip
-  } else {
-    event.set(h_xi_gen_out, xi);
-  }
-  if(event.is_valid(h_DeltaY_gen_in)) event.set(h_DeltaY_gen_out, event.get(h_DeltaY_gen_in));
-  if(event.is_valid(h_mtt_gen_in))    event.set(h_mtt_gen_out,    event.get(h_mtt_gen_in));
+  if(gen_branches_declared && event.is_valid(h_xi_gen_in)) {
+    float xi = event.get(h_xi_gen_in);
+    if(!std::isfinite(xi)) {
+      // leave it unset; Hists guard will skip
+    } else {
+      event.set(h_xi_gen_out, xi);
+    }
+    if(event.is_valid(h_DeltaY_gen_in)) event.set(h_DeltaY_gen_out, event.get(h_DeltaY_gen_in));
+    if(event.is_valid(h_mtt_gen_in))    event.set(h_mtt_gen_out,    event.get(h_mtt_gen_in));
+    if(event.is_valid(h_costheta_gen_in)) event.set(h_costheta_gen_out, event.get(h_costheta_gen_in));
   }
 
   if(!event.isRealData){
@@ -1155,10 +1166,11 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
   fill_histograms(event, "NNInputsBeforeReweight");
   if(debug) cout << "NNInputsBeforeReweight: ok" << endl;
 
-  if(event.is_valid(h_xi_gen_in)) {
+  if(gen_branches_declared && event.is_valid(h_xi_gen_in)) {
     event.set(h_xi_gen_out,     event.get(h_xi_gen_in));
     event.set(h_DeltaY_gen_out, event.get(h_DeltaY_gen_in));
     event.set(h_mtt_gen_out,    event.get(h_mtt_gen_in));
+    event.set(h_costheta_gen_out, event.get(h_costheta_gen_in));
   }
 
   // histograms for systematics
