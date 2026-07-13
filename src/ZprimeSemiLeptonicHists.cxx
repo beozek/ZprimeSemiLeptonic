@@ -2088,6 +2088,22 @@ if (is_zprime_reconstructed_chi2 ){
     chi2_Zprime->Fill(chi2, weight);
     chi2_Zprime_rebin->Fill(chi2, weight);
     chi2_Zprime_rebin2->Fill(chi2, weight);
+
+    // Reconstructed top kinematics: filled here (data + MC) so the top p_T/eta plots
+    // include data. These use only the reconstructed candidate (no gen-level info),
+    // so they are safe for data. The signal-sensitive angular variables (cos theta*),
+    // chi2 discriminators and 2D maps remain in the is_mc-only block below.
+    LorentzVector toplep_reco = BestZprimeCandidate->top_leptonic_v4();
+    LorentzVector tophad_reco = BestZprimeCandidate->top_hadronic_v4();
+    toplep_pt->Fill(toplep_reco.Pt(), weight);
+    toplep_eta->Fill(toplep_reco.Eta(), weight);
+    toplep_phi->Fill(toplep_reco.Phi(), weight);
+    toplep_m->Fill(toplep_reco.M(), weight);
+    tophad_pt->Fill(tophad_reco.Pt(), weight);
+    tophad_eta->Fill(tophad_reco.Eta(), weight);
+    tophad_phi->Fill(tophad_reco.Phi(), weight);
+    tophad_m->Fill(tophad_reco.M(), weight);
+
     // cout << "the boolean is: "<< isLeptonPositive << endl;
     float_t dyreco = 0.0;
     if (BestZprimeCandidate->lepton().charge()>0) {
@@ -2478,15 +2494,15 @@ if (is_zprime_reconstructed_chi2 ){
     LorentzVector toplep = BestZprimeCandidate->top_leptonic_v4();
     LorentzVector tophad = BestZprimeCandidate->top_hadronic_v4();
 
-    toplep_pt->Fill(toplep.Pt(), weight);
-    toplep_eta->Fill(toplep.Eta(), weight);
-    toplep_phi->Fill(toplep.Phi(), weight);
-    toplep_m->Fill(toplep.M(), weight);
+    // toplep_pt->Fill(toplep.Pt(), weight);
+    // toplep_eta->Fill(toplep.Eta(), weight);
+    // toplep_phi->Fill(toplep.Phi(), weight);
+    // toplep_m->Fill(toplep.M(), weight);
 
-    tophad_pt->Fill(tophad.Pt(), weight);
-    tophad_eta->Fill(tophad.Eta(), weight);
-    tophad_phi->Fill(tophad.Phi(), weight);
-    tophad_m->Fill(tophad.M(), weight);
+    // tophad_pt->Fill(tophad.Pt(), weight);
+    // tophad_eta->Fill(tophad.Eta(), weight);
+    // tophad_phi->Fill(tophad.Phi(), weight);
+    // tophad_m->Fill(tophad.M(), weight);
 
     //ditop_mass->Fill(Mreco, weight);
     ditop_absDeltaPhi->Fill(deltaPhi(toplep, tophad), weight);

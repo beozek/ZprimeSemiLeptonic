@@ -243,8 +243,8 @@
 ]>
 
 <!--
-<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="henrik.jabusch@desy.de" Notification="as" Workdir="workdir_Analysis_UL18_muon_JER_up"/>
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="1" AutoResubmit="0"/>
+<ConfigSGE RAM="4" DISK="4" Mail="henrik.jabusch@desy.de" Notification="as" Workdir="workdir_Analysis_UL18_muon_JER_up"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">

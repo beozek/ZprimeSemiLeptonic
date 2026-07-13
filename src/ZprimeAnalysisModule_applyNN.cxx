@@ -42,6 +42,7 @@
 #include <UHH2/ZprimeSemiLeptonic/include/TTbarLJHists.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicHists.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicSystematicsHists.h>
+#include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicKinematicSystHists.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicPDFHists.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicMulticlassNNHists.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicGeneratorHists.h>
@@ -398,6 +399,7 @@ protected:
   std::unique_ptr<Hists> h_MulticlassNN_output;
 
   std::unique_ptr<Hists> h_DeltaY_reco_SystVariations_Inclusive_SR;
+  std::unique_ptr<Hists> h_KinematicSyst_Inclusive_SR;
   std::unique_ptr<Hists> h_DeltaY_reco_PDFVariations_Inclusive_SR;
   std::unique_ptr<Hists> h_DeltaY_reco_SystVariations_Inclusive_SR_correctmatch;
   std::unique_ptr<Hists> h_DeltaY_reco_PDFVariations_Inclusive_SR_correctmatch;
@@ -812,6 +814,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
 
   if (debug) cout << "[DEBUG] About to create DeltaY_reco_SystVariations_Inclusive_SR..." << endl;
   h_DeltaY_reco_SystVariations_Inclusive_SR.reset(new ZprimeSemiLeptonicSystematicsHists(ctx, "DeltaY_reco_SystVariations_Inclusive_SR"));
+  h_KinematicSyst_Inclusive_SR.reset(new ZprimeSemiLeptonicKinematicSystHists(ctx, "KinematicSyst_Inclusive_SR"));
   h_DeltaY_reco_SystVariations_Inclusive_SR_correctmatch.reset(new ZprimeSemiLeptonicSystematicsHists(ctx, "DeltaY_reco_SystVariations_Inclusive_SR_correctmatch"));
   if (debug) cout << "[DEBUG] DeltaY_reco_SystVariations_Inclusive_SR created successfully!" << endl;
   h_DeltaY_reco_PDFVariations_Inclusive_SR.reset(new ZprimeSemiLeptonicPDFHists(ctx, "DeltaY_reco_PDFVariations_Inclusive_SR"));
@@ -1090,7 +1093,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   //muon
   // NNModule.reset( new NeuralNetworkModule(ctx, "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_muon/model.pb", "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_muon/model.config.pbtxt"));
   
-  //electron
+  // electron
   NNModule.reset( new NeuralNetworkModule(ctx, "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_ele/model.pb", "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_ele/model.config.pbtxt"));
 
   is_ttbar_or_eft = false;
@@ -1706,6 +1709,7 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
           && BestZprimeCandidate->has_discriminator("correct_match")
           && BestZprimeCandidate->discriminator("correct_match") < 10.;
       h_DeltaY_reco_SystVariations_Inclusive_SR->fill(event);
+      h_KinematicSyst_Inclusive_SR->fill(event);
       h_DeltaY_reco_PDFVariations_Inclusive_SR->fill(event);
       if(chi2_is_correct_match){
       h_DeltaY_reco_SystVariations_Inclusive_SR_correctmatch->fill(event);

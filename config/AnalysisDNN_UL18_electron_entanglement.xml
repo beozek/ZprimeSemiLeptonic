@@ -67,7 +67,7 @@
 
 <!--
 <ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="1" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="ricardo.jesus.escobar.franco@cern.ch" Notification="as" Workdir="workdir_Zprime_Analysis_UL18_electron_entanglement"/>
+<ConfigSGE RAM="4" DISK="4" Mail="ricardo.jesus.escobar.franco@cern.ch" Notification="as" Workdir="workdir_Zprime_Analysis_UL18_electron_entanglement"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">

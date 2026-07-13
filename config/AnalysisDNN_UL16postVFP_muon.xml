@@ -63,7 +63,7 @@
 
 <!--
 <ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="1" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="titasroy89n@gmail.com" Notification="as" Workdir="workdir_AnalysisDNN_2016post_muon"/>
+<ConfigSGE RAM="4" DISK="4" Mail="titasroy89n@gmail.com" Notification="as" Workdir="workdir_AnalysisDNN_2016post_muon"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">

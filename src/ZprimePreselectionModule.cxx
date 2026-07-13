@@ -44,6 +44,7 @@
 // #include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h"
 
 #include <UHH2/ZprimeSemiLeptonic/include/ModuleBASE.h>
+#include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicModules.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicSelections.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicPreselectionHists.h>
 #include <UHH2/ZprimeSemiLeptonic/include/ZprimeSemiLeptonicGeneratorHists.h>
@@ -268,6 +269,18 @@ protected:
   // Standalone lumi weight (applied between raw GEN hists and lumi-scaled GEN hists)
   std::unique_ptr<MCLumiWeight> lumi_weight;
 
+  // Optional NNLO QCD + EWK correction of the GEN xi histograms used to build NoAC weights.
+  // Gated by XML flag ApplyNNLOEWKToGenHists (default false): when off, nothing below is
+  // constructed, no extra output branches are declared, and the normal preselection ->
+  // analysis -> DNN chain is completely unchanged. When on, a parallel "_lumiscaled_nnloewk"
+  // folder set is filled with genWeight * lumi * EWK * NNLO-QCD, intended only for producing
+  // the NoAC gen-template file (the actual per-event correction stays at the applyNN stage).
+  bool apply_nnloewk_to_gen_hists = false;
+  std::unique_ptr<AnalysisModule> ttbar_ewk_gen;
+  std::unique_ptr<AnalysisModule> ttbar_nnloqcd_gen;
+  uhh2::Event::Handle<float> h_w_ewk_nom;
+  uhh2::Event::Handle<float> h_w_nnlo_nom;
+
   // Corrections
   std::unique_ptr<CommonModules> common;
   std::unique_ptr<AnalysisModule> hotvrjetCorr;
@@ -405,6 +418,20 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx) {
   // Standalone lumi weight: applied AFTER raw GEN hists, BEFORE lumi-scaled GEN hists
   if(isMC) lumi_weight.reset(new MCLumiWeight(ctx));
 
+  // Optional: NNLO QCD + EWK correction applied (after lumi) to a parallel GEN folder set,
+  // used only to build NoAC gen templates. Off by default so normal jobs are untouched.
+  // Reuses the "ttbargen" handle produced above by TTbarGenProducer. Both modules apply to
+  // event.weight only for ttbar datasets (gated internally on dataset_version).
+  apply_nnloewk_to_gen_hists = isMC && (ctx.get("ApplyNNLOEWKToGenHists", "false") == "true");
+  if(apply_nnloewk_to_gen_hists){
+    ttbar_ewk_gen.reset(new TTbarEWKCorrection(ctx, "ttbargen"));
+    ttbar_nnloqcd_gen.reset(new TTbarNNLOQCDReweighting(ctx, "ttbargen"));
+    // Read back the stored nominal weights (set by the modules above) to apply only to the
+    // GEN _nnloewk folders, without touching the global event.weight.
+    h_w_ewk_nom  = ctx.get_handle<float>("weight_ttbar_ewk_nominal");
+    h_w_nnlo_nom = ctx.get_handle<float>("weight_ttbar_nnlo_qcd");
+  }
+
   // Cache lumi factor for cutflow
   if(isMC){
     double dataset_lumi = std::abs(string2double(ctx.get("dataset_lumi")));
@@ -503,6 +530,15 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx) {
     histogram_tags.push_back("mtt_gen_" + tag + "_lumiscaled");
   }
   histogram_tags.push_back("mtt_gen_0_750_lumiscaled");
+  // --- NNLO QCD + EWK corrected GEN folders (genWeight * lumi * EWK * NNLOQCD) ---
+  // Parallel to the _lumiscaled set above; only booked when ApplyNNLOEWKToGenHists is on.
+  if(apply_nnloewk_to_gen_hists){
+    histogram_tags.push_back("mtt_gen_inclusive_lumiscaled_nnloewk");
+    for (const auto & tag : mttbar_bin_tags) {
+      histogram_tags.push_back("mtt_gen_" + tag + "_lumiscaled_nnloewk");
+    }
+    histogram_tags.push_back("mtt_gen_0_750_lumiscaled_nnloewk");
+  }
 
   // --- Reco-level folders ---
   histogram_tags.push_back("MET");
@@ -560,6 +596,18 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
     // branches neutral until model inference or official plugin output is wired.
     event.set(h_weight_bfrag_nom, 1.0f);
     event.set(h_weight_bfrag_up, 1.0f);
+
+    // NNLO QCD + EWK gen-template correction. These modules declare output branches that SFrame
+    // requires to be set on EVERY written event, so process() must run for all MC events here
+    // (the modules set their weights to 1.0 for non-ttbar). event.weight is restored immediately;
+    // the correction itself is applied only to the dedicated _nnloewk GEN folders below, by reading
+    // the stored nominal weights from the handles.
+    if (apply_nnloewk_to_gen_hists) {
+      const double w_keep = event.weight;
+      ttbar_ewk_gen->process(event);
+      ttbar_nnloqcd_gen->process(event);
+      event.weight = w_keep;
+    }
   }
 
   if(debug) cout << "++++++++++++ NEW EVENT ++++++++++++++" << endl;
@@ -667,6 +715,26 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
         }
         if (mtt >= mttbar_bin_edges[0] && mtt < mttbar_bin_edges[2]) {
           fill_histograms(event, "mtt_gen_0_750_lumiscaled");
+        }
+
+        // ==========================================
+        // OPTIONAL: NNLO QCD + EWK corrected GEN folders (applied AFTER lumi scaling).
+        // Only used to build NoAC gen templates; event.weight is restored afterwards so the
+        // downstream reco-level processing (CommonModules onward) sees the lumi-only weight.
+        // ==========================================
+        if (apply_nnloewk_to_gen_hists) {
+          const double w_lumi = event.weight;          // genWeight * lumi
+          const float w_ewk  = event.get(h_w_ewk_nom);   // EWK ratio (1.0 if not ttbar)
+          const float w_nnlo = event.get(h_w_nnlo_nom);  // sqrt(SF(pt_top)*SF(pt_atop))
+          event.weight = w_lumi * w_ewk * w_nnlo;
+          fill_histograms(event, "mtt_gen_inclusive_lumiscaled_nnloewk");
+          if (ibin >= 0) {
+            fill_histograms(event, "mtt_gen_" + mttbar_bin_tags.at(ibin) + "_lumiscaled_nnloewk");
+          }
+          if (mtt >= mttbar_bin_edges[0] && mtt < mttbar_bin_edges[2]) {
+            fill_histograms(event, "mtt_gen_0_750_lumiscaled_nnloewk");
+          }
+          event.weight = w_lumi;                        // restore lumi-only weight
         }
         gen_filled = true;
       }

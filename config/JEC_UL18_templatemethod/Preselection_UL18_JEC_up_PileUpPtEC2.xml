@@ -15,7 +15,7 @@
 ]>
 
 <!--
-<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="20" AutoResubmit="0"/>
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
 <ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Preselection_UL18_JEC_up_PileUpPtEC2"/>
 -->
 

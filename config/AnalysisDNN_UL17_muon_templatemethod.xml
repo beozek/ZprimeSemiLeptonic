@@ -21,9 +21,9 @@
 <!ENTITY SingleMuon_RunE SYSTEM "../data/Skimming_datasets_UL17_muon/DATA_SingleMuon_RunE_UL17.xml">
 <!ENTITY SingleMuon_RunF SYSTEM "../data/Skimming_datasets_UL17_muon/DATA_SingleMuon_RunF_UL17.xml">
 
-<!ENTITY TTToSemiLeptonic SYSTEM "../data/Skimming_datasets_DNN_UL17_muon_templatemethod_ttbar1l_iniftymassbin/MC_TTToSemiLeptonic_UL17.xml">
-<!ENTITY TTToHadronic SYSTEM "../data/Skimming_datasets_DNN_UL17_muon_templatemethod_ttbar_massbin0750/MC_TTToHadronic_UL17.xml">
-<!ENTITY TTTo2L2Nu SYSTEM "../data/Skimming_datasets_DNN_UL17_muon_templatemethod_ttbar_massbin0750/MC_TTTo2L2Nu_UL17.xml">
+<!ENTITY TTToSemiLeptonic SYSTEM "../data/Skimming_datasets_DNN_UL17_muon_templatemethod_ttbar_newsystematics/MC_TTToSemiLeptonic_UL17.xml">
+<!ENTITY TTToHadronic SYSTEM "../data/Skimming_datasets_DNN_UL17_muon_templatemethod_ttbar_newsystematics/MC_TTToHadronic_UL17.xml">
+<!ENTITY TTTo2L2Nu SYSTEM "../data/Skimming_datasets_DNN_UL17_muon_templatemethod_ttbar_newsystematics/MC_TTTo2L2Nu_UL17.xml">
 
 <!ENTITY WJetsToLNu_HT-70To100 SYSTEM "../data/Skimming_datasets_UL17_muon/MC_WJetsToLNu_HT-70To100_UL17.xml">
 <!ENTITY WJetsToLNu_HT-100To200 SYSTEM "../data/Skimming_datasets_UL17_muon/MC_WJetsToLNu_HT-100To200_UL17.xml">
@@ -64,7 +64,7 @@
 
 <!--
 <ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="1" AutoResubmit="0"/>
-<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_AnalysisDNN_UL17_muon_templatemethod_QCD_EW_correction"/>
+<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_AnalysisDNN_UL17_muon_templatemethod_newcombinegen"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">

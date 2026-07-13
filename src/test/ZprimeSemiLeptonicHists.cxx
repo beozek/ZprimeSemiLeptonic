@@ -232,7 +232,7 @@ Hists(ctx, dirname) {
   if(ctx.get("channel") == "muon") isMuon = true;
   if(ctx.get("channel") == "electron") isElectron = true;
   std::string dataset_version = ctx.get("dataset_version");
-  is_tt = (dataset_version.find("TTTo") == 0) || (dataset_version.find("EFT") != std::string::npos);
+  is_tt = (dataset_version.find("TTTo") == 0) || (dataset_version.find("EFT") != std::string::npos) || (dataset_version.find("TTJets") != std::string::npos);
   gen_match=true;
   if(isdeepAK8){
     h_AK8TopTags = ctx.get_handle<std::vector<TopJet>>("DeepAK8TopTags");
@@ -984,7 +984,8 @@ void ZprimeSemiLeptonicHists::init(){
   mttbar_vs_costhetastar = book<TH2F>("mttbar_vs_costhetastar", "m_{t#bar{t}} vs cos(#theta*)", 20, -1, 1, 1000, 0, 10000);
   costhetastar_vs_mttbar = book<TH2F>("costhetastar_vs_mttbar", "cos(#theta*) vs m_{t#bar{t}}", 1000, 0, 10000, 20, -1, 1);
 
-  response_matrix = book<TH2F>("response_matrix", "#Delta Y_{(t,#bar{t})}_reco ;#Delta Y_{(t,#bar{t})}_gen",  2, -2.5, 2.5, 2, -2.5, 2.5);
+  response_matrix = book<TH2F>("response_matrix", ";#xi_{reco};#xi_{gen}",  2, -1.0, 1.0, 2, -1.0, 1.0);
+  Mtt_reco_vs_gen = book<TH2F>("Mtt_reco_vs_gen", ";M_{t#bar{t}}^{reco} [GeV];M_{t#bar{t}}^{gen} [GeV]", 100, 0, 3000, 100, 0, 3000);
   // response_matrix->GetXaxis()->SetBinLabel(1, "Negative");
   // response_matrix->GetXaxis()->SetBinLabel(2, "Positive");
   // response_matrix->GetYaxis()->SetBinLabel(1, "Negative");
@@ -2057,7 +2058,6 @@ void ZprimeSemiLeptonicHists::fill(const Event & event){
     //   DeltaY_notMatched->Fill(1., weight);
     // }
 
-    response_matrix->Fill(DeltaY_reco_best, DeltaY_gen_best, weight);
     DeltaY_reco_best_plot->Fill(DeltaY_reco_best, weight);
     DeltaY_gen_best_plot->Fill(DeltaY_gen_best, weight);
   
@@ -2088,6 +2088,22 @@ if (is_zprime_reconstructed_chi2 ){
     chi2_Zprime->Fill(chi2, weight);
     chi2_Zprime_rebin->Fill(chi2, weight);
     chi2_Zprime_rebin2->Fill(chi2, weight);
+
+    // Reconstructed top kinematics: filled here (data + MC) so the top p_T/eta plots
+    // include data. These use only the reconstructed candidate (no gen-level info),
+    // so they are safe for data. The signal-sensitive angular variables (cos theta*),
+    // chi2 discriminators and 2D maps remain in the is_mc-only block below.
+    LorentzVector toplep_reco = BestZprimeCandidate->top_leptonic_v4();
+    LorentzVector tophad_reco = BestZprimeCandidate->top_hadronic_v4();
+    toplep_pt->Fill(toplep_reco.Pt(), weight);
+    toplep_eta->Fill(toplep_reco.Eta(), weight);
+    toplep_phi->Fill(toplep_reco.Phi(), weight);
+    toplep_m->Fill(toplep_reco.M(), weight);
+    tophad_pt->Fill(tophad_reco.Pt(), weight);
+    tophad_eta->Fill(tophad_reco.Eta(), weight);
+    tophad_phi->Fill(tophad_reco.Phi(), weight);
+    tophad_m->Fill(tophad_reco.M(), weight);
+
     // cout << "the boolean is: "<< isLeptonPositive << endl;
     float_t dyreco = 0.0;
     if (BestZprimeCandidate->lepton().charge()>0) {
@@ -2106,6 +2122,17 @@ if (is_zprime_reconstructed_chi2 ){
     DeltaY_reco_unw->Fill(dyreco, w_nom);
     float xi_reco = std::tanh(dyreco);
     DeltaY_xi_reco_unw->Fill(xi_reco, w_nom);
+
+    // response_matrix and Mtt migration: use event-level GEN handles (no gen matching)
+    if(event.is_valid(h_xi_gen)){
+      float xi_gen_val = event.get(h_xi_gen);
+      response_matrix->Fill(xi_reco, xi_gen_val, w_nom);
+    }
+    if(event.is_valid(h_mtt_gen)){
+      float mtt_reco_val = BestZprimeCandidate->Zprime_v4().M();
+      float mtt_gen_val  = event.get(h_mtt_gen);
+      Mtt_reco_vs_gen->Fill(mtt_reco_val, mtt_gen_val, w_nom);
+    }
 
     // single configured f-value: fill base set weighted, else fill base unweighted
     if(use_noac_evtweights_ && noac_weights_ && event.is_valid(h_xi_gen)){
@@ -2467,15 +2494,9 @@ if (is_zprime_reconstructed_chi2 ){
     LorentzVector toplep = BestZprimeCandidate->top_leptonic_v4();
     LorentzVector tophad = BestZprimeCandidate->top_hadronic_v4();
 
-    toplep_pt->Fill(toplep.Pt(), weight);
-    toplep_eta->Fill(toplep.Eta(), weight);
-    toplep_phi->Fill(toplep.Phi(), weight);
-    toplep_m->Fill(toplep.M(), weight);
-
-    tophad_pt->Fill(tophad.Pt(), weight);
-    tophad_eta->Fill(tophad.Eta(), weight);
-    tophad_phi->Fill(tophad.Phi(), weight);
-    tophad_m->Fill(tophad.M(), weight);
+    // NOTE: the reconstructed top p_T/eta/phi/m are now filled (data + MC) in the
+    // un-gated "is_zprime_reconstructed_chi2" block above, so they are NOT filled here
+    // to avoid double-counting. toplep/tophad are kept for the angular variables below.
 
     //ditop_mass->Fill(Mreco, weight);
     ditop_absDeltaPhi->Fill(deltaPhi(toplep, tophad), weight);
@@ -2628,7 +2649,7 @@ if (is_zprime_reconstructed_chi2 ){
   ██   ████ ██   ████
   */
 
-  if(debug) cout << "before NN in hists" << endl;
+  // if(debug) cout << "before NN in hists" << endl;
   if(NN){
     if(debug) cout << "is it going inside NN" << endl;
     for(int i=0; i<Nmuons; i++){

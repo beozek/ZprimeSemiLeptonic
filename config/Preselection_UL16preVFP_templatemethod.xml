@@ -15,8 +15,8 @@
 ]>
 
 <!--
-<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="20" AutoResubmit="0"/>
-<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Preselection_UL16preVFP_templatemethod_ttbar_newsystematics"/>
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
+<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Preselection_UL16preVFP_templatemethod_ttbar_NNLOcorrectionatgen"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">
@@ -74,8 +74,11 @@
 			<Item Name="jersmear_direction" Value="nominal"/>
 			<Item Name="jecsmear_direction" Value="nominal"/>
 
-			<Item Name="PowhegEWKLookupBinningFile" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/top_pt_reweighting/HATHORMGPY_costheta.root"/>
-
+			<Item Name="ApplyNNLOEWKToGenHists"        Value="true"/>
+			<Item Name="ApplyTTbarEWKCorrection"       Value="true"/>
+			<Item Name="TTbarEWKCorrectionFile"        Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/top_pt_reweighting/HATHORMGPY_costheta.root"/>
+			<Item Name="ApplyTTbarNNLOQCDReweighting"  Value="true"/>
+			<Item Name="TTbarNNLOQCDScaleFactor"       Value="SF_3"/>
 
 			<Item Name="AnalysisModule" Value="ZprimePreselectionModule"/>
 		</UserConfig>

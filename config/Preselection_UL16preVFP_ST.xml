@@ -71,8 +71,8 @@
 ]>
 
 <!--
-<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="50" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="fstrug2@gmail.com" Notification="as" Workdir="workdir_Preselection_UL16preVFP_test"/>
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
+<ConfigSGE RAM="4" DISK="4" Mail="fstrug2@gmail.com" Notification="as" Workdir="workdir_Preselection_UL16preVFP_test"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">

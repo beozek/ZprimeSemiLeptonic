@@ -20,9 +20,9 @@
 <!ENTITY EGamma_RunC SYSTEM "../data/Skimming_datasets_UL18_electron/DATA_EGamma_RunC_UL18.xml">
 <!ENTITY EGamma_RunD SYSTEM "../data/Skimming_datasets_UL18_electron/DATA_EGamma_RunD_UL18.xml">
 
-<!ENTITY TTToSemiLeptonic SYSTEM "../data/Skimming_datasets_DNN_UL18_electron_templatemethod_ttbar1l_iniftymassbin/MC_TTToSemiLeptonic_UL18.xml">
-<!ENTITY TTToHadronic SYSTEM "../data/Skimming_datasets_DNN_UL18_electron_templatemethod_ttbar_massbin0750/MC_TTToHadronic_UL18.xml">
-<!ENTITY TTTo2L2Nu SYSTEM "../data/Skimming_datasets_DNN_UL18_electron_templatemethod_ttbar_massbin0750/MC_TTTo2L2Nu_UL18.xml">
+<!ENTITY TTToSemiLeptonic SYSTEM "../data/Skimming_datasets_DNN_UL18_electron_templatemethod_ttbar_newsystematics/MC_TTToSemiLeptonic_UL18.xml">
+<!ENTITY TTToHadronic SYSTEM "../data/Skimming_datasets_DNN_UL18_electron_templatemethod_ttbar_newsystematics/MC_TTToHadronic_UL18.xml">
+<!ENTITY TTTo2L2Nu SYSTEM "../data/Skimming_datasets_DNN_UL18_electron_templatemethod_ttbar_newsystematics/MC_TTTo2L2Nu_UL18.xml">
 
 <!ENTITY WJetsToLNu_HT-70To100 SYSTEM "../data/Skimming_datasets_UL18_electron/MC_WJetsToLNu_HT-70To100_UL18.xml">
 <!ENTITY WJetsToLNu_HT-100To200 SYSTEM "../data/Skimming_datasets_UL18_electron/MC_WJetsToLNu_HT-100To200_UL18.xml">
@@ -63,7 +63,7 @@
 
 <!--
 <ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="1" AutoResubmit="0"/>
-<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_AnalysisDNN_UL18_electron_templatemethod_newmassbins_ttbar1l_combinedgen"/>
+<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_AnalysisDNN_UL18_electron_templatemethod_newcombinegen"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">

@@ -19,8 +19,8 @@
 ]>
 
 <!--
-<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="bozek3@uic.edu" Notification="as" Workdir="try_titas_massoftop"/>
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="1" AutoResubmit="0"/>
+<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="try_titas_massoftop"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">

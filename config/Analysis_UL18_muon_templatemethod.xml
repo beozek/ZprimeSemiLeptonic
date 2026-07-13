@@ -87,7 +87,7 @@
 
 			<Item Name="noac_apply_event_weight"     Value="true"/>
 			<Item Name="noac_use_mtt_binning"        Value="true"/>
-			<Item Name="noac_gen_file"               Value="/data/dust/group/cms/zprime-uhh/Presel_UL18_templatemethod/workdir_Preselection_UL18_templatemethod_ttbar_iniftymassbin/uhh2.AnalysisModuleRunner.MC.TTToSemiLeptonic_UL18_*.root"/>
+			<Item Name="noac_gen_file"               Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/template_combinegen_input/combination_gen.root"/>
 			<Item Name="noac_gen_hist"               Value="mtt_gen_inclusive_General/DeltaY_xi_gen_100"/>
 
 			<Item Name="AnalysisModule" Value="ZprimeAnalysisModule"/>

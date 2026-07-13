@@ -13,7 +13,7 @@
 <!ENTITY TTTo2L2Nu_UL16postVFP        SYSTEM "../../common/UHH2-datasets/RunII_106X_v2/SM/UL16postVFP/TTTo2L2Nu_CP5_powheg-pythia8_Summer20UL16_v1.xml">
 ]>
 <!--
-<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="20" AutoResubmit="0"/>
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="5" AutoResubmit="0"/>
 <ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Preselection_UL16postVFP_JER_down"/>
 -->
 

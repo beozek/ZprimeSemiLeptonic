@@ -14,15 +14,15 @@
 <!ENTITY OUTPUTdir           "/data/dust/group/cms/zprime-uhh/Analysis_UL16postVFP_templatemethod/&CHANNEL;/">
 
 <!-- TTbar -->
-<!ENTITY TTToSemiLeptonic_UL16postVFP SYSTEM "../data/Skimming_datasets_Analysis_afterPreselection_UL16postVFP_templatemethod_ttbar_iniftymassbin/MC_TTToSemiLeptonic_UL16postVFP.xml">
-<!ENTITY TTToHadronic_UL16postVFP     SYSTEM "../data/Skimming_datasets_Analysis_afterPreselection_UL16postVFP_templatemethod_massbin0750_ttbar/MC_TTToHadronic_UL16postVFP.xml">
-<!ENTITY TTTo2L2Nu_UL16postVFP        SYSTEM "../data/Skimming_datasets_Analysis_afterPreselection_UL16postVFP_templatemethod_massbin0750_ttbar/MC_TTTo2L2Nu_UL16postVFP.xml">
+<!ENTITY TTToSemiLeptonic_UL16postVFP SYSTEM "../data/Skimming_datasets_UL16postVFP_afterpreselection_templatemethod_ttbar_newsystematics/MC_TTToSemiLeptonic_UL16postVFP.xml">
+<!ENTITY TTToHadronic_UL16postVFP     SYSTEM "../data/Skimming_datasets_UL16postVFP_afterpreselection_templatemethod_ttbar_newsystematics/MC_TTToHadronic_UL16postVFP.xml">
+<!ENTITY TTTo2L2Nu_UL16postVFP        SYSTEM "../data/Skimming_datasets_UL16postVFP_afterpreselection_templatemethod_ttbar_newsystematics/MC_TTTo2L2Nu_UL16postVFP.xml">
 <!ENTITY EtaT_m343_w2p8_lj_UL16postVFP SYSTEM "../data/Skimming_datasets_Analysis_afterPreselection_UL16postVFP_templatemethod_massbin0750/MC_EtaT_m343_w2p8_lj_UL16postVFP.xml">
 ]>
 
 <!--
 <ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="1" AutoResubmit="0"/>
-<ConfigSGE RAM="2" DISK="2" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Analysis_UL16postVFP_muon_templatemethod_ttbar1l_iniftymassbin"/>
+<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_Analysis_UL16postVFP_muon_templatemethod_ttbar_newsystematics"/>
 -->
 
 <JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">
@@ -37,7 +37,7 @@
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
 		</InputData>
-		<!-- <InputData Lumi="88489755.8674" NEventsMax="&NEVT;" Type="MC" Version="TTToHadronic_UL16postVFP" Cacheable="&b_Cacheable;">
+		<InputData Lumi="88489755.8674" NEventsMax="&NEVT;" Type="MC" Version="TTToHadronic_UL16postVFP" Cacheable="&b_Cacheable;">
 			&TTToHadronic_UL16postVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
@@ -46,7 +46,7 @@
 			&TTTo2L2Nu_UL16postVFP;
 			<InputTree Name="AnalysisTree" />
 			<OutputTree Name="AnalysisTree" />
-		</InputData> -->
+		</InputData>
 		<!-- <InputData Lumi="85217" NEventsMax="&NEVT;" Type="MC" Version="EtaT_m343_w2p8_lj_UL16postVFP" Cacheable="&b_Cacheable;"> &EtaT_m343_w2p8_lj_UL16postVFP; <InputTree Name="AnalysisTree"/> <OutputTree Name="AnalysisTree"/> </InputData> -->
 		
 
@@ -105,7 +105,7 @@
 
 			<Item Name="noac_apply_event_weight"     Value="true"/>
 			<Item Name="noac_use_mtt_binning"        Value="true"/>
-			<Item Name="noac_gen_file"               Value="/data/dust/group/cms/zprime-uhh/Presel_UL16postVFP_templatemethod/workdir_Preselection_UL16postVFP_templatemethod_ttbar_iniftymassbin/uhh2.AnalysisModuleRunner.MC.TTToSemiLeptonic*.root"/>
+			<Item Name="noac_gen_file"               Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/template_combinegen_input/combination_gen.root"/>
 			<Item Name="noac_gen_hist"               Value="mtt_gen_inclusive_General/DeltaY_xi_gen_100"/>
 
 			<Item Name="AnalysisModule" Value="ZprimeAnalysisModule"/>

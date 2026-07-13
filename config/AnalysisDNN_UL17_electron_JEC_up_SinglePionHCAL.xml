@@ -12,7 +12,7 @@
 <!ENTITY IS_LOOSER_SELECTION "false">
 <!ENTITY CHANNEL             "electron">
 <!ENTITY SAMPLE "none">
-<!ENTITY OUTPUTdir           "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/output_JEC/UL17/&CHANNEL;/">
+<!ENTITY OUTPUTdir           "/data/dust/group/cms/zprime-uhh/JEC_sources/UL17/electron">
 
 <!ENTITY TTToSemiLeptonic SYSTEM "../data/Skimming_datasets_UL17_forAnalysisDNN_electron_JEC_up_SinglePionHCAL/MC_TTToSemiLeptonic_UL17.xml">
 <!ENTITY TTToHadronic SYSTEM "../data/Skimming_datasets_UL17_forAnalysisDNN_electron_JEC_up_SinglePionHCAL/MC_TTToHadronic_UL17.xml">
