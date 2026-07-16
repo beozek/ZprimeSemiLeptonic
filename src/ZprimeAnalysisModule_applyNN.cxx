@@ -258,9 +258,9 @@ void NeuralNetworkModule::CreateInputs(Event & event){
 
   //NN - DON'T FORGET TO CHANGE!
   //Muon
-  // ifstream normfile ("/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_muon/NormInfo.txt", ios::in);
+  ifstream normfile ("/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_muon/NormInfo.txt", ios::in);
   //Electron
-  ifstream normfile ("/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_ele/NormInfo.txt", ios::in);
+  // ifstream normfile ("/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_ele/NormInfo.txt", ios::in);
   
   if(!normfile.good()) throw runtime_error("NeuralNetworkModule: The specified norm file does not exist.");
   if (normfile.is_open()){
@@ -279,9 +279,10 @@ void NeuralNetworkModule::CreateInputs(Event & event){
   //Only Ele or Mu variables!! DON'T FORGET TO CHANGE!
 
   // /Muon
-  // vector<uhh2::Event::Handle<float>> inputs = {h_Ak4_j1_E, h_Ak4_j1_deepjetbscore, h_Ak4_j1_eta, h_Ak4_j1_m, h_Ak4_j1_phi, h_Ak4_j1_pt, h_Ak4_j2_E, h_Ak4_j2_deepjetbscore, h_Ak4_j2_eta, h_Ak4_j2_m, h_Ak4_j2_phi, h_Ak4_j2_pt, h_Ak4_j3_E, h_Ak4_j3_deepjetbscore, h_Ak4_j3_eta, h_Ak4_j3_m, h_Ak4_j3_phi, h_Ak4_j3_pt, h_Ak4_j4_E, h_Ak4_j4_deepjetbscore, h_Ak4_j4_eta, h_Ak4_j4_m, h_Ak4_j4_phi, h_Ak4_j4_pt, h_Ak4_j5_E, h_Ak4_j5_deepjetbscore, h_Ak4_j5_eta, h_Ak4_j5_m, h_Ak4_j5_phi, h_Ak4_j5_pt, h_Ak8_j1_E, h_Ak8_j1_eta, h_Ak8_j1_mSD, h_Ak8_j1_phi, h_Ak8_j1_pt, h_Ak8_j1_tau21, h_Ak8_j1_tau32, h_Ak8_j2_E, h_Ak8_j2_eta, h_Ak8_j2_mSD, h_Ak8_j2_phi, h_Ak8_j2_pt, h_Ak8_j2_tau21, h_Ak8_j2_tau32, h_Ak8_j3_E, h_Ak8_j3_eta, h_Ak8_j3_mSD, h_Ak8_j3_phi, h_Ak8_j3_pt, h_Ak8_j3_tau21, h_Ak8_j3_tau32, h_MET_phi, h_MET_pt, h_Mu_E, h_Mu_eta, h_Mu_phi, h_Mu_pt, h_N_Ak4, h_N_Ak8}; // in alphabetical order to match NormInfo.txt
+  vector<uhh2::Event::Handle<float>> inputs = {h_Ak4_j1_E, h_Ak4_j1_deepjetbscore, h_Ak4_j1_eta, h_Ak4_j1_m, h_Ak4_j1_phi, h_Ak4_j1_pt, h_Ak4_j2_E, h_Ak4_j2_deepjetbscore, h_Ak4_j2_eta, h_Ak4_j2_m, h_Ak4_j2_phi, h_Ak4_j2_pt, h_Ak4_j3_E, h_Ak4_j3_deepjetbscore, h_Ak4_j3_eta, h_Ak4_j3_m, h_Ak4_j3_phi, h_Ak4_j3_pt, h_Ak4_j4_E, h_Ak4_j4_deepjetbscore, h_Ak4_j4_eta, h_Ak4_j4_m, h_Ak4_j4_phi, h_Ak4_j4_pt, h_Ak4_j5_E, h_Ak4_j5_deepjetbscore, h_Ak4_j5_eta, h_Ak4_j5_m, h_Ak4_j5_phi, h_Ak4_j5_pt, h_Ak8_j1_E, h_Ak8_j1_eta, h_Ak8_j1_mSD, h_Ak8_j1_phi, h_Ak8_j1_pt, h_Ak8_j1_tau21, h_Ak8_j1_tau32, h_Ak8_j2_E, h_Ak8_j2_eta, h_Ak8_j2_mSD, h_Ak8_j2_phi, h_Ak8_j2_pt, h_Ak8_j2_tau21, h_Ak8_j2_tau32, h_Ak8_j3_E, h_Ak8_j3_eta, h_Ak8_j3_mSD, h_Ak8_j3_phi, h_Ak8_j3_pt, h_Ak8_j3_tau21, h_Ak8_j3_tau32, h_MET_phi, h_MET_pt, h_Mu_E, h_Mu_eta, h_Mu_phi, h_Mu_pt, h_N_Ak4, h_N_Ak8}; // in alphabetical order to match NormInfo.txt
   //Electron
-  vector<uhh2::Event::Handle<float>> inputs = {h_Ak4_j1_E, h_Ak4_j1_deepjetbscore, h_Ak4_j1_eta, h_Ak4_j1_m, h_Ak4_j1_phi, h_Ak4_j1_pt, h_Ak4_j2_E, h_Ak4_j2_deepjetbscore, h_Ak4_j2_eta, h_Ak4_j2_m, h_Ak4_j2_phi, h_Ak4_j2_pt, h_Ak4_j3_E, h_Ak4_j3_deepjetbscore, h_Ak4_j3_eta, h_Ak4_j3_m, h_Ak4_j3_phi, h_Ak4_j3_pt, h_Ak4_j4_E, h_Ak4_j4_deepjetbscore, h_Ak4_j4_eta, h_Ak4_j4_m, h_Ak4_j4_phi, h_Ak4_j4_pt, h_Ak4_j5_E, h_Ak4_j5_deepjetbscore, h_Ak4_j5_eta, h_Ak4_j5_m, h_Ak4_j5_phi, h_Ak4_j5_pt, h_Ak8_j1_E, h_Ak8_j1_eta, h_Ak8_j1_mSD, h_Ak8_j1_phi, h_Ak8_j1_pt, h_Ak8_j1_tau21, h_Ak8_j1_tau32, h_Ak8_j2_E, h_Ak8_j2_eta, h_Ak8_j2_mSD, h_Ak8_j2_phi, h_Ak8_j2_pt, h_Ak8_j2_tau21, h_Ak8_j2_tau32, h_Ak8_j3_E, h_Ak8_j3_eta, h_Ak8_j3_mSD, h_Ak8_j3_phi, h_Ak8_j3_pt, h_Ak8_j3_tau21, h_Ak8_j3_tau32, h_Ele_E, h_Ele_eta, h_Ele_phi, h_Ele_pt, h_MET_phi, h_MET_pt, h_N_Ak4, h_N_Ak8}; // in alphabetical order to match NormInfo.txt
+  // vector<uhh2::Event::Handle<float>> inputs = {h_Ak4_j1_E, h_Ak4_j1_deepjetbscore, h_Ak4_j1_eta, h_Ak4_j1_m, h_Ak4_j1_phi, h_Ak4_j1_pt, h_Ak4_j2_E, h_Ak4_j2_deepjetbscore, h_Ak4_j2_eta, h_Ak4_j2_m, h_Ak4_j2_phi, h_Ak4_j2_pt, h_Ak4_j3_E, h_Ak4_j3_deepjetbscore, h_Ak4_j3_eta, h_Ak4_j3_m, h_Ak4_j3_phi, h_Ak4_j3_pt, h_Ak4_j4_E, h_Ak4_j4_deepjetbscore, h_Ak4_j4_eta, h_Ak4_j4_m, h_Ak4_j4_phi, h_Ak4_j4_pt, h_Ak4_j5_E, h_Ak4_j5_deepjetbscore, h_Ak4_j5_eta, h_Ak4_j5_m, h_Ak4_j5_phi, h_Ak4_j5_pt, h_Ak8_j1_E, h_Ak8_j1_eta, h_Ak8_j1_mSD, h_Ak8_j1_phi, h_Ak8_j1_pt, h_Ak8_j1_tau21, h_Ak8_j1_tau32, h_Ak8_j2_E, h_Ak8_j2_eta, h_Ak8_j2_mSD, h_Ak8_j2_phi, h_Ak8_j2_pt, h_Ak8_j2_tau21, h_Ak8_j2_tau32, h_Ak8_j3_E, h_Ak8_j3_eta, h_Ak8_j3_mSD, h_Ak8_j3_phi, h_Ak8_j3_pt, h_Ak8_j3_tau21, h_Ak8_j3_tau32, h_Ele_E, h_Ele_eta, h_Ele_phi, h_Ele_pt, h_MET_phi, h_MET_pt, h_N_Ak4, h_N_Ak8}; // in alphabetical order to match NormInfo.txt
+
   for(int i = 0; i < 59; ++i){
     // cout<<"looping over NN inputs "<< i <<endl;
 
@@ -528,10 +529,10 @@ protected:
   Event::Handle<float> h_Ak4_j5_pt;
   Event::Handle<float> h_Ak4_j5_deepjetbscore;
 
-  Event::Handle<float> h_E;
-  Event::Handle<float> h_eta;
-  Event::Handle<float> h_phi;
-  Event::Handle<float> h_pt;
+  Event::Handle<float> h_Ele_E;
+  Event::Handle<float> h_Ele_eta;
+  Event::Handle<float> h_Ele_phi;
+  Event::Handle<float> h_Ele_pt;
 
   Event::Handle<float> h_MET_phi;
   Event::Handle<float> h_MET_pt;
@@ -662,8 +663,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   electron_cleaner_high.reset(new ElectronCleaner(electronID_high));
 
   // Important selection values — topology-dependent chi2 thresholds
-  double chi2_max_resolved = stod(ctx.get("chi2_max_resolved", "30."));
-  double chi2_max_merged   = stod(ctx.get("chi2_max_merged",   "30."));
+  double chi2_max(30.);
   string trigger_mu_A, trigger_mu_B, trigger_mu_C, trigger_mu_D, trigger_mu_E, trigger_mu_F;
   string trigger_A, trigger_B;
   string trigger_ph_A;
@@ -769,7 +769,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   sf_ele_reco_dummy.reset(new uhh2::ElectronRecoScaleFactors(ctx, boost::none, boost::none, boost::none, boost::none, true));
 
   // Selection modules — separate chi2 thresholds for resolved and merged topologies
-  Chi2_selection.reset(new Chi2Cut(ctx, 0., chi2_max_resolved, chi2_max_merged));
+  Chi2_selection.reset(new Chi2Cut(ctx, 0., chi2_max));
   TwoDCut_selection_low1.reset(new TwoDCut(0.3, 10.));
   TTbarMatchable_selection.reset(new TTbarSemiLepMatchableSelection());
   Chi2CandidateMatched_selection.reset(new Chi2CandidateMatchedSelection(ctx));
@@ -913,10 +913,10 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   }
 
   vector<string> histogram_tags = {
-  // "Initial", "Weights_Init", "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_MCScale", "Weights_Prefiring", , "Weights_TopMistag_SF", "Weights_PS", 
+  // "Initial", , "Weights_HEM", "Weights_PU", "Weights_Lumi", "Weights_MCScale", "Weights_Prefiring", , "Weights_TopMistag_SF", "Weights_PS", 
   // "NLOCorrections","TwoDCut_low1","IdMuon_SF", "IdEle_SF", "IsoMuon_SF",
   // "RecoEle_SF", "MuonReco_SF", "TriggerMuon_SF", "BeforeBtagSF", "AfterBtagSF", "AfterCustomBtagSF", "TriggerEle_SF", "NNInputsBeforeReweight", "TopTagVeto", "DeltaEtaCut",
-  "Weights_TopTag_SF","TwoDCut_Muon_low1", "Weights_TopPt", "Weights_EWK", "Weights_NNLOQCD", "AfterChi2", 
+  "Weights_Init","Weights_TopTag_SF","TwoDCut_Muon_low1", "Weights_TopPt", "Weights_EWK", "Weights_NNLOQCD", "AfterChi2", "just_before_NN", "DNN_output0_beforecorrections_NOCHI2", "DNN_output0_beforecorrections",
   // "AfterBaseline", "Chi2_passes","Chi2_withTopTag", "Chi2_noTopTag","Chi2_inverse",
   // "DNN_output0_nochi2", // DISABLED for regular runs
   "DNN_output0",
@@ -950,7 +950,7 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
 
  if(isMC){
     TString sample_name = "";
-    vector<TString> names = {"MC_EFT_Mttbar_0-700_UL17", "MC_EFT_Mttbar_700-900_UL17", "MC_EFT_Mttbar_900-Inf_UL17","ST", "WJets", "DY", "QCD"};
+    vector<TString> names = {"ST", "WJets", "DY", "QCD"};
 
     for(unsigned int i=0; i<names.size(); i++){
       if( ctx.get("dataset_version").find(names.at(i)) != std::string::npos ) sample_name = names.at(i);
@@ -958,47 +958,26 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
     if( (ctx.get("dataset_version").find("TTToHadronic") != std::string::npos)
      || (ctx.get("dataset_version").find("TTToSemiLeptonic") != std::string::npos)
      || (ctx.get("dataset_version").find("TTTo2L2Nu") != std::string::npos)
-     || (ctx.get("dataset_version").find("TTJets_Madgraph") != std::string::npos) ) {
-      sample_name = "TTbar";
-    }
-    if( (ctx.get("dataset_version").find("MC_EFT_Mttbar_0-700_UL17") != std::string::npos)
-     || (ctx.get("dataset_version").find("MC_EFT_Mttbar_700-900_UL17") != std::string::npos)
-     || (ctx.get("dataset_version").find("MC_EFT_Mttbar_900-Inf_UL17") != std::string::npos) ) {
-      sample_name = "TTbar_EFT";
-    }
+     || (ctx.get("dataset_version").find("TTJets_Madgraph") != std::string::npos) ) sample_name = "TTbar";
     if( (ctx.get("dataset_version").find("WW") != std::string::npos)
      || (ctx.get("dataset_version").find("ZZ") != std::string::npos)
-     || (ctx.get("dataset_version").find("WZ") != std::string::npos) ) {
-      sample_name = "Diboson";
-    }
+     || (ctx.get("dataset_version").find("WZ") != std::string::npos) ) sample_name = "Diboson";
+    
     if( ctx.get("dataset_version").find("EtaT") != std::string::npos ) {
       sample_name = "TTbar"; // toponium: use TTbar b-tag ratio (similar l+jets topology)
     }
 
-    if (debug) cout << "is it EFT? " << isEFT << endl;
   
     // 2D b-tag SF reading with the new logic (EFT or others):
     if(isMuon){
       TFile* f_btag2Dsf_muon = new TFile("/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/macros/src/files_BTagSF/customBtagSF_muon_"+year+".root");
-      if(isEFT){
-        ratio_hist_muon = (TH2F*)f_btag2Dsf_muon->Get("N_Jets_vs_HT_TTbar");
-      }
-      else{
-        ratio_hist_muon = (TH2F*)f_btag2Dsf_muon->Get("N_Jets_vs_HT_" + sample_name);
-      }
-      if(!ratio_hist_muon) ratio_hist_muon = (TH2F*)f_btag2Dsf_muon->Get("N_Jets_vs_HT_TTbar"); // fallback for unknown samples
-      if(ratio_hist_muon) ratio_hist_muon->SetDirectory(0);
+      ratio_hist_muon = (TH2F*)f_btag2Dsf_muon->Get("N_Jets_vs_HT_" + sample_name);
+      ratio_hist_muon->SetDirectory(0);
     }
     else if(!isMuon){
       TFile* f_btag2Dsf_ele = new TFile("/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/macros/src/files_BTagSF/customBtagSF_electron_"+year+".root");
-      if(isEFT){
-        ratio_hist_ele = (TH2F*)f_btag2Dsf_ele->Get("N_Jets_vs_HT_TTbar");
-      }
-      else{
-        ratio_hist_ele = (TH2F*)f_btag2Dsf_ele->Get("N_Jets_vs_HT_" + sample_name);
-      }
-      if(!ratio_hist_ele) ratio_hist_ele = (TH2F*)f_btag2Dsf_ele->Get("N_Jets_vs_HT_TTbar"); // fallback for unknown samples
-      if(ratio_hist_ele) ratio_hist_ele->SetDirectory(0);
+      ratio_hist_ele = (TH2F*)f_btag2Dsf_ele->Get("N_Jets_vs_HT_" + sample_name);
+      ratio_hist_ele->SetDirectory(0);
     }
   }
 
@@ -1038,10 +1017,10 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   h_Ak4_j5_pt  = ctx.get_handle<float>("Ak4_j5_pt");
   h_Ak4_j5_deepjetbscore  = ctx.get_handle<float>("Ak4_j5_deepjetbscore");
 
-  h_E    = ctx.get_handle<float>("Ele_E");
-  h_eta  = ctx.get_handle<float>("Ele_eta");
-  h_phi  = ctx.get_handle<float>("Ele_phi");
-  h_pt   = ctx.get_handle<float>("Ele_pt");
+  h_Ele_E    = ctx.get_handle<float>("Ele_E");
+  h_Ele_eta  = ctx.get_handle<float>("Ele_eta");
+  h_Ele_phi  = ctx.get_handle<float>("Ele_phi");
+  h_Ele_pt   = ctx.get_handle<float>("Ele_pt");
 
   h_MET_phi = ctx.get_handle<float>("MET_phi");
   h_MET_pt = ctx.get_handle<float>("MET_pt");
@@ -1091,10 +1070,10 @@ ZprimeAnalysisModule_applyNN::ZprimeAnalysisModule_applyNN(uhh2::Context& ctx){
   
   //Only Ele or Mu variables!! DON'T FORGET TO CHANGE!
   //muon
-  // NNModule.reset( new NeuralNetworkModule(ctx, "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_muon/model.pb", "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_muon/model.config.pbtxt"));
+  NNModule.reset( new NeuralNetworkModule(ctx, "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_muon/model.pb", "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_muon/model.config.pbtxt"));
   
   // electron
-  NNModule.reset( new NeuralNetworkModule(ctx, "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_ele/model.pb", "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_ele/model.config.pbtxt"));
+  // NNModule.reset( new NeuralNetworkModule(ctx, "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_ele/model.pb", "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/KerasNN/NN_DeepAK8_UL17_ele/model.config.pbtxt"));
 
   is_ttbar_or_eft = false;
   if(isMC) {
@@ -1143,8 +1122,6 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
   event.set(h_is_zprime_reconstructed_correctmatch, false);
   event.set(h_chi2,-100);
   event.set(h_weight,-100);
-
-  
   event.set(h_NNoutput0, 0);
   event.set(h_NNoutput1, 0);
   event.set(h_NNoutput2, 0);
@@ -1178,77 +1155,7 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
   }
   if(debug) cout<<"Top Tagger ok"<<endl;
 
-  // fill_histograms(event, "Weights_Init");
-  //Setting low and high pt points
-  // double muon_pt_high(55.);
-  // bool muon_is_low = false;
-  // bool muon_is_high = false;
-  // if(debug)  cout<<"sorting leptons"<<endl;
-  // if(isMuon){
-  //   vector<Muon>* muons = event.muons;
-  //   for(unsigned int i=0; i<muons->size(); i++){
-  //     if(event.muons->at(i).pt()<=muon_pt_high){
-  //       muon_is_low = true;
-  //     }else{
-  //       muon_is_high = true;
-  //     }
-  //   }
-  // }
-  // sort_by_pt<Muon>(*event.muons);
-
-  // double electron_pt_high(120.);
-  // bool ele_is_low = false;
-  // bool ele_is_high = false;
-
-  // if(isElectron){
-  //   vector<Electron>* electrons = event.electrons;
-  //   for(unsigned int i=0; i<electrons->size(); i++){
-  //     if(event.electrons->at(i).pt()<=electron_pt_high){
-  //       ele_is_low = true;
-  //     }else{
-  //       ele_is_high = true;
-  //     }
-  //   }
-  // }
-  // sort_by_pt<Electron>(*event.electrons);
-  
-
-  // if(debug)  cout<<"2D cut for low pt"<<endl;
-  // //TwoD for low pt:
-  // if(isMuon && muon_is_low){
-  //   if (debug)cout <<"two d for muon"<<endl;
-  //   if(!TwoDCut_selection_low1->passes(event)) return false;
-  // }
-  // // fill_histograms(event, "TwoDCut_Muon_low1");
-
-  
-  // if(isElectron && ele_is_low){
-  //   if (debug)cout <<"two d for ele"<<endl;
-  //   if(!TwoDCut_selection_low1->passes(event)) return false;
-  // }
-  
-  
-  // fill_histograms(event, "TwoDCut_low1");
-  
-    
-
-  
-  // if(debug)  cout<<"done 2D low cut"<<endl;
-  // Run top-tagging
-//  if(ishotvr){
-//    TopTaggerHOTVR->process(event);
-//    hadronic_top->process(event);
-//  }else if(isdeepAK8){
-//    TopTaggerDeepAK8->process(event);
-//    hadronic_top->process(event);
-//  }
-//  if(debug) cout<<"Top Tagger ok"<<endl;
-
-  //fill_histograms(event, "Weights_Init");
- // if(debug)  cout<<"Weights_Init"<<endl;
-  // lumihists_Weights_Init->fill(event);
-  
-  
+  fill_histograms(event, "Weights_Init");
 
   if(!HEM_selection->passes(event)){
     if(!isMC) return false;
@@ -1257,7 +1164,7 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
   // fill_histograms(event, "Weights_HEM");
 
   // pileup weight
-    PUWeight_module->process(event);
+  PUWeight_module->process(event);
   if(debug)  cout<<"PUWeight ok"<<endl;
   // fill_histograms(event, "Weights_PU");
   // lumihists_Weights_PU->fill(event);
@@ -1277,7 +1184,6 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
   TTbarNNLOQCDReweighting_module->process(event);
   const double weight_after_nnloqcd = event.weight;
   // lumihists_Weights_TopPt->fill(event);
-
 
   // MC scale
   MCScale_module->process(event);
@@ -1300,7 +1206,6 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
   // DeepAK8 TopTag SFs
   if(isdeepAK8) sf_toptag->process(event);
   if(debug) cout << "Weights_TopTag_SF: ok" << endl;
-  
   if(isdeepAK8) sf_topmistag->process(event);
   double muon_pt_high(55.);
   bool muon_is_low = false;
@@ -1586,13 +1491,15 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
     event.set(h_chi2, chi2_val);
     event.set(h_weight, (float)event.weight);
   }
-
+  fill_histograms(event, "just_before_NN");
   // out0=TTbar, out1=ST, out2=WJets
   if( out0 == max_score ){
+    cout << "inside signal node" << endl;
     if(debug) cout << "inside signal node, about to process EFT vars" << endl;
     // VariablesEFTSR_module->process(event);
     // fill_histograms(event, "DNN_output0_nochi2"); // DISABLED for regular runs
     if(debug) cout << "signal DNN output0" << endl;
+    fill_histograms(event, "DNN_output0_beforecorrections_NOCHI2");
 
     // Purity vs m_tt: for each topology, *_total_* = denominator = all MC events in that category
     // (matched and not-matched). *_matched_* = numerator subset only. In ROOT: divide matched/total
@@ -1694,6 +1601,7 @@ bool ZprimeAnalysisModule_applyNN::process(uhh2::Event& event){
     if(Chi2_selection->passes(event)){  // cut on chi2<30 - only in SR == out0)
       // cout << "signal DNN output0 chi2" << endl;
       // h_CHSMatchHists->fill(event);
+      fill_histograms(event, "DNN_output0_beforecorrections");
       const double final_weight = event.weight;
       const double downstream_weight_factor = weight_after_nnloqcd != 0.0 ? final_weight / weight_after_nnloqcd : 1.0;
       event.weight = weight_after_toppt * downstream_weight_factor;

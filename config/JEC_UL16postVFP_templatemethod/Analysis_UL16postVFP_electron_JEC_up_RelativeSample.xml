@@ -12,7 +12,7 @@
 <!ENTITY IS_LOOSER_SELECTION "false">
 <!ENTITY IS_ELE_TRIGGER "false">
 <!ENTITY CHANNEL "electron">
-<!ENTITY OUTPUTdir "/data/dust/group/cms/zprime-uhh/Analysis_UL16postVFP/JEC_up/electron/">
+<!ENTITY OUTPUTdir "/data/dust/group/cms/zprime-uhh/JEC_sources/UL16postVFP/electron/Analysis/">
 
 <!ENTITY TTToSemiLeptonic SYSTEM "../../data/Skimming_datasets_UL16postVFP_preselection_JEC_up_RelativeSample/MC_TTToSemiLeptonic_UL16postVFP.xml">
 <!ENTITY TTToHadronic SYSTEM "../../data/Skimming_datasets_UL16postVFP_preselection_JEC_up_RelativeSample/MC_TTToHadronic_UL16postVFP.xml">

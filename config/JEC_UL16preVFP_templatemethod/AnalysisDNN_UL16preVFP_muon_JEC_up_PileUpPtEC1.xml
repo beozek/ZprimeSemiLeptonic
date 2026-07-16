@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JobConfiguration PUBLIC "" "JobConfig.dtd" [
+
+<!ENTITY TargetLumi "19520"> <!-- from https://twiki.cern.ch/twiki/bin/view/CMS/TWikiLUM#SummaryTable -->
+<!ENTITY PREFIX "uhh2.AnalysisModuleRunner.">
+<!ENTITY b_Cacheable "False">
+<!ENTITY NEVT "-1">
+<!ENTITY YEARsuffix "_UL16preVFP">
+
+<!ENTITY IS_HOTVR            "false">
+<!ENTITY IS_DEEPAK8          "true">
+<!ENTITY IS_LOOSER_SELECTION "false">
+<!ENTITY IS_ELE_TRIGGER      "false">
+<!ENTITY CHANNEL             "muon">
+<!ENTITY SAMPLE "none">
+<!ENTITY OUTPUTdir           "/data/dust/group/cms/zprime-uhh/JEC_sources/UL16preVFP/muon">
+
+<!ENTITY TTToSemiLeptonic SYSTEM "../../data/Skimming_datasets_UL16preVFP_forAnalysisDNN_muon_JEC_up_PileUpPtEC1/MC_TTToSemiLeptonic_UL16preVFP.xml">
+<!ENTITY TTToHadronic SYSTEM "../../data/Skimming_datasets_UL16preVFP_forAnalysisDNN_muon_JEC_up_PileUpPtEC1/MC_TTToHadronic_UL16preVFP.xml">
+<!ENTITY TTTo2L2Nu SYSTEM "../../data/Skimming_datasets_UL16preVFP_forAnalysisDNN_muon_JEC_up_PileUpPtEC1/MC_TTTo2L2Nu_UL16preVFP.xml">
+]>
+
+<!--
+<ConfigParse NEventsBreak="0" LastBreak="0" FileSplit="1" AutoResubmit="0"/>
+<ConfigSGE RAM="4" DISK="4" Mail="bozek3@uic.edu" Notification="as" Workdir="workdir_AnalysisDNN_UL16preVFP_muon_JEC_up_PileUpPtEC1"/>
+-->
+
+<JobConfiguration JobName="ZprimePreselectionJob" OutputLevel="INFO">
+  <Library Name="libSUHH2ZprimeSemiLeptonic"/>
+  <Package Name="SUHH2ZprimeSemiLeptonic.par"/>
+
+  <Cycle Name="uhh2::AnalysisModuleRunner" OutputDirectory="&OUTPUTdir;/" PostFix="" TargetLumi="&TargetLumi;">
+
+    <InputData Lumi="107178313.917" NEventsMax="&NEVT;" Type="MC" Version="TTToSemiLeptonic&YEARsuffix;" Cacheable="&b_Cacheable;"> &TTToSemiLeptonic; <InputTree Name="AnalysisTree"/> </InputData>
+    <InputData Lumi="30689876.8706" NEventsMax="&NEVT;" Type="MC" Version="TTTo2L2Nu&YEARsuffix;" Cacheable="&b_Cacheable;"> &TTTo2L2Nu; <InputTree Name="AnalysisTree"/> </InputData>
+    <InputData Lumi="79684571.3184" NEventsMax="&NEVT;" Type="MC" Version="TTToHadronic&YEARsuffix;" Cacheable="&b_Cacheable;"> &TTToHadronic; <InputTree Name="AnalysisTree"/> </InputData>
+
+    <UserConfig>
+      <Item Name="PrimaryVertexCollection" Value="offlineSlimmedPrimaryVertices"/>
+      <Item Name="GenParticleCollection" Value="GenParticles"/>
+      <Item Name="ElectronCollection" Value="slimmedElectronsUSER"/>
+      <Item Name="MuonCollection" Value="slimmedMuonsUSER"/>
+      <Item Name="JetCollection" Value="jetsAk4Puppi"/>
+      <Item Name="GenJetCollection" Value="slimmedGenJets"/>
+      <Item Name="TopJetCollection" Value="hotvrPuppi"/>
+      <Item Name="GenTopJetCollection" Value="genjetsAk8SubstructureSoftDrop"/>
+      <Item Name="TopPuppiJetCollection" Value="jetsAk8PuppiSubstructure_SoftDropPuppi"/>
+      <Item Name="METName" Value="slimmedMETsPuppi"/>
+      <Item Name="genMETName" Value="slimmedMETs_GenMET"/>
+
+      <Item Name="lumi_file" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/common/UHH2-data/UL16preVFP/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON_UL16preVFP_normtag.root"/>
+      <Item Name="lumihists_lumi_per_bin" Value="500.0"/>
+
+      <Item Name="pileup_directory" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/common/UHH2-data/UL16preVFP/MyMCPileupHistogram_UL16preVFP.root" />
+      <Item Name="pileup_directory_data" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/common/UHH2-data/UL16preVFP/MyDataPileupHistogram_UL16preVFP.root" />
+      <Item Name="pileup_directory_data_up" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/common/UHH2-data/UL16preVFP/MyDataPileupHistogram_UL16preVFP_72383.root" />
+      <Item Name="pileup_directory_data_down" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/common/UHH2-data/UL16preVFP/MyDataPileupHistogram_UL16preVFP_66017.root" />
+
+      <Item Name="NLOCorrections" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/data/" />
+
+      <Item Name="is_hotvr" Value="&IS_HOTVR;"/>
+      <Item Name="is_deepAK8" Value="&IS_DEEPAK8;"/>
+      <Item Name="is_looser_selection" Value="&IS_LOOSER_SELECTION;"/>
+
+      <Item Name="additionalBranches" Value="jetsAk4CHS CHS_matched hotvrGen
+        Ak4_j1_E Ak4_j1_eta Ak4_j1_m Ak4_j1_phi Ak4_j1_pt Ak4_j1_deepjetbscore
+        Ak4_j2_E Ak4_j2_eta Ak4_j2_m Ak4_j2_phi Ak4_j2_pt Ak4_j2_deepjetbscore
+        Ak4_j3_E Ak4_j3_eta Ak4_j3_m Ak4_j3_phi Ak4_j3_pt Ak4_j3_deepjetbscore
+        Ak4_j4_E Ak4_j4_eta Ak4_j4_m Ak4_j4_phi Ak4_j4_pt Ak4_j4_deepjetbscore
+        Ak4_j5_E Ak4_j5_eta Ak4_j5_m Ak4_j5_phi Ak4_j5_pt Ak4_j5_deepjetbscore
+        Ak8_j1_E Ak8_j1_eta Ak8_j1_mSD Ak8_j1_phi Ak8_j1_pt Ak8_j1_tau21 Ak8_j1_tau32
+        Ak8_j2_E Ak8_j2_eta Ak8_j2_mSD Ak8_j2_phi Ak8_j2_pt Ak8_j2_tau21 Ak8_j2_tau32
+        Ak8_j3_E Ak8_j3_eta Ak8_j3_mSD Ak8_j3_phi Ak8_j3_pt Ak8_j3_tau21 Ak8_j3_tau32
+        MET_phi MET_pt
+        Mu_E Mu_eta Mu_phi Mu_pt
+        N_Ak4 N_Ak8"/>
+
+      <Item Name="use_sframe_weight" Value="false"/>
+      <Item Name="jecsmear_source" Value="PileUpPtEC1"/>
+      <Item Name="jersmear_direction" Value="nominal"/>
+      <Item Name="jecsmear_direction" Value="up"/>
+      <Item Name="ScaleVariationMuR" Value="nominal"/>
+      <Item Name="ScaleVariationMuF" Value="nominal"/>
+      <Item Name="SystDirection_MuonId_stat" Value="nominal"/>
+      <Item Name="SystDirection_MuonId_syst" Value="nominal"/>
+      <Item Name="SystDirection_MuonIso_stat" Value="nominal"/>
+      <Item Name="SystDirection_MuonIso_syst" Value="nominal"/>
+      <Item Name="SystDirection_MuonTrigger_stat" Value="nominal"/>
+      <Item Name="SystDirection_MuonTrigger_syst" Value="nominal"/>
+      <Item Name="SystDirection_ElectronId" Value="nominal"/>
+      <Item Name="SystDirection_ElectronReco" Value="nominal"/>
+      <Item Name="Sys_PU" Value="central"/>
+      <Item Name="SystDirection_BTaggingShape" Value="central"/>
+      <Item Name="Sys_prefiring" Value="nominal"/>
+      <Item Name="Sys_TopTag" Value="nominal"/>
+      <Item Name="Systematic_TopPt_a" Value="nominal"/>
+      <Item Name="Systematic_TopPt_b" Value="nominal"/>
+      <Item Name="channel" Value="&CHANNEL;"/>
+      <Item Name="sample" Value="&SAMPLE;"/>
+      
+      <Item Name="noac_apply_event_weight"     Value="false"/>
+      <Item Name="noac_use_mtt_binning"        Value="true"/>
+			<Item Name="noac_gen_file"               Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/template_combinegen_input/combination_gen.root"/>
+      <Item Name="noac_gen_hist"               Value="mtt_gen_inclusive_General/DeltaY_xi_gen_100"/>
+      <!-- ttbar EW (HATHOR) + NNLO QCD top-pT corrections -->
+      <Item Name="ApplyTTbarEWKCorrection" Value="true"/>
+      <Item Name="TTbarEWKCorrectionFile" Value="/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/top_pt_reweighting/HATHORMGPY_costheta.root"/>
+      <Item Name="ApplyTTbarNNLOQCDReweighting" Value="true"/>
+      <Item Name="TTbarNNLOQCDScaleFactor" Value="SF_3"/>
+
+
+      <!-- Chi2 discriminator: combined mu+ele, all UL years, correct-match fits -->
+      <!-- <Item Name="chi2_mtophad"           Value="172.1"/>
+      <Item Name="chi2_sigmatophad"       Value="22.4"/>
+      <Item Name="chi2_mtoplep"           Value="174.8"/>
+      <Item Name="chi2_sigmatoplep"       Value="27.2"/>
+      <Item Name="chi2_mtophad_ttag"      Value="178.5"/>
+      <Item Name="chi2_sigmatophad_ttag"  Value="13.1"/>
+      <Item Name="chi2_mtoplep_ttag"      Value="171.3"/>
+      <Item Name="chi2_sigmatoplep_ttag"  Value="26.2"/> -->
+
+      <!-- Topology-dependent chi2 thresholds (FoM-optimized) -->
+      <Item Name="chi2_max_resolved" Value="30."/>
+      <Item Name="chi2_max_merged"   Value="30."/>
+
+      <Item Name="AnalysisModule" Value="ZprimeAnalysisModule_applyNN"/>
+    </UserConfig>
+
+  </Cycle>
+</JobConfiguration>
