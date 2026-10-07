@@ -348,6 +348,7 @@ void ZprimeSemiLeptonicPreselectionHists::init(){
 
   // Template method histograms
   Mtt_gen               = book<TH1F>("Mtt_gen", "M_{t#bar{t}} GEN [GeV]", 100, 0, 2000);
+  Mtt_gen_5GeV          = book<TH1F>("Mtt_gen_5GeV", "M_{t#bar{t}} GEN;M_{t#bar{t}}^{gen} [GeV];Weighted events / 5 GeV", 600, 0, 3000);
   DeltaY_gen            = book<TH1F>("DeltaY_gen", "#Delta|Y|_{(t,#bar{t})} GEN ", 50, -2.5, 2.5);
   DeltaY_xi_gen         = book<TH1F>("DeltaY_xi_gen", "#xi = tanh(#Delta|Y|) GEN ", 50, -1.0, 1.0);
   DeltaY_xi_gen_300     = book<TH1F>("DeltaY_xi_gen_300", "#xi = tanh(#Delta|Y|) GEN ", 300, -1.0, 1.0);
@@ -958,6 +959,7 @@ void ZprimeSemiLeptonicPreselectionHists::fill(const Event & event){
             break;
         }
         Mtt_gen->Fill(mtt_gen_val, weight);
+        Mtt_gen_5GeV->Fill(mtt_gen_val, weight);
       
         // DeltaY_xi_genVsReco->Fill(xi_gen_val, xi_reco_val, weight);
     }

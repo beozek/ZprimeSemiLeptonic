@@ -209,6 +209,52 @@ namespace {
     return static_cast<float>(costheta);
   }
 
+  // NNLO QCD SF_3(pT), same parameters as TTbarNNLOQCDReweighting (ZprimeSemiLeptonicModules.cxx).
+  // Used only for the no-cap cross-check (FillNNLONoCapGenHists); the capped value built from it
+  // is compared on every event with the weight stored by the module.
+  double nnlo_qcd_sf3(double pt) {
+    return 0.17478303752138802 * std::exp(-0.0045665365705007399 * pt) + 0.89410719420857065;
+  }
+
+  // Local copy of the TTbarEWKCorrection lookup (ZprimeSemiLeptonicModules.cxx: clamp_to_axis,
+  // evaluate_histo, evaluate_ratio and the cos(theta*) definition of process()), so that the EWK
+  // weight can be evaluated on caller-supplied tops (last-copy cross-check). Checked on every event
+  // against the module's stored weight on the status-22 tops.
+  double ewk_clamp_to_axis(const TAxis* axis, double value) {
+    if (!axis || !std::isfinite(value)) return std::numeric_limits<double>::quiet_NaN();
+    const double xmin = axis->GetXmin();
+    const double xmax = axis->GetXmax();
+    const double eps = std::max(1e-9, 1e-9 * std::abs(xmax - xmin));
+    if (value <= xmin) return xmin + eps;
+    if (value >= xmax) return xmax - eps;
+    return value;
+  }
+  double ewk_evaluate_histo(const TH2D* hist, double x, double y) {
+    if (!hist) return 0.0;
+    const double x_eval = ewk_clamp_to_axis(hist->GetXaxis(), x);
+    const double y_eval = ewk_clamp_to_axis(hist->GetYaxis(), y);
+    if (!std::isfinite(x_eval) || !std::isfinite(y_eval)) return 0.0;
+    return hist->GetBinContent(hist->GetXaxis()->FindFixBin(x_eval), hist->GetYaxis()->FindFixBin(y_eval));
+  }
+  // EWYt_10 / EWno_0 at (m_ttbar, cos theta*) of the given tops; 1.0 wherever the module stores 1.0
+  double ewk_weight_for(const TH2D* lo_qcd, const TH2D* nlo_ewk, const LorentzVector& top_v4, const LorentzVector& antitop_v4) {
+    const double mttbar = (top_v4 + antitop_v4).M();
+    const TLorentzVector top = to_tlorentzvector(top_v4);
+    const TLorentzVector antitop = to_tlorentzvector(antitop_v4);
+    const TLorentzVector ttbar = top + antitop;
+    if (!(std::isfinite(mttbar) && mttbar > 0.0 && ttbar.E() > 0.0)) return 1.0;
+    TLorentzVector top_ttbar_frame = top;
+    top_ttbar_frame.Boost(-ttbar.BoostVector());
+    if (!(top_ttbar_frame.P() > 0.0)) return 1.0;
+    double costheta = top_ttbar_frame.Vect().Unit().Dot(TVector3(0.0, 0.0, 1.0));
+    costheta = std::max(-1.0, std::min(1.0, costheta));
+    const double lo = ewk_evaluate_histo(lo_qcd, mttbar, costheta);
+    const double nlo = ewk_evaluate_histo(nlo_ewk, mttbar, costheta);
+    if (lo == 0.0 || !std::isfinite(lo) || !std::isfinite(nlo)) return 1.0;
+    const double ratio = nlo / lo;
+    return (std::isfinite(ratio) && ratio > 0.0) ? ratio : 1.0;
+  }
+
   // b-fragmentation : check if the particle is a b-hadron, b-quark, or b-hadron-quark.
   // True if any tau in the ttbar decay goes tau->hadronic. Exclude such events.
   bool has_any_hadronic_tau_decay(const std::vector<GenParticle>* gps, const TTbarGen& ttbargen) {
@@ -281,6 +327,14 @@ protected:
   uhh2::Event::Handle<float> h_w_ewk_nom;
   uhh2::Event::Handle<float> h_w_nnlo_nom;
 
+  // Optional (XML FillNNLONoCapGenHists=true, needs ApplyNNLOEWKToGenHists=true and SF_3): parallel
+  // "_lumiscaled_nnloewk_nocap" GEN folders (and gen_lastcopy/*_nnloewk_nocap) filled with
+  // genWeight * lumi * EWK * NNLO-QCD WITHOUT the pT > 500 GeV freeze, to compare with the capped
+  // _lumiscaled_nnloewk folders. The capped SF_3 recomputed here must equal the module's stored
+  // weight; if not, the event keeps the stored weight and a warning is printed.
+  bool fill_nnlo_nocap_gen_hists = false;
+  long n_nnlo_nocap_mismatch = 0;
+
   // Corrections
   std::unique_ptr<CommonModules> common;
   std::unique_ptr<AnalysisModule> hotvrjetCorr;
@@ -341,6 +395,54 @@ protected:
   // Harvest offline: sigma_POWHEG_bin = powheg_yield * xsec / powheg_sumw.
   TH2D* h_powheg_lookup_yield = nullptr;
   TH1D* h_powheg_lookup_sumw = nullptr;
+
+  // Top-definition cross-check (XML flag FillLastCopyGenHists, default false).
+  // Same GEN events and weight (genWeight * lumi) as the _lumiscaled folders, with xi and
+  // m_tt computed twice: from the status-22 (hard-process) tops, and from the last top copy
+  // (after ISR recoil / FSR, before decay; what TopDecaySubset kStable uses). The last copy
+  // is pruned from UHH2 ntuples, but the stored W (status 22) and b (status 23) daughters of
+  // the top come from its decay, so t_last = W + b.
+  // Output directory gen_lastcopy/:
+  //   mtt_22, mtt_last                     gen m_tt for each definition
+  //   xi_22_<bin>, xi_last_<bin>           xi per gen-m_tt bin of the SAME definition
+  //                                        (<bin> = inclusive, 0_500, ..., 1500Inf)
+  //   migration_22_vs_last                 x = 2*mttbin_22 + (xi_22 > 0),
+  //                                        y = 2*mttbin_last + (xi_last > 0); Sumw2 per cell
+  //                                        gives the paired (same-event) error on A_last - A_22
+  // Every histogram exists twice: without suffix (genWeight * lumi) and, when
+  // ApplyNNLOEWKToGenHists is also on, with suffix _nnloewk (genWeight * lumi * EWK * NNLO-QCD,
+  // the same per-event correction for both definitions; it is evaluated on the status-22 tops).
+  struct LastCopyGenHists {
+    TH1D* mtt_22 = nullptr;
+    TH1D* mtt_last = nullptr;
+    std::vector<TH1D*> xi_22;       // [0] = inclusive, [1 + i] = gen m_tt bin i
+    std::vector<TH1D*> xi_last;
+    TH2D* migration = nullptr;        // filled with the last-copy weight
+    TH2D* migration_cross = nullptr;  // only *_ownkin sets: filled with w_22 * w_last
+  };
+  // Optional (XML FillLastCopyOwnKinGenHists=true; needs FillLastCopyGenHists and
+  // ApplyNNLOEWKToGenHists): gen_lastcopy/*_nnloewk_ownkin (and *_nnloewk_nocap_ownkin when
+  // FillNNLONoCapGenHists is on). The status-22 quantities keep the module weights; the last-copy
+  // quantities get EWK and NNLO-QCD evaluated on the last-copy (W+b) tops, i.e. the dilepton
+  // TopAnalysis recipe. The migration matrix is filled with the last-copy weight and
+  // migration_*_cross with w_22 * w_last (paired error in compare_lastcopy_genac.py).
+  bool fill_lastcopy_ownkin = false;
+  std::unique_ptr<TH2D> h_ewk_lo_qcd;
+  std::unique_ptr<TH2D> h_ewk_nlo_ewk;
+  long n_ownkin_ewk_mismatch = 0;
+  // DEBUG (XML DebugTauGen=true, default false): print the stored gen record of the first
+  // DebugTauGenMaxEvents tau-channel events and running counts, to check whether tau decay
+  // products are stored and whether leptonic-tau events pass fill_gen.
+  bool debug_tau_gen = false;
+  int  debug_tau_gen_max = 10;
+  long n_dbg_tau_events = 0, n_dbg_tau_with_child = 0, n_dbg_tau_kept = 0, n_dbg_lep_printed = 0;
+
+  bool fill_lastcopy_gen_hists = false;
+  LastCopyGenHists lc_hists;           // genWeight * lumi
+  LastCopyGenHists lc_hists_nnloewk;   // genWeight * lumi * EWK * NNLO-QCD
+  LastCopyGenHists lc_hists_nnloewk_nocap;  // same, NNLO-QCD without the pT > 500 GeV freeze
+  LastCopyGenHists lc_hists_ownkin;         // corrections on each definition's own tops (capped NNLO)
+  LastCopyGenHists lc_hists_ownkin_nocap;   // same, uncapped NNLO
 
 };
 
@@ -430,6 +532,44 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx) {
     // GEN _nnloewk folders, without touching the global event.weight.
     h_w_ewk_nom  = ctx.get_handle<float>("weight_ttbar_ewk_nominal");
     h_w_nnlo_nom = ctx.get_handle<float>("weight_ttbar_nnlo_qcd");
+  }
+  fill_nnlo_nocap_gen_hists = isMC && (ctx.get("FillNNLONoCapGenHists", "false") == "true");
+  if (fill_nnlo_nocap_gen_hists && !apply_nnloewk_to_gen_hists) {
+    cout << "ZprimePreselectionModule WARNING: FillNNLONoCapGenHists=true needs ApplyNNLOEWKToGenHists=true; "
+         << "no _nnloewk_nocap histograms will be filled." << endl;
+    fill_nnlo_nocap_gen_hists = false;
+  }
+  if (fill_nnlo_nocap_gen_hists && ctx.get("TTbarNNLOQCDScaleFactor", "SF_3") != "SF_3") {
+    cout << "ZprimePreselectionModule WARNING: FillNNLONoCapGenHists implements SF_3 only, but TTbarNNLOQCDScaleFactor="
+         << ctx.get("TTbarNNLOQCDScaleFactor") << "; no _nnloewk_nocap histograms will be filled." << endl;
+    fill_nnlo_nocap_gen_hists = false;
+  }
+  fill_lastcopy_ownkin = isMC && (ctx.get("FillLastCopyOwnKinGenHists", "false") == "true");
+  if (fill_lastcopy_ownkin && !(apply_nnloewk_to_gen_hists && ctx.get("FillLastCopyGenHists", "false") == "true"
+                                && ctx.get("TTbarNNLOQCDScaleFactor", "SF_3") == "SF_3")) {
+    cout << "ZprimePreselectionModule WARNING: FillLastCopyOwnKinGenHists=true needs FillLastCopyGenHists=true, "
+         << "ApplyNNLOEWKToGenHists=true and SF_3; no *_ownkin histograms will be filled." << endl;
+    fill_lastcopy_ownkin = false;
+  }
+  if (fill_lastcopy_ownkin) {
+    // same table and histograms as TTbarEWKCorrection
+    const std::string ewk_file_path = ctx.get(
+      "TTbarEWKCorrectionFile",
+      "/data/dust/user/beozek/uuh2-106X_v2/CMSSW_10_6_28/src/UHH2/ZprimeSemiLeptonic/analysis/top_pt_reweighting/HATHORMGPY_costheta.root");
+    TFile ewk_file(locate_file(ewk_file_path).c_str(), "READ");
+    if (ewk_file.IsZombie()) {
+      throw std::runtime_error("ZprimePreselectionModule: failed to open TTbarEWKCorrectionFile '" + ewk_file_path + "'");
+    }
+    TH2D* lo_qcd = dynamic_cast<TH2D*>(ewk_file.Get("EWno_0"));
+    TH2D* nlo_ewk = dynamic_cast<TH2D*>(ewk_file.Get("EWYt_10"));
+    if (!lo_qcd || !nlo_ewk) {
+      throw std::runtime_error("ZprimePreselectionModule: no EWno_0/EWYt_10 in '" + ewk_file_path + "'");
+    }
+    h_ewk_lo_qcd.reset(dynamic_cast<TH2D*>(lo_qcd->Clone("presel_ewk_lo_qcd")));
+    h_ewk_nlo_ewk.reset(dynamic_cast<TH2D*>(nlo_ewk->Clone("presel_ewk_nlo_ewk")));
+    h_ewk_lo_qcd->SetDirectory(0);
+    h_ewk_nlo_ewk->SetDirectory(0);
+    ewk_file.Close();
   }
 
   // Cache lumi factor for cutflow
@@ -539,6 +679,14 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx) {
     }
     histogram_tags.push_back("mtt_gen_0_750_lumiscaled_nnloewk");
   }
+  // --- Same, with the NNLO-QCD SF not frozen above pT = 500 GeV (FillNNLONoCapGenHists) ---
+  if(fill_nnlo_nocap_gen_hists){
+    histogram_tags.push_back("mtt_gen_inclusive_lumiscaled_nnloewk_nocap");
+    for (const auto & tag : mttbar_bin_tags) {
+      histogram_tags.push_back("mtt_gen_" + tag + "_lumiscaled_nnloewk_nocap");
+    }
+    histogram_tags.push_back("mtt_gen_0_750_lumiscaled_nnloewk_nocap");
+  }
 
   // --- Reco-level folders ---
   histogram_tags.push_back("MET");
@@ -568,6 +716,69 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx) {
     ctx.put("powheg_ewk_lookup", h_powheg_lookup_yield);
     ctx.put("powheg_ewk_lookup", h_powheg_lookup_sumw);
     lookup_file.Close();
+  }
+
+  debug_tau_gen     = isMC && (ctx.get("DebugTauGen", "false") == "true");
+  debug_tau_gen_max = std::stoi(ctx.get("DebugTauGenMaxEvents", "10"));
+
+  // Top-definition cross-check: status-22 vs last-copy tops (see member comment).
+  // Off unless FillLastCopyGenHists=true in the XML, so normal runs are unchanged.
+  fill_lastcopy_gen_hists = isMC && (ctx.get("FillLastCopyGenHists", "false") == "true");
+  if (fill_lastcopy_gen_hists) {
+    auto book_lc = [&](TH1* h) {
+      h->Sumw2();
+      ctx.put("gen_lastcopy", h);  // attach to output file under gen_lastcopy/ directory
+    };
+    // 300 xi bins: rebinnable to 100 (NoAC templates), 12 and 6 (comparisons)
+    std::vector<std::string> xi_tags = {"inclusive"};
+    xi_tags.insert(xi_tags.end(), mttbar_bin_tags.begin(), mttbar_bin_tags.end());
+    const int ncell = 2 * static_cast<int>(mttbar_bin_tags.size());
+
+    auto book_set = [&](const std::string& sfx, const std::string& wlabel, bool with_cross) {
+      LastCopyGenHists s;
+      s.mtt_22   = new TH1D(("mtt_22" + sfx).c_str(),   ("GEN m_{t#bar{t}}, status-22 tops, " + wlabel + ";m_{t#bar{t}} [GeV]").c_str(), 500, 0., 5000.);
+      s.mtt_last = new TH1D(("mtt_last" + sfx).c_str(), ("GEN m_{t#bar{t}}, last-copy tops (W+b), " + wlabel + ";m_{t#bar{t}} [GeV]").c_str(), 500, 0., 5000.);
+      book_lc(s.mtt_22);
+      book_lc(s.mtt_last);
+      for (const auto& tag : xi_tags) {
+        TH1D* h22   = new TH1D(("xi_22_" + tag + sfx).c_str(),   ("#xi GEN, status-22 tops, m_{t#bar{t}} " + tag + ", " + wlabel).c_str(),         300, -1., 1.);
+        TH1D* hlast = new TH1D(("xi_last_" + tag + sfx).c_str(), ("#xi GEN, last-copy tops (W+b), m_{t#bar{t}} " + tag + ", " + wlabel).c_str(), 300, -1., 1.);
+        book_lc(h22);
+        book_lc(hlast);
+        s.xi_22.push_back(h22);
+        s.xi_last.push_back(hlast);
+      }
+      s.migration = new TH2D(("migration_22_vs_last" + sfx).c_str(),
+                             ("GEN (m_{t#bar{t}} bin, sign #xi): status-22 (x) vs last copy (y), " + wlabel +
+                              ";2*bin_{22}+(#xi_{22}>0);2*bin_{last}+(#xi_{last}>0)").c_str(),
+                             ncell, 0., ncell, ncell, 0., ncell);
+      book_lc(s.migration);
+      if (with_cross) {
+        s.migration_cross = new TH2D(("migration_22_vs_last" + sfx + "_cross").c_str(),
+                                     ("sum(w_{22} w_{last}) per cell, " + wlabel +
+                                      ";2*bin_{22}+(#xi_{22}>0);2*bin_{last}+(#xi_{last}>0)").c_str(),
+                                     ncell, 0., ncell, ncell, 0., ncell);
+        book_lc(s.migration_cross);
+      }
+      return s;
+    };
+    lc_hists = book_set("", "genWeight*lumi", false);
+    if (apply_nnloewk_to_gen_hists) {
+      lc_hists_nnloewk = book_set("_nnloewk", "genWeight*lumi*EWK*NNLO", false);
+      if (fill_nnlo_nocap_gen_hists) {
+        lc_hists_nnloewk_nocap = book_set("_nnloewk_nocap", "genWeight*lumi*EWK*NNLO (no pT cap)", false);
+      }
+      if (fill_lastcopy_ownkin) {
+        lc_hists_ownkin = book_set("_nnloewk_ownkin", "genWeight*lumi*EWK*NNLO, last copy: corrections on W+b tops", true);
+        if (fill_nnlo_nocap_gen_hists) {
+          lc_hists_ownkin_nocap = book_set("_nnloewk_nocap_ownkin", "genWeight*lumi*EWK*NNLO (no pT cap), last copy: corrections on W+b tops", true);
+        }
+      }
+    }
+    else {
+      cout << "ZprimePreselectionModule WARNING: FillLastCopyGenHists=true but ApplyNNLOEWKToGenHists is not true: "
+           << "only the UNCORRECTED (genWeight*lumi) gen_lastcopy histograms will be filled." << endl;
+    }
   }
 
   lumihists.reset(new LuminosityHists(ctx, "lumi"));
@@ -671,6 +882,67 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
         }
       }
       const bool fill_gen = (dc != TTbarGen::e_notfound && !has_any_hadronic_tau_decay(event.genparticles, ttbargen));
+
+      // DEBUG: tau treatment at gen level (XML DebugTauGen=true)
+      if (debug_tau_gen && event.genparticles) {
+        static const char* dc_names[] = {"e_had", "e_ehad", "e_muhad", "e_tauhad", "e_ee", "e_mumu",
+                                         "e_tautau", "e_emu", "e_etau", "e_mutau", "e_notfound"};
+        const auto& gps = *event.genparticles;
+        const bool tau_channel = (dc == TTbarGen::e_tauhad || dc == TTbarGen::e_tautau ||
+                                  dc == TTbarGen::e_etau   || dc == TTbarGen::e_mutau);
+        const bool lep_channel = (dc == TTbarGen::e_ehad || dc == TTbarGen::e_muhad);
+
+        // does any stored particle have a tau as mother? (exactly what tau_decays_to_emumu scans)
+        auto is_tau_child = [&](const GenParticle& gp) {
+          for (const auto& tau : gps) {
+            if (std::abs(tau.pdgId()) != 15) continue;
+            if (gp.mother1() == tau.index() || gp.mother2() == tau.index()) return true;
+          }
+          return false;
+        };
+        bool any_tau_child = false;
+        for (const auto& gp : gps) any_tau_child |= is_tau_child(gp);
+
+        if (tau_channel) {
+          ++n_dbg_tau_events;
+          if (any_tau_child) ++n_dbg_tau_with_child;
+          if (fill_gen) ++n_dbg_tau_kept;
+        }
+        const bool print_event = (tau_channel && n_dbg_tau_events <= debug_tau_gen_max) ||
+                                 (lep_channel && n_dbg_lep_printed < 2);   // two e/mu+jets events for comparison
+        if (lep_channel && print_event) ++n_dbg_lep_printed;
+
+        if (print_event) {
+          const auto old_flags = cout.flags();
+          const auto old_prec  = cout.precision();
+          cout << "\n[DebugTauGen] run " << event.run << " event " << event.event
+               << "  decay channel = " << dc_names[dc] << " (" << dc << ")"
+               << "  fill_gen = " << fill_gen << (fill_gen ? "  (KEPT)" : "  (EXCLUDED)")
+               << "  any particle with a tau mother: " << (any_tau_child ? "YES" : "NO") << endl;
+          cout << "  (mother/daughter index 65535 or -1 = none)" << endl;
+          cout << setw(6) << "idx" << setw(8) << "pdgId" << setw(8) << "status"
+               << setw(9) << "mother1" << setw(9) << "mother2" << setw(11) << "daughter1" << setw(11) << "daughter2"
+               << setw(10) << "pt" << setw(8) << "eta" << endl;
+          for (const auto& gp : gps) {
+            cout << setw(6) << gp.index() << setw(8) << gp.pdgId() << setw(8) << gp.status()
+                 << setw(9) << gp.mother1() << setw(9) << gp.mother2() << setw(11) << gp.daughter1() << setw(11) << gp.daughter2()
+                 << setw(10) << fixed << setprecision(1) << gp.pt();
+            if (gp.pt() > 1e-3) cout << setw(8) << setprecision(2) << gp.eta();
+            else                cout << setw(8) << "-";     // incoming partons: pt = 0, eta undefined
+            if (std::abs(gp.pdgId()) == 15) cout << "   <-- tau";
+            if (is_tau_child(gp))           cout << "   <-- CHILD OF A TAU";
+            cout << endl;
+          }
+          cout.flags(old_flags);
+          cout.precision(old_prec);
+        }
+        if (tau_channel && (print_event || n_dbg_tau_events % 500 == 0)) {
+          cout << "[DebugTauGen] tau-channel events so far: " << n_dbg_tau_events
+               << " | with any stored tau daughter: " << n_dbg_tau_with_child
+               << " | passing fill_gen (kept): " << n_dbg_tau_kept << endl;
+        }
+      }
+
       if (fill_gen) {
         const auto& top  = ttbargen.Top();
         const auto& atop = ttbargen.Antitop();
@@ -702,6 +974,29 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
         lumi_weight->process(event);
         // event.weight = genWeight * (target_lumi / dataset_lumi)
 
+        // Uncapped NNLO-QCD weight for the optional _nnloewk_nocap histograms (status-22 tops).
+        // nnlo_sf3_matches_module: the capped SF_3 recomputed here equals the module's stored weight,
+        // i.e. the module applied SF_3 to this event (false for non-ttbar datasets, where it stores 1.0).
+        double w_nnlo_nocap = 1.0;
+        bool nnlo_sf3_matches_module = false;
+        if (fill_nnlo_nocap_gen_hists || fill_lastcopy_ownkin) {
+          const double pt_t  = top.v4().Pt();
+          const double pt_tb = atop.v4().Pt();
+          const double w_nnlo_stored = event.get(h_w_nnlo_nom);
+          const double w_nnlo_capped = std::sqrt(nnlo_qcd_sf3(std::min(pt_t, 500.)) * nnlo_qcd_sf3(std::min(pt_tb, 500.)));
+          nnlo_sf3_matches_module = (std::abs(w_nnlo_capped - w_nnlo_stored) <= 1e-6 * std::abs(w_nnlo_capped));
+          if (nnlo_sf3_matches_module) {
+            w_nnlo_nocap = std::sqrt(nnlo_qcd_sf3(pt_t) * nnlo_qcd_sf3(pt_tb));
+          }
+          else {
+            w_nnlo_nocap = w_nnlo_stored;  // module did not apply the capped SF_3 here: keep its weight
+            if (++n_nnlo_nocap_mismatch <= 5) {
+              cerr << "ZprimePreselectionModule WARNING: capped SF_3 " << w_nnlo_capped << " != stored NNLO weight "
+                   << w_nnlo_stored << " (event " << event.event << "); using the stored weight for _nnloewk_nocap / _ownkin." << endl;
+            }
+          }
+        }
+
         // --- CUTFLOW: 2_AfterLumiWeight, 3_GEN_lumiscaled ---
         h_cf_raw->Fill(2.5, 1.);
         h_cf_lumiscaled->Fill(2.5, event.weight);
@@ -715,6 +1010,69 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
         }
         if (mtt >= mttbar_bin_edges[0] && mtt < mttbar_bin_edges[2]) {
           fill_histograms(event, "mtt_gen_0_750_lumiscaled");
+        }
+
+        // OPTIONAL: top-definition cross-check, status-22 vs last-copy (W+b) tops.
+        // Same events as the _lumiscaled folders above; event.weight = genWeight * lumi here.
+        if (fill_lastcopy_gen_hists) {
+          const auto t_last  = ttbargen.WTop().v4()     + ttbargen.bTop().v4();
+          const auto tb_last = ttbargen.WAntitop().v4() + ttbargen.bAntitop().v4();
+          const double mtt_last  = (t_last + tb_last).M();
+          const double xi_last   = std::tanh(std::abs(t_last.Rapidity()) - std::abs(tb_last.Rapidity()));
+          const double xi_22     = std::tanh(dy);
+          const int    ibin_last = find_mtt_bin(mtt_last);
+
+          // w22: weight for the status-22 quantities, wlast: weight for the last-copy quantities
+          auto fill_set = [&](LastCopyGenHists& s, double w22, double wlast) {
+            s.mtt_22->Fill(mtt, w22);
+            s.mtt_last->Fill(mtt_last, wlast);
+            s.xi_22.at(0)->Fill(xi_22, w22);
+            s.xi_last.at(0)->Fill(xi_last, wlast);
+            if (ibin >= 0)      s.xi_22.at(ibin + 1)->Fill(xi_22, w22);
+            if (ibin_last >= 0) s.xi_last.at(ibin_last + 1)->Fill(xi_last, wlast);
+            if (ibin >= 0 && ibin_last >= 0) {
+              const double cell_22   = 2 * ibin      + (xi_22   > 0. ? 1 : 0) + 0.5;
+              const double cell_last = 2 * ibin_last + (xi_last > 0. ? 1 : 0) + 0.5;
+              s.migration->Fill(cell_22, cell_last, wlast);
+              if (s.migration_cross) s.migration_cross->Fill(cell_22, cell_last, w22 * wlast);
+            }
+          };
+          fill_set(lc_hists, event.weight, event.weight);
+          if (apply_nnloewk_to_gen_hists) {
+            // same per-event correction as the _lumiscaled_nnloewk folders (status-22 tops)
+            const double w_ewk_22  = event.get(h_w_ewk_nom);
+            const double w_nnlo_22 = event.get(h_w_nnlo_nom);
+            const double w22_cap   = event.weight * w_ewk_22 * w_nnlo_22;
+            const double w22_nocap = event.weight * w_ewk_22 * w_nnlo_nocap;
+            fill_set(lc_hists_nnloewk, w22_cap, w22_cap);
+            if (fill_nnlo_nocap_gen_hists) {
+              fill_set(lc_hists_nnloewk_nocap, w22_nocap, w22_nocap);
+            }
+            if (fill_lastcopy_ownkin) {
+              // EWK on the last-copy tops, after checking that the local lookup reproduces the module
+              // weight on the status-22 tops; otherwise keep the module weight (non-ttbar datasets).
+              double w_ewk_last = ewk_weight_for(h_ewk_lo_qcd.get(), h_ewk_nlo_ewk.get(), t_last, tb_last);
+              const double w_ewk_22_local = ewk_weight_for(h_ewk_lo_qcd.get(), h_ewk_nlo_ewk.get(), top.v4(), atop.v4());
+              if (std::abs(w_ewk_22_local - w_ewk_22) > 1e-6 * std::abs(w_ewk_22)) {
+                w_ewk_last = w_ewk_22;
+                if (++n_ownkin_ewk_mismatch <= 5) {
+                  cerr << "ZprimePreselectionModule WARNING: local EWK lookup " << w_ewk_22_local << " != stored EWK weight "
+                       << w_ewk_22 << " (event " << event.event << "); using the stored weight for *_ownkin." << endl;
+                }
+              }
+              // NNLO-QCD on the last-copy tops (capped / uncapped); module weight if SF_3 did not apply
+              const double pt_tl  = t_last.Pt();
+              const double pt_tbl = tb_last.Pt();
+              const double w_nnlo_last_cap   = nnlo_sf3_matches_module
+                ? std::sqrt(nnlo_qcd_sf3(std::min(pt_tl, 500.)) * nnlo_qcd_sf3(std::min(pt_tbl, 500.))) : w_nnlo_22;
+              const double w_nnlo_last_nocap = nnlo_sf3_matches_module
+                ? std::sqrt(nnlo_qcd_sf3(pt_tl) * nnlo_qcd_sf3(pt_tbl)) : w_nnlo_22;
+              fill_set(lc_hists_ownkin, w22_cap, event.weight * w_ewk_last * w_nnlo_last_cap);
+              if (fill_nnlo_nocap_gen_hists) {
+                fill_set(lc_hists_ownkin_nocap, w22_nocap, event.weight * w_ewk_last * w_nnlo_last_nocap);
+              }
+            }
+          }
         }
 
         // ==========================================
@@ -733,6 +1091,16 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
           }
           if (mtt >= mttbar_bin_edges[0] && mtt < mttbar_bin_edges[2]) {
             fill_histograms(event, "mtt_gen_0_750_lumiscaled_nnloewk");
+          }
+          if (fill_nnlo_nocap_gen_hists) {
+            event.weight = w_lumi * w_ewk * w_nnlo_nocap;
+            fill_histograms(event, "mtt_gen_inclusive_lumiscaled_nnloewk_nocap");
+            if (ibin >= 0) {
+              fill_histograms(event, "mtt_gen_" + mttbar_bin_tags.at(ibin) + "_lumiscaled_nnloewk_nocap");
+            }
+            if (mtt >= mttbar_bin_edges[0] && mtt < mttbar_bin_edges[2]) {
+              fill_histograms(event, "mtt_gen_0_750_lumiscaled_nnloewk_nocap");
+            }
           }
           event.weight = w_lumi;                        // restore lumi-only weight
         }
