@@ -55,6 +55,18 @@
 using namespace std;
 using namespace uhh2;
 
+namespace {
+  // Each muon SF (ID, ISO, trigger) is applied by a _stat and a _syst module. Both multiply
+  // event.weight by the full SF: the _stat and _syst POG histograms have the same central values
+  // and differ only in their errors. Call this right after the _syst module to divide one central
+  // SF back out, so the SF enters the weight once. An up/down setting of either module
+  // (SystDirection_Muon*_stat or _syst) is kept. The stored weight_sfmu_* values are unchanged.
+  void remove_second_muon_sf(uhh2::Event & event, const uhh2::Event::Handle<float> & h_sf_syst_nominal){
+    const float sf = event.get(h_sf_syst_nominal);
+    if(sf > 0.f) event.weight /= sf;
+  }
+}
+
 /*
 ██████  ███████ ███████ ██ ███    ██ ██ ████████ ██  ██████  ███    ██
 ██   ██ ██      ██      ██ ████   ██ ██    ██    ██ ██    ██ ████   ██
@@ -83,6 +95,8 @@ protected:
 
   // scale factors
   unique_ptr<AnalysisModule> sf_muon_iso_stat_low, sf_muon_iso_syst_low,sf_muon_id_stat_low,sf_muon_id_syst_low, sf_muon_id_stat_high,sf_muon_id_syst_high, sf_muon_trigger_stat_low, sf_muon_trigger_syst_low, sf_muon_trigger_stat_high, sf_muon_trigger_syst_high;
+  // central SFs written by the _syst modules, used to apply each muon SF once (remove_second_muon_sf)
+  uhh2::Event::Handle<float> h_sfmu_iso_syst, h_sfmu_id_syst, h_sfmu_trigger_syst;
   unique_ptr<AnalysisModule> sf_muon_iso_stat_low_dummy, sf_muon_iso_syst_low_dummy, sf_muon_id_stat_dummy, sf_muon_id_syst_dummy, sf_muon_trigger_stat_dummy, sf_muon_trigger_syst_dummy;
   unique_ptr<AnalysisModule> sf_ele_id_low, sf_ele_id_high, sf_ele_reco;
   unique_ptr<AnalysisModule> sf_ele_id_dummy, sf_ele_reco_dummy;
@@ -378,6 +392,10 @@ ZprimeAnalysisModule::ZprimeAnalysisModule(uhh2::Context& ctx){
   sf_muon_trigger_stat_high.reset(new uhh2::MuonTriggerScaleFactors_stat(ctx, true, false));
   sf_muon_trigger_syst_low.reset(new uhh2::MuonTriggerScaleFactors_syst(ctx, false, true));
   sf_muon_trigger_syst_high.reset(new uhh2::MuonTriggerScaleFactors_syst(ctx, true, false));
+  // default weight postfixes of the _syst modules above (iso_syst, id_syst, trigger_syst)
+  h_sfmu_iso_syst     = ctx.get_handle<float>("weight_sfmu_iso_syst");
+  h_sfmu_id_syst      = ctx.get_handle<float>("weight_sfmu_id_syst");
+  h_sfmu_trigger_syst = ctx.get_handle<float>("weight_sfmu_trigger_syst");
 
   sf_muon_reco.reset(new MuonRecoSF(ctx));
   sf_ele_id_low.reset(new uhh2::ElectronIdScaleFactors(ctx, Electron::tag::mvaEleID_Fall17_iso_V2_wp80, true));
@@ -817,6 +835,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     if(muon_is_low){
       sf_muon_iso_stat_low->process(event);
       sf_muon_iso_syst_low->process(event);
+      remove_second_muon_sf(event, h_sfmu_iso_syst);
     }
     // if (muon_is_mid){
     //   sf_muon_iso_low->process(event);
@@ -839,6 +858,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     if(muon_is_low){
       sf_muon_id_stat_low->process(event);
       sf_muon_id_syst_low->process(event);
+      remove_second_muon_sf(event, h_sfmu_id_syst);
 
     }
     // if(muon_is_mid){
@@ -847,6 +867,7 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
     else if(muon_is_high){
       sf_muon_id_stat_high->process(event);
       sf_muon_id_syst_high->process(event);
+      remove_second_muon_sf(event, h_sfmu_id_syst);
 
     }
     fill_histograms(event, "IdMuon_SF");
@@ -896,9 +917,13 @@ bool ZprimeAnalysisModule::process(uhh2::Event& event){
           }else{ // DATA above Run B
             if(!(Trigger_mu_C_selection->passes(event) || Trigger_mu_D_selection->passes(event))) return false;
           }
-        }else{ // 2016 MC RunB
+        }else{ // 2016 MC: emulate the runs < 274889 (Run B), where HLT_TkMu50 did not exist
+          // Fraction of the era's luminosity with run < 274889: preVFP 2.74/19.30 fb^-1 = 0.142
+          // (0.1429 kept); postVFP has no such runs, so 0. The random number is drawn in both
+          // eras so the rand() sequence is unchanged.
+          const float mu50only_frac_UL16 = isUL16preVFP ? 0.1429f : 0.f;
           float runB_UL16_mu = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-          if( runB_UL16_mu < 0.1429){
+          if( runB_UL16_mu < mu50only_frac_UL16){
             if(!Trigger_mu_C_selection->passes(event)) return false;
           }else{  // 2016 MC above RunB
             if(!(Trigger_mu_C_selection->passes(event) || Trigger_mu_D_selection->passes(event))) return false;

@@ -255,6 +255,54 @@ namespace {
     return (std::isfinite(ratio) && ratio > 0.0) ? ratio : 1.0;
   }
 
+  // ---- Direct gen-level ttbar system from the raw GenParticles collection (FillGenChannelHists) ----
+  // No TTbarGen, no decay-channel veto: the first pdgId +6 / -6 particle (the status-22 tops in UHH2
+  // ntuples), its W and b daughters via the mother links, and the decay channel from the W daughters.
+  const GenParticle* find_first_pdgid(const std::vector<GenParticle>& gps, int pdgid) {
+    for (const auto& gp : gps) if (gp.pdgId() == pdgid) return &gp;
+    return nullptr;
+  }
+  // W and b(-like) daughters of a top, via mother1; returns false if either is missing
+  bool find_top_daughters(const std::vector<GenParticle>& gps, int top_index, const GenParticle*& w, const GenParticle*& b) {
+    w = nullptr; b = nullptr;
+    for (const auto& gp : gps) {
+      if (gp.mother1() != top_index) continue;
+      const int id = std::abs(gp.pdgId());
+      if (id == 24 && !w) w = &gp;
+      else if ((id == 5 || id == 3 || id == 1) && !b) b = &gp;
+    }
+    return w && b;
+  }
+  // W decay flavour from the stored W daughters: 11 / 13 / 15 (e / mu / tau), 0 = hadronic, -1 = no daughters stored
+  int w_decay_flavour(const std::vector<GenParticle>& gps, int w_index) {
+    int flavour = -1;
+    for (const auto& gp : gps) {
+      if (gp.mother1() != w_index) continue;
+      const int id = std::abs(gp.pdgId());
+      if (id == 11 || id == 13 || id == 15) return id;
+      if (id <= 6 && id >= 1) flavour = 0;
+    }
+    return flavour;
+  }
+  // channel code in TTbarGen enum order: 0 had, 1 ehad, 2 muhad, 3 tauhad, 4 ee, 5 mumu, 6 tautau,
+  // 7 emu, 8 etau, 9 mutau; 10 = unclassified
+  int decay_channel_code(int f1, int f2) {
+    if (f1 < 0 || f2 < 0) return 10;
+    const int lo = std::min(f1, f2), hi = std::max(f1, f2);
+    if (lo == 0 && hi == 0)  return 0;
+    if (lo == 0 && hi == 11) return 1;
+    if (lo == 0 && hi == 13) return 2;
+    if (lo == 0 && hi == 15) return 3;
+    if (lo == 11 && hi == 11) return 4;
+    if (lo == 13 && hi == 13) return 5;
+    if (lo == 15 && hi == 15) return 6;
+    if (lo == 11 && hi == 13) return 7;
+    if (lo == 11 && hi == 15) return 8;
+    if (lo == 13 && hi == 15) return 9;
+    return 10;
+  }
+  const char* const kGenChannelLabels[11] = {"had", "ehad", "muhad", "tauhad", "ee", "mumu", "tautau", "emu", "etau", "mutau", "unclassified"};
+
   // b-fragmentation : check if the particle is a b-hadron, b-quark, or b-hadron-quark.
   // True if any tau in the ttbar decay goes tau->hadronic. Exclude such events.
   bool has_any_hadronic_tau_decay(const std::vector<GenParticle>* gps, const TTbarGen& ttbargen) {
@@ -426,6 +474,18 @@ protected:
   // quantities get EWK and NNLO-QCD evaluated on the last-copy (W+b) tops, i.e. the dilepton
   // TopAnalysis recipe. The migration matrix is filled with the last-copy weight and
   // migration_*_cross with w_22 * w_last (paired error in compare_lastcopy_genac.py).
+  // Optional (XML FillGenChannelHists=true, default false): gen A_C inputs per ttbar decay channel from
+  // the raw GenParticles collection (helpers above): every MC event with a top and an antitop, including
+  // the tau channels (which fill_gen vetoes in practice, since tau daughters are not stored) and events
+  // TTbarGen cannot classify (channel 10, EWK/NNLO weights = 1 there). gen_channels/ac_<22|last>[_nnloewk]:
+  // x = channel code (labels on the axis), y = 2*mttbin + (xi > 0). Weights: genWeight * lumi [* EWK * NNLO].
+  bool fill_gen_channel_hists = false;
+  TH2D* h_ch_22 = nullptr;
+  TH2D* h_ch_last = nullptr;
+  TH2D* h_ch_22_nnloewk = nullptr;
+  TH2D* h_ch_last_nnloewk = nullptr;
+  long n_ch_no_tops = 0, n_ch_no_wb = 0;
+
   bool fill_lastcopy_ownkin = false;
   std::unique_ptr<TH2D> h_ewk_lo_qcd;
   std::unique_ptr<TH2D> h_ewk_nlo_ewk;
@@ -781,6 +841,25 @@ ZprimePreselectionModule::ZprimePreselectionModule(uhh2::Context& ctx) {
     }
   }
 
+  fill_gen_channel_hists = isMC && (ctx.get("FillGenChannelHists", "false") == "true");
+  if (fill_gen_channel_hists) {
+    const int ncell = 2 * static_cast<int>(mttbar_bin_tags.size());
+    auto book_ch = [&](const std::string& name, const std::string& wlabel) {
+      TH2D* h = new TH2D(name.c_str(), ("GEN A_C inputs per decay channel, " + wlabel + ";decay channel;2*bin_{m_{t#bar{t}}}+(#xi>0)").c_str(),
+                         11, 0., 11., ncell, 0., ncell);
+      for (int i = 0; i < 11; ++i) h->GetXaxis()->SetBinLabel(i + 1, kGenChannelLabels[i]);
+      h->Sumw2();
+      ctx.put("gen_channels", h);
+      return h;
+    };
+    h_ch_22   = book_ch("ac_22",   "status-22 tops, genWeight*lumi");
+    h_ch_last = book_ch("ac_last", "last-copy tops (W+b), genWeight*lumi");
+    if (apply_nnloewk_to_gen_hists) {
+      h_ch_22_nnloewk   = book_ch("ac_22_nnloewk",   "status-22 tops, genWeight*lumi*EWK*NNLO");
+      h_ch_last_nnloewk = book_ch("ac_last_nnloewk", "last-copy tops (W+b), genWeight*lumi*EWK*NNLO");
+    }
+  }
+
   lumihists.reset(new LuminosityHists(ctx, "lumi"));
 }
 
@@ -859,6 +938,44 @@ bool ZprimePreselectionModule::process(uhh2::Event& event){
     event.set(h_mtt_gen,      std::numeric_limits<float>::quiet_NaN());
     event.set(h_costheta_gen, std::numeric_limits<float>::quiet_NaN());
     event.set(h_DeltaY_gen,   std::numeric_limits<float>::quiet_NaN());
+
+    // Per-decay-channel gen A_C inputs from the raw GenParticles (all events, no tau veto).
+    // event.weight is the raw genWeight here; the lumi factor is applied by hand.
+    if (fill_gen_channel_hists && event.genparticles) {
+      const auto& gps = *event.genparticles;
+      const GenParticle* t  = find_first_pdgid(gps, 6);
+      const GenParticle* tb = find_first_pdgid(gps, -6);
+      if (!t || !tb) {
+        ++n_ch_no_tops;
+      }
+      else {
+        const GenParticle *wt = nullptr, *bt = nullptr, *wb = nullptr, *bb = nullptr;
+        const bool have_t  = find_top_daughters(gps, t->index(),  wt, bt);
+        const bool have_tb = find_top_daughters(gps, tb->index(), wb, bb);
+        const int channel = decay_channel_code(have_t ? w_decay_flavour(gps, wt->index()) : -1,
+                                               have_tb ? w_decay_flavour(gps, wb->index()) : -1);
+        const double w_lumi_all = event.weight * lumi_factor;
+        const double w_corr_all = apply_nnloewk_to_gen_hists ? w_lumi_all * event.get(h_w_ewk_nom) * event.get(h_w_nnlo_nom) : w_lumi_all;
+        auto fill_ch = [&](TH2D* h_plain, TH2D* h_corr, double mtt_def, double xi_def) {
+          const int ib = find_mtt_bin(mtt_def);
+          if (ib < 0) return;
+          const double cell = 2 * ib + (xi_def > 0. ? 1 : 0) + 0.5;
+          h_plain->Fill(channel + 0.5, cell, w_lumi_all);
+          if (h_corr) h_corr->Fill(channel + 0.5, cell, w_corr_all);
+        };
+        const double mtt_22 = (t->v4() + tb->v4()).M();
+        const double xi_22  = std::tanh(std::abs(t->v4().Rapidity()) - std::abs(tb->v4().Rapidity()));
+        fill_ch(h_ch_22, h_ch_22_nnloewk, mtt_22, xi_22);
+        if (have_t && have_tb) {
+          const auto tl  = wt->v4() + bt->v4();
+          const auto tbl = wb->v4() + bb->v4();
+          fill_ch(h_ch_last, h_ch_last_nnloewk, (tl + tbl).M(), std::tanh(std::abs(tl.Rapidity()) - std::abs(tbl.Rapidity())));
+        }
+        else {
+          ++n_ch_no_wb;
+        }
+      }
+    }
 
     bool gen_filled = false;
     if (event.is_valid(h_ttbargen)) {
