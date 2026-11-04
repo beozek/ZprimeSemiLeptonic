@@ -27,7 +27,7 @@ protected:
   bool is_htott_pseudo;
   bool is_zprimetott;
 
-TH1F *Mtt_gen, *DeltaY_xi_gen, *DeltaY_xi_gen_300, *DeltaY_xi_gen_100, *DeltaY_xi_gen_36, *DeltaY_xi_gen_20, *DeltaY_xi_gen_10, *DeltaY_xi_gen_6,
+TH1F *Mtt_gen, *Mtt_gen_5GeV, *DeltaY_xi_gen, *DeltaY_xi_gen_300, *DeltaY_xi_gen_100, *DeltaY_xi_gen_36, *DeltaY_xi_gen_20, *DeltaY_xi_gen_10, *DeltaY_xi_gen_6,
      *DeltaY_xi_gen_300_mtt0, *DeltaY_xi_gen_300_mtt1, *DeltaY_xi_gen_300_mtt2, *DeltaY_xi_gen_300_mtt3, *DeltaY_xi_gen_300_mtt4,
      *DeltaY_xi_gen_100_mtt0, *DeltaY_xi_gen_100_mtt1, *DeltaY_xi_gen_100_mtt2, *DeltaY_xi_gen_100_mtt3, *DeltaY_xi_gen_100_mtt4,
      *DeltaY_xi_gen_mtt0, *DeltaY_xi_gen_mtt1, *DeltaY_xi_gen_mtt2, *DeltaY_xi_gen_mtt3, *DeltaY_xi_gen_mtt4,
